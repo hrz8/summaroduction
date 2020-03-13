@@ -5,7 +5,7 @@ import { UnplannedActivity } from './unplannedActivity.model';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
-@Controller('group')
+@Controller('unplanned-activity')
 export class UnplannedActivityController extends BaseController<UnplannedActivity> {
   constructor(private readonly unplannedActivityService: UnplannedActivityService) {
     super(unplannedActivityService);
