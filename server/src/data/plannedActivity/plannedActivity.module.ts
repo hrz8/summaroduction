@@ -13,4 +13,4 @@ import { PlannedActivityService } from './plannedActivity.service';
   providers: [PlannedActivityService],
   controllers: [PlannedActivityController],
 })
-export class GroupModule {}
+export class PlannedActivityModule {}

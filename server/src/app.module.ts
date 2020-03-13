@@ -6,6 +6,11 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ShiftModule } from './data/shift/shift.module';
 import { GroupModule } from './data/group/group.module';
+import { ProccessNameModule } from './data/proccessName/proccessName.module';
+import { LineNumberModule } from './data/lineNumber/lineNumber.module';
+import { ModelTypeModule } from './data/modelType/modelType.module';
+import { PlannedActivityModule } from './data/plannedActivity/plannedActivity.module';
+import { UnplannedActivityModule } from './data/unplannedActivity/unplannedActivity.module';
 
 @Module({
   imports: [
@@ -16,8 +21,14 @@ import { GroupModule } from './data/group/group.module';
     }),
     AuthModule,
     UserModule,
+    // base model string
     ShiftModule,
-    GroupModule
+    GroupModule,
+    ProccessNameModule,
+    LineNumberModule,
+    ModelTypeModule,
+    PlannedActivityModule,
+    UnplannedActivityModule
   ],
   controllers: [AppController],
   providers: [AppService],

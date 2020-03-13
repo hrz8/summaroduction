@@ -13,4 +13,4 @@ import { LineNumberService } from './lineNumber.service';
   providers: [LineNumberService],
   controllers: [LineNumberController],
 })
-export class ShiftModule {}
+export class LineNumberModule {}
