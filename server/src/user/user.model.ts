@@ -15,8 +15,11 @@ export class UserSafe extends BaseModel {
   public username!: string;
 
   @IsEmail()
-  @prop({ required: true, unique: true })
-  public email!: string;
+  @prop()
+  public email?: string;
+
+  @prop({ required: true })
+  public role?: string;
 }
 
 export class User extends UserSafe {

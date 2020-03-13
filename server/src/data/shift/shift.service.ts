@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from "nestjs-typegoose";
 import { ReturnModelType } from '@typegoose/typegoose/lib/types';
 import { BaseService } from '../../shared/base.service';
-import { Article } from './article.model';
+import { Shift } from './shift.model';
 
 @Injectable()
-export class ArticleService extends BaseService<Article> {
+export class ShiftService extends BaseService<Shift> {
   constructor(
-    @InjectModel(Article)
-    private readonly articleModel: ReturnModelType<typeof Article>,
+    @InjectModel(Shift)
+    private readonly shiftModel: ReturnModelType<typeof Shift>,
   ) {
-    super(articleModel);
+    super(shiftModel);
   }
 }

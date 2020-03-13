@@ -1,23 +1,23 @@
 import { Module } from '@nestjs/common';
 import { TypegooseModule } from 'nestjs-typegoose';
-import { ArticleModule } from './data/article/article.module';
-import { CategoryModule } from './data/category/category.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ShiftModule } from './data/shift/shift.module';
+import { GroupModule } from './data/group/group.module';
 
 @Module({
   imports: [
-    TypegooseModule.forRoot('mongodb://127.0.0.1/nestjs-blog', {
+    TypegooseModule.forRoot('mongodb://127.0.0.1/summaroduction', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true
     }),
     AuthModule,
-    ArticleModule,
-    CategoryModule,
-    UserModule
+    UserModule,
+    ShiftModule,
+    GroupModule
   ],
   controllers: [AppController],
   providers: [AppService],

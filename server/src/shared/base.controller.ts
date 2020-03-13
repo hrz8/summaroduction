@@ -1,8 +1,7 @@
 import {
   Controller, 
   Get, Post, Body, Res, Query, Put, Delete, Param,
-  HttpStatus, NotFoundException,  BadRequestException,
-  UseGuards,
+  HttpStatus, NotFoundException,  BadRequestException
 } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { ValidateObjectId } from './pipes/validate-object-id.pipe';
@@ -10,9 +9,7 @@ import { ValidateQueryInteger } from './pipes/validate-query-integer.pipe';
 import { GetResponse, GetOneResponse, ActionResponse } from '../shared/base.response';
 import { BasicFilterMessage, BasicQueryMessage } from '../shared/base.message';
 import { BaseModel } from './base.model';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller()
 export class BaseController<TModel extends BaseModel> {
   private readonly dataService: any;

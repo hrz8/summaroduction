@@ -1,4 +1,5 @@
-import { prop } from "@typegoose/typegoose";
+import { prop } from '@typegoose/typegoose';
+import { IsString } from 'class-validator';
 
 export abstract class BaseModel {
   public createdAt?: any;
@@ -24,4 +25,15 @@ export abstract class BaseModel {
   public static get modelName(): string {
     return this.name;
   }
+}
+
+export abstract class BaseModelString extends BaseModel {
+  @IsString()
+  @prop({ required: true })
+  public name!: string;
+  
+  @IsString()
+  @prop({ default: "" })
+
+  public description?: string;
 }

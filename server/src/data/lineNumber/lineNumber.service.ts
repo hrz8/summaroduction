@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from "nestjs-typegoose";
 import { ReturnModelType } from '@typegoose/typegoose/lib/types';
 import { BaseService } from '../../shared/base.service';
-import { Category } from './category.model';
+import { LineNumber } from './lineNumber.model';
 
 @Injectable()
-export class CategoryService extends BaseService<Category> {
+export class LineNumberService extends BaseService<LineNumber> {
   constructor(
-    @InjectModel(Category)
-    private readonly categoryModel: ReturnModelType<typeof Category>,
+    @InjectModel(LineNumber)
+    private readonly lineNumberModel: ReturnModelType<typeof LineNumber>,
   ) {
-    super(categoryModel);
+    super(lineNumberModel);
   }
 }
