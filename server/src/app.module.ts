@@ -11,6 +11,7 @@ import { LineNumberModule } from './data/lineNumber/lineNumber.module';
 import { ModelTypeModule } from './data/modelType/modelType.module';
 import { PlannedActivityModule } from './data/plannedActivity/plannedActivity.module';
 import { UnplannedActivityModule } from './data/unplannedActivity/unplannedActivity.module';
+import { ProductionModule } from './data/production/production.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { UnplannedActivityModule } from './data/unplannedActivity/unplannedActiv
     LineNumberModule,
     ModelTypeModule,
     PlannedActivityModule,
-    UnplannedActivityModule
+    UnplannedActivityModule,
+    ProductionModule
   ],
   controllers: [AppController],
   providers: [AppService],
