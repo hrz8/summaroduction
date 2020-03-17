@@ -23,6 +23,9 @@ class UnplannedAct {
   @prop({ required: true })
   public minute!: number;
 
+  @prop({ required: true, ref: UnplannedActivity })
+  public activity!: Ref<UnplannedActivity>;
+
   @prop()
 
   public op?: string;
@@ -31,9 +34,6 @@ class UnplannedAct {
   @prop({ default: "" })
 
   public description?: string;
-
-  @prop({ required: true, ref: UnplannedActivity })
-  public activity!: Ref<UnplannedActivity>;
 }
 
 export class Production extends BaseModel {
