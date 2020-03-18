@@ -1,4 +1,4 @@
-import { prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref, arrayProp } from '@typegoose/typegoose';
 import { IsNumber, IsString } from 'class-validator';
 import { BaseModel } from '../../shared/base.model';
 import { Shift } from '../shift/shift.model';
@@ -9,7 +9,7 @@ import { ModelType } from '../modelType/modelType.model';
 import { PlannedActivity } from '../plannedActivity/plannedActivity.model';
 import { UnplannedActivity } from '../unplannedActivity/unplannedActivity.model';
  
-class PlannedAct {
+export class ProdPlannedActivity {
   @IsNumber()
   @prop({ required: true })
   public minute!: number;
@@ -18,7 +18,7 @@ class PlannedAct {
   public activity!: Ref<PlannedActivity>;
 }
 
-class UnplannedAct {
+export class ProdUnplannedActivity {
   @IsNumber()
   @prop({ required: true })
   public minute!: number;
@@ -28,7 +28,7 @@ class UnplannedAct {
 
   @prop()
 
-  public op?: string;
+  public operationNumber?: string;
 
   @IsString()
   @prop({ default: "" })
@@ -80,10 +80,10 @@ export class Production extends BaseModel {
 
   public description?: string;
 
-  @prop()
-  public plannedAct?: Array<PlannedAct>;
+  @arrayProp({ _id: false, items: ProdPlannedActivity })
+  public plannedActivities?: Array<ProdPlannedActivity>;
 
-  @prop()
-  public unplannedAct?: Array<UnplannedAct>;
+  @arrayProp({ _id: false, items: ProdUnplannedActivity })
+  public unplannedActivities?: Array<ProdUnplannedActivity>;
 
 }

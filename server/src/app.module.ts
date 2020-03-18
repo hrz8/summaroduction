@@ -18,7 +18,8 @@ import { ProductionModule } from './data/production/production.module';
     TypegooseModule.forRoot('mongodb://127.0.0.1/summaroduction', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true
+      useCreateIndex: true,
+      useFindAndModify: false
     }),
     AuthModule,
     UserModule,

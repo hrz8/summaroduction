@@ -66,7 +66,7 @@ export class BaseController<TModel extends BaseModel> {
       }
 
       if (queryString.populate) {
-        const regexComma: RegExp = /^(\w+)(,(\w+))?$/;
+        const regexComma: RegExp = /^([\w\.]+)(,[\w\.]+)*?$/;
         if (regexComma.test(queryString.populate)) {
           filterMessage.populate = queryString.populate.replace(/,/g, ' ');
         }
@@ -91,13 +91,32 @@ export class BaseController<TModel extends BaseModel> {
   }
   
   @Get(':id')
-  public async getById(@Res() res, @Param('id', new ValidateObjectId()) id): Promise<GetOneResponse<TModel>>
+  public async getById(@Res() res, @Param('id', new ValidateObjectId()) id, @Query(new ValidateQueryInteger()) queryString: BasicQueryMessage): Promise<GetOneResponse<TModel>>
   {
     let response: GetOneResponse<TModel> = new GetOneResponse<TModel>();
-    const data: TModel = await this.dataService.findByIdAsync(id);
+    let data: TModel;
+
+    if (Object.keys(queryString).length) {
+      if (queryString.populate) {
+        const regexComma: RegExp = /^([\w\.]+)(,[\w\.]+)*?$/;
+        if (regexComma.test(queryString.populate)) {
+          const populate = queryString.populate.replace(/,/g, ' ');
+          data = await this.dataService.findByIdAsync(id, populate);
+        }
+      }
+    }
+    else {
+        data = await this.dataService.findByIdAsync(id);
+        if (!data) {
+          throw new NotFoundException("unknown id");
+        }
+    }
 
     if (!data) {
-      throw new NotFoundException("unknown id");
+      data = await this.dataService.findByIdAsync(id);
+      if (!data) {
+        throw new NotFoundException("unknown id");
+      }
     }
 
     response.message = "successfully fetched";
