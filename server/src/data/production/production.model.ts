@@ -8,7 +8,7 @@ import { LineNumber } from '../lineNumber/lineNumber.model';
 import { ModelType } from '../modelType/modelType.model';
 import { PlannedActivity } from '../plannedActivity/plannedActivity.model';
 import { UnplannedActivity } from '../unplannedActivity/unplannedActivity.model';
- 
+
 export class ProdPlannedActivity {
   @IsNumber()
   @prop({ required: true })
@@ -80,10 +80,10 @@ export class Production extends BaseModel {
 
   public description?: string;
 
-  @arrayProp({ _id: false, items: ProdPlannedActivity })
+  @arrayProp({ items: ProdPlannedActivity })
   public plannedActivities?: Array<ProdPlannedActivity>;
 
-  @arrayProp({ _id: false, items: ProdUnplannedActivity })
+  @arrayProp({ items: ProdUnplannedActivity })
   public unplannedActivities?: Array<ProdUnplannedActivity>;
 
 }

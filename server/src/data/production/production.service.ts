@@ -3,7 +3,7 @@ import { InjectModel } from "nestjs-typegoose";
 import { DocumentType } from '@typegoose/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose/lib/types';
 import { BaseService } from '../../shared/base.service';
-import { ProdPlannedActivity, Production } from './production.model';
+import { ProdPlannedActivity, Production, ProdUnplannedActivity } from './production.model';
 
 @Injectable()
 export class ProductionService extends BaseService<Production> {
@@ -20,6 +20,19 @@ export class ProductionService extends BaseService<Production> {
       return await this.productionModel
         .findByIdAndUpdate(BaseService.toObjectId(id), 
           { $push: { plannedActivities: item } },
+        );
+    }
+    catch(e) {
+      BaseService.throwMongoError(e);
+    }
+  }
+
+  public async addUnplannedActivity(id: string, item: ProdUnplannedActivity): Promise<DocumentType<Production>>
+  {
+    try {
+      return await this.productionModel
+        .findByIdAndUpdate(BaseService.toObjectId(id), 
+          { $push: { unplannedActivities: item } },
         );
     }
     catch(e) {

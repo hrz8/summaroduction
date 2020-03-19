@@ -15,11 +15,11 @@ export abstract class BaseModel {
         virtuals: true,
         versionKey: false,
         transform: (doc, ret, options) => {
-          delete ret._id;
-          return ret;
+            delete ret._id;
+            return ret;
+        }
       }
-      },
-    };
+    }
   }
 
   public static get modelName(): string {
