@@ -12,6 +12,7 @@ import { ModelTypeModule } from './data/modelType/modelType.module';
 import { PlannedActivityModule } from './data/plannedActivity/plannedActivity.module';
 import { UnplannedActivityModule } from './data/unplannedActivity/unplannedActivity.module';
 import { ProductionModule } from './data/production/production.module';
+import { OperationNumberModule } from './data/operationNumber/operationNumber.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ProductionModule } from './data/production/production.module';
     ProccessNameModule,
     LineNumberModule,
     ModelTypeModule,
+    OperationNumberModule,
     PlannedActivityModule,
     UnplannedActivityModule,
     ProductionModule

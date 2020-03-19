@@ -27,12 +27,38 @@ export class ProductionService extends BaseService<Production> {
     }
   }
 
+  public async removePlannedActivity(id: string, plannedActivityId: string): Promise<DocumentType<Production>>
+  {
+    try {
+      return await this.productionModel
+        .findByIdAndUpdate(BaseService.toObjectId(id), 
+          { $pull: { plannedActivities: { activity: plannedActivityId } } },
+        );
+    }
+    catch(e) {
+      BaseService.throwMongoError(e);
+    }
+  }
+
   public async addUnplannedActivity(id: string, item: ProdUnplannedActivity): Promise<DocumentType<Production>>
   {
     try {
       return await this.productionModel
         .findByIdAndUpdate(BaseService.toObjectId(id), 
           { $push: { unplannedActivities: item } },
+        );
+    }
+    catch(e) {
+      BaseService.throwMongoError(e);
+    }
+  }
+
+  public async removeUnplannedActivity(id: string, activityId: string): Promise<DocumentType<Production>>
+  {
+    try {
+      return await this.productionModel
+        .findByIdAndUpdate(BaseService.toObjectId(id), 
+          { $pull: { unplannedActivities: { _id: activityId } } },
         );
     }
     catch(e) {

@@ -8,6 +8,7 @@ import { LineNumber } from '../lineNumber/lineNumber.model';
 import { ModelType } from '../modelType/modelType.model';
 import { PlannedActivity } from '../plannedActivity/plannedActivity.model';
 import { UnplannedActivity } from '../unplannedActivity/unplannedActivity.model';
+import { OperationNumber } from '../operationNumber/operationNumber.model';
 
 export class ProdPlannedActivity {
   @IsNumber()
@@ -26,9 +27,9 @@ export class ProdUnplannedActivity {
   @prop({ required: true, ref: UnplannedActivity })
   public activity!: Ref<UnplannedActivity>;
 
-  @prop()
+  @prop({ required: true, ref: OperationNumber })
 
-  public operationNumber?: string;
+  public operationNumber!: Ref<OperationNumber>;
 
   @IsString()
   @prop({ default: "" })
