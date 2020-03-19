@@ -1,0 +1,233 @@
+@font-face {
+  font-family: 'myFont';
+  src: url("/fonts/RobotoCondensed-Regular.ttf") format("truetype");
+}
+
+$font-main: 'RobotoCondensed-Bold', sans-serif;
+
+$colors: (
+  primary: rgb(120, 120, 120),
+  secondary: #ae0001,
+  dark: #000
+);
+
+@function color($color-name) {
+  @return map-get($colors, $color-name)
+}
+
+$desktop: 992px;
+@mixin desktop {
+  @media (min-width: #{$desktop}) {
+      @content;
+  }
+}
+
+$large-desktop: 1200px;
+@mixin large-desktop {
+  @media (min-width: #{$large-desktop}) {
+      @content;
+  }
+}
+
+$extra-large-desktop: 1440px;
+@mixin extra-large-desktop {
+  @media (min-width: #{$extra-large-desktop}) {
+      @content;
+  }
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  padding-bottom: 6rem;
+  min-height: 100%;
+  background-image: url('/images/pattern.png');
+  background-repeat: repeat;
+  font-family: $font-main !important;
+}
+
+footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+nav, footer, main {
+  padding-left: 0 !important;
+
+  @include extra-large-desktop {
+      padding-left: 285px !important;
+  }
+}
+
+.side-nav {
+  width: 285px !important;
+  background-image: url('/images/sidebar.png') !important;
+
+  .sidenav-bg {
+      width: 285px !important;
+  }
+
+  .sidenav-bg:after {
+      background: rgba(255, 255, 255, .65) !important;
+  }
+
+  .logo-wrapper a {
+      width: 285px !important;
+  }
+
+  a:hover {
+      color: color(secondary) !important;
+  }
+
+  .collapsible-header {
+      font-size: .75rem;
+      color: rgba(0, 0, 0, .55);
+  }
+
+  .collapsible-body a {
+      background-color: transparent !important;
+      font-size: .9rem;
+  }
+
+  .collapsible-header.active,
+  .collapsible-body a.active {
+      color: color(secondary) !important;
+  }
+}
+
+.navbar {
+  .breadcrumb-item + .breadcrumb-item::before {
+      color: color(primary) !important;
+  }
+
+  .breadcrumb-item:first-of-type > a {
+      font-size: 1.2rem !important;
+      color: color(secondary) !important;
+      font-weight: 600;
+  }
+  a.dropdown-item:hover {
+      background-color: color(secondary) !important;
+  }
+}
+
+input.focus:focus {
+  box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28) !important;
+  background-color: #fff !important;
+  border: 1px solid #fff !important;
+}
+
+.form-control:focus {
+  border-color: #80bdff !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25) !important;
+}
+
+.input-with-icon {
+  position: relative;
+
+  input {
+      padding-left: 32px;
+      border: 1px solid #eaeaea;
+  }
+
+  i {
+      position: absolute;
+      left: 0;
+      top: 4px;
+      padding: 3px 10px;
+      color: #495057;
+  }
+}
+
+.input-with-icon-right {
+  position: relative;
+
+  i {
+      position: absolute;
+      right: 0;
+      top: 4px;
+      padding: 1.5px 10px;
+      color: #495057;
+  }
+}
+
+.react-datepicker-wrapper {
+  display: block !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__close-icon::after {
+  background-color: color(secondary) !important;
+}
+
+.table-bordered {
+  border: 2px solid #000;
+
+  th, td {
+      border: 2px solid #000 !important;
+  }
+}
+
+.table thead th {
+  border-bottom: 2px solid #000 !important;
+}
+
+.disable-anchor {
+  pointer-events: none;
+  cursor: default;
+}
+
+.bg-primary {
+  background: color(primary) !important;
+}
+
+.bg-secondary {
+  background: color(secondary) !important;
+}
+
+.bg-dark {
+  background: color(dark) !important;
+}
+
+.bg-grey {
+  background-color: #eaeaea !important;
+}
+
+.btn-cc {
+  text-transform: none !important;
+  font-size: .9rem !important;
+}
+
+.btn-cc-radius-normal {
+  border-radius: .33rem;
+}
+
+.btn-cc-radius-extra {
+  border-radius: 2rem;
+}
+
+.btn-cc-primary {
+  background-color: color(primary) !important;
+  color: #fff !important;
+}
+
+.btn-cc-secondary {
+  background-color: color(secondary) !important;
+  color: #fff !important;
+}
+
+.btn-cc-white {
+  background-color: #fff !important;
+  color: color(primary) !important;
+}
