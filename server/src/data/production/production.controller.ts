@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Res, Body, HttpStatus, Param, BadRequestException, Delete } from '@nestjs/common';
+import { Controller, UseGuards, Post, Res, Body, HttpStatus, Param, BadRequestException, Delete, Put } from '@nestjs/common';
 import { BaseController } from '../../shared/base.controller';
 import { ProductionService } from './production.service';
 import { Production, ProdPlannedActivity, ProdUnplannedActivity } from './production.model';
@@ -14,7 +14,10 @@ export class ProductionController extends BaseController<Production> {
   }
 
   @Post(':id/planned-activity')
-  public async addPlannedActivity(@Res() res, @Param('id', new ValidateObjectId()) id, @Body() message: ProdPlannedActivity): Promise<ActionResponse<ProdPlannedActivity>>
+  public async addPlannedActivity(
+    @Res() res, 
+    @Param('id', new ValidateObjectId()) id, 
+    @Body() message: ProdPlannedActivity): Promise<ActionResponse<ProdPlannedActivity>>
   {
     let response: ActionResponse<ProdPlannedActivity[]> = new ActionResponse<ProdPlannedActivity[]>();
     const createdData: Production = await this.productionService.addPlannedActivity(id, message);
@@ -34,7 +37,10 @@ export class ProductionController extends BaseController<Production> {
   }
 
   @Delete(':id/planned-activity/:activityId')
-  public async removePlannedActivity(@Res() res, @Param('id', new ValidateObjectId()) id, @Param('activityId', new ValidateObjectId()) activityId): Promise<ActionResponse<ProdPlannedActivity>>
+  public async removePlannedActivity(
+    @Res() res, 
+    @Param('id', new ValidateObjectId()) id, 
+    @Param('activityId', new ValidateObjectId()) activityId): Promise<ActionResponse<ProdPlannedActivity>>
   {
     let response: ActionResponse<ProdPlannedActivity[]> = new ActionResponse<ProdPlannedActivity[]>();
     const deletedData: Production = await this.productionService.removePlannedActivity(id, activityId);
@@ -53,8 +59,35 @@ export class ProductionController extends BaseController<Production> {
     return res.status(HttpStatus.OK).json(response);
   }
 
+  @Put(':id/planned-activity/:activityId')
+  public async updatePlannedActivity(
+    @Res() res,
+    @Param('id', new ValidateObjectId()) id,
+    @Param('activityId', new ValidateObjectId()) activityId,
+    @Body() message: ProdPlannedActivity): Promise<ActionResponse<ProdPlannedActivity>>
+  {
+    let response: ActionResponse<ProdPlannedActivity[]> = new ActionResponse<ProdPlannedActivity[]>();
+    const updatedData: Production = await this.productionService.updatePlannedActivity(id, activityId, message.minute);
+
+    if (!updatedData) {
+      throw new BadRequestException("check your request parameters");
+    }
+
+    const newData: Production = await this.productionService.findByIdAsync(id, 'plannedActivities.activity');
+
+    response.message = "successfully updated planned activity";
+    response.action = "update/set";
+    response.id = newData.id;
+    response.data = newData.plannedActivities;
+
+    return res.status(HttpStatus.OK).json(response);
+  }
+
   @Post(':id/unplanned-activity')
-  public async addUnplannedActivity(@Res() res, @Param('id', new ValidateObjectId()) id, @Body() message: ProdUnplannedActivity): Promise<ActionResponse<ProdUnplannedActivity>>
+  public async addUnplannedActivity(
+    @Res() res, 
+    @Param('id', new ValidateObjectId()) id, 
+    @Body() message: ProdUnplannedActivity): Promise<ActionResponse<ProdUnplannedActivity>>
   {
     let response: ActionResponse<ProdUnplannedActivity[]> = new ActionResponse<ProdUnplannedActivity[]>();
     const createdData: Production = await this.productionService.addUnplannedActivity(id, message);

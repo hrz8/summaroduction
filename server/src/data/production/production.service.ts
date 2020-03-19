@@ -40,6 +40,19 @@ export class ProductionService extends BaseService<Production> {
     }
   }
 
+  public async updatePlannedActivity(id: string, plannedActivityId: string, minute: number): Promise<DocumentType<Production>>
+  {
+    try {
+      return await this.productionModel
+        .update({_id: id, 'plannedActivities.activity': plannedActivityId }, 
+          { $set: { 'plannedActivities.$.minute': minute } },
+        );
+    }
+    catch(e) {
+      BaseService.throwMongoError(e);
+    }
+  }
+
   public async addUnplannedActivity(id: string, item: ProdUnplannedActivity): Promise<DocumentType<Production>>
   {
     try {
