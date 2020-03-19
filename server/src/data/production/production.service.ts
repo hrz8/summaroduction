@@ -27,12 +27,12 @@ export class ProductionService extends BaseService<Production> {
     }
   }
 
-  public async removePlannedActivity(id: string, plannedActivityId: string): Promise<DocumentType<Production>>
+  public async removePlannedActivity(id: string, prodPlannedActivityId: string): Promise<DocumentType<Production>>
   {
     try {
       return await this.productionModel
         .findByIdAndUpdate(BaseService.toObjectId(id), 
-          { $pull: { plannedActivities: { activity: plannedActivityId } } },
+          { $pull: { plannedActivities: { _id: prodPlannedActivityId } } },
         );
     }
     catch(e) {
@@ -40,12 +40,17 @@ export class ProductionService extends BaseService<Production> {
     }
   }
 
-  public async updatePlannedActivity(id: string, plannedActivityId: string, minute: number): Promise<DocumentType<Production>>
+  public async updatePlannedActivity(id: string, plannedActivityId: string, message: ProdPlannedActivity): Promise<DocumentType<Production>>
   {
     try {
       return await this.productionModel
-        .update({_id: id, 'plannedActivities.activity': plannedActivityId }, 
-          { $set: { 'plannedActivities.$.minute': minute } },
+        .updateOne({_id: id, 'plannedActivities._id': plannedActivityId }, 
+          { 
+            $set: { 
+              'plannedActivities.$.minute': message.minute, 
+              'plannedActivities.$.activity': message.activity
+            }
+          }
         );
     }
     catch(e) {
@@ -66,12 +71,32 @@ export class ProductionService extends BaseService<Production> {
     }
   }
 
-  public async removeUnplannedActivity(id: string, activityId: string): Promise<DocumentType<Production>>
+  public async removeUnplannedActivity(id: string, prodUnplannedActivityId: string): Promise<DocumentType<Production>>
   {
     try {
       return await this.productionModel
         .findByIdAndUpdate(BaseService.toObjectId(id), 
-          { $pull: { unplannedActivities: { _id: activityId } } },
+          { $pull: { unplannedActivities: { _id: prodUnplannedActivityId } } },
+        );
+    }
+    catch(e) {
+      BaseService.throwMongoError(e);
+    }
+  }
+
+  public async updateUnplannedActivity(id: string, prodUnplannedActivityId: string, message: ProdUnplannedActivity): Promise<DocumentType<Production>>
+  {
+    try {
+      return await this.productionModel
+        .updateOne({_id: id, 'unplannedActivities._id': prodUnplannedActivityId }, 
+          { 
+            $set: { 
+              'unplannedActivities.$.minute': message.minute, 
+              'unplannedActivities.$.activity': message.activity,
+              'unplannedActivities.$.operationNumber': message.operationNumber,
+              'unplannedActivities.$.description': message.description
+            }
+          }
         );
     }
     catch(e) {

@@ -59,15 +59,15 @@ export class ProductionController extends BaseController<Production> {
     return res.status(HttpStatus.OK).json(response);
   }
 
-  @Put(':id/planned-activity/:activityId')
+  @Put(':id/planned-activity/:prodActivityId')
   public async updatePlannedActivity(
     @Res() res,
     @Param('id', new ValidateObjectId()) id,
-    @Param('activityId', new ValidateObjectId()) activityId,
+    @Param('prodActivityId', new ValidateObjectId()) prodActivityId,
     @Body() message: ProdPlannedActivity): Promise<ActionResponse<ProdPlannedActivity>>
   {
     let response: ActionResponse<ProdPlannedActivity[]> = new ActionResponse<ProdPlannedActivity[]>();
-    const updatedData: Production = await this.productionService.updatePlannedActivity(id, activityId, message.minute);
+    const updatedData: Production = await this.productionService.updatePlannedActivity(id, prodActivityId, message);
 
     if (!updatedData) {
       throw new BadRequestException("check your request parameters");
@@ -96,7 +96,7 @@ export class ProductionController extends BaseController<Production> {
       throw new BadRequestException("check your request parameters");
     }
 
-    const newData: Production = await this.productionService.findByIdAsync(id, 'unplannedActivities.activity');
+    const newData: Production = await this.productionService.findByIdAsync(id, 'unplannedActivities.activity unplannedActivities.operationNumber');
 
     response.message = "successfully added unplanned activity";
     response.action = "add/push";
@@ -116,10 +116,34 @@ export class ProductionController extends BaseController<Production> {
       throw new BadRequestException("check your request parameters");
     }
 
-    const newData: Production = await this.productionService.findByIdAsync(id, 'unplannedActivities.activity');
+    const newData: Production = await this.productionService.findByIdAsync(id, 'unplannedActivities.activity unplannedActivities.operationNumber');
 
     response.message = "successfully removed unplanned activity";
     response.action = "remove/pull";
+    response.id = newData.id;
+    response.data = newData.unplannedActivities;
+
+    return res.status(HttpStatus.OK).json(response);
+  }
+
+  @Put(':id/unplanned-activity/:prodActivityId')
+  public async updateUnplannedActivity(
+    @Res() res,
+    @Param('id', new ValidateObjectId()) id,
+    @Param('prodActivityId', new ValidateObjectId()) prodActivityId,
+    @Body() message: ProdUnplannedActivity): Promise<ActionResponse<ProdUnplannedActivity>>
+  {
+    let response: ActionResponse<ProdUnplannedActivity[]> = new ActionResponse<ProdUnplannedActivity[]>();
+    const updatedData: Production = await this.productionService.updateUnplannedActivity(id, prodActivityId, message);
+
+    if (!updatedData) {
+      throw new BadRequestException("check your request parameters");
+    }
+
+    const newData: Production = await this.productionService.findByIdAsync(id, 'unplannedActivities.activity unplannedActivities.operationNumber');
+
+    response.message = "successfully updated unplanned activity";
+    response.action = "update/set";
     response.id = newData.id;
     response.data = newData.unplannedActivities;
 
