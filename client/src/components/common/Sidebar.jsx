@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, withRouter, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faUserAlt,
-  faThLarge,
-  faBox} from '@fortawesome/free-solid-svg-icons';
+  faSignInAlt,
+  faIndustry,
+  faAdjust,
+  faUsers,
+  faSpinner,
+  faGripLines,
+  faCubes,
+  faRandom,
+  faListOl,
+  faBriefcase} from '@fortawesome/free-solid-svg-icons';
 import logo from '../../logo.png';
 
 class Sidebar extends Component {
@@ -21,36 +29,72 @@ class Sidebar extends Component {
           </li>
           <li>
             <ul className="collapsible">
-              <li>
-                <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Pengguna</a>
-                <div className="collapsible-body d-block">
-                  <ul>
-                    <li>
-                      <NavLink to="/dashboard/operator" className="waves-effect pl-4"><FontAwesomeIcon icon={faUserAlt} />&emsp;Operator</NavLink>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li>
-                <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Part</a>
-                <div className="collapsible-body d-block">
-                  <ul>
-                    <li>
-                      <NavLink to="/dashboard/tipe-part" className="waves-effect pl-4"><FontAwesomeIcon icon={faThLarge} />&emsp;Tipe</NavLink>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li>
-                <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Work</a>
-                <div className="collapsible-body d-block">
-                  <ul>
-                    <li>
-                      <NavLink to="/dashboard/work-subassy" className="waves-effect pl-4"><FontAwesomeIcon icon={faBox} />&emsp;Sub Assy</NavLink>
-                    </li>
-                  </ul>
-                </div>
-              </li>
+              {this.props.store.auth === null &&
+                <>
+                  <li>
+                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Portal</a>
+                    <div className="collapsible-body d-block">
+                      <ul>
+                        <li>
+                          <NavLink to="/login" className="waves-effect pl-4"><FontAwesomeIcon icon={faSignInAlt} />&emsp;Login</NavLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </>
+              }
+              {this.props.store.auth &&
+                <>
+                  <li>
+                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Production</a>
+                    <div className="collapsible-body d-block">
+                      <ul>
+                        <li>
+                          <NavLink to="/dashboard/production" className="waves-effect pl-4"><FontAwesomeIcon icon={faIndustry} />&emsp;Master</NavLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Options</a>
+                    <div className="collapsible-body d-block">
+                      <ul>
+                        <li>
+                          <NavLink to="/dashboard/shift" className="waves-effect pl-4"><FontAwesomeIcon icon={faAdjust} />&emsp;Shift</NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/dashboard/group" className="waves-effect pl-4"><FontAwesomeIcon icon={faUsers} />&emsp;Group</NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/dashboard/proccess-name" className="waves-effect pl-4"><FontAwesomeIcon icon={faSpinner} />&emsp;Proccess Name</NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/dashboard/line-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faGripLines} />&emsp;Line Number</NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/dashboard/model" className="waves-effect pl-4"><FontAwesomeIcon icon={faCubes} />&emsp;Model</NavLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Activity</a>
+                    <div className="collapsible-body d-block">
+                      <ul>
+                        <li>
+                          <NavLink to="/dashboard/planned-activity" className="waves-effect pl-4"><FontAwesomeIcon icon={faListOl} />&emsp;Planned Activities</NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/dashboard/unplanned-activity" className="waves-effect pl-4"><FontAwesomeIcon icon={faRandom} />&emsp;Unplanned Activities</NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/dashboard/operation-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faBriefcase} />&emsp;Operation Numbers</NavLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </>
+              }
             </ul>
           </li>
         </ul>
@@ -60,4 +104,5 @@ class Sidebar extends Component {
   }
 }
 
-export default withRouter(Sidebar);
+const mapState = (state) => ({ store: state });
+export default connect(mapState)(withRouter(Sidebar));

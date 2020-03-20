@@ -11,7 +11,7 @@ export const login = user => async dispatch => {
     return response;
   }
   catch(err) {
-    return err
+    throw err;
   }
 }
 

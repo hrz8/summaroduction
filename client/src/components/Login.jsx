@@ -7,8 +7,8 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      password: ""
+      username: '',
+      password: ''
     }
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -20,15 +20,19 @@ class Login extends Component {
       });
   }
 
-  onSubmit(e) {
+  async onSubmit(e) {
     e.preventDefault();
     const user = {
       username: this.state.username,
       password: this.state.password
     }
-    this.props.dispatch(login(user)).then(response => {
-      console.log(response);
-    });
+    try {
+      await this.props.dispatch(login(user));
+    }
+    catch(err) {
+      alert(err.response.data.message);
+    }
+    
   }
 
   render() {
