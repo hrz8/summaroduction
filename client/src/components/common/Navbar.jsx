@@ -7,12 +7,15 @@ import {
   faTachometerAlt, 
   faBox, 
   faList } from '@fortawesome/free-solid-svg-icons';
+import { logout } from '../../store/actions/auth';
+import { connect } from 'react-redux';
 
 class Navbar extends Component {
   logout = (e) => {
     e.preventDefault();
+    this.props.dispatch(logout());
     this.props.history.push('/login');
-  }
+}
 
   render() {
     return (
@@ -56,4 +59,5 @@ class Navbar extends Component {
   }
 }
 
-export default withRouter(Navbar);
+const mapState = (state) => ({ store: state });
+export default connect(mapState)(withRouter(Navbar));
