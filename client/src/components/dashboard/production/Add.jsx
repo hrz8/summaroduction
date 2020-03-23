@@ -110,7 +110,7 @@ class Add extends Component {
       }, () => {
         this.state.plannedactivities.forEach(item => {
           this.setState(prevState => ({
-            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { id: item.id, minute: 0 }]
+            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { activity: item.id, minute: 0 }]
           }))
         });
       });
@@ -152,7 +152,7 @@ class Add extends Component {
     );
   }
 
-  handleChangeNumberUnplannedActivitiesJumlah = (e) => {
+  handleChangeNumberUnplannedActivitiesJumlah = e => {
     const newLength = parseInt(e.target.value);
     const prevLength = parseInt(this.state.unplannedactivitiesJumlah);
     if (newLength >= 0) {
@@ -160,10 +160,12 @@ class Add extends Component {
         if (newLength > prevLength) {
           let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
           unplannedactivitiesToSendTemp[unplannedactivitiesToSendTemp.length] = {
-            minute: null,
+            minute: 0,
+            activityObj: null,
             activity: null,
             operationNumber: null,
-            description: null
+            operationNumberObj: null,
+            description: ''
           }
           this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
         }
@@ -176,8 +178,34 @@ class Add extends Component {
       });
     }
     else if (newLength === 0) {
-      this.setState({ unplannedactivitiesToSend: [] })
+      this.setState({ unplannedactivitiesToSend: [] });
     }
+  }
+
+  handleChangeUnplannedActivity = (selected, index) => {
+    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+    unplannedactivitiesToSendTemp[index].activity = selected.value;
+    unplannedactivitiesToSendTemp[index].activityObj = selected;
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+  }
+
+  handleChangeUnplannedOperationNumber = (selected, index) => {
+    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+    unplannedactivitiesToSendTemp[index].operationNumber = selected.value;
+    unplannedactivitiesToSendTemp[index].operationNumberObj = selected;
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+  }
+
+  handleChangeUnplannedMinute = e => {
+    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+    unplannedactivitiesToSendTemp[e.target.dataset.index].minute = parseInt(e.target.value);
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+  }
+
+  handleChangeUnplannedDescription = e => {
+    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+    unplannedactivitiesToSendTemp[e.target.dataset.index].description = e.target.value;
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
   }
 
   renderPlannedActivity = () => {
@@ -209,7 +237,10 @@ class Add extends Component {
   renderUnplannedActivity = () => {
     let unplannedactivitiesForm = [];
     const unplannedactivityElem = (index, id, name) => {
-      // const minute = this.state.plannedactivitiesToSend[index] ? this.state.plannedactivitiesToSend[index].minute : 0;
+      const activity = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].activityObj : null;
+      const operationnumber = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].operationNumberObj : null;
+      const minute = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].minute : 0;
+      const description = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].description : '';
       return (
         <div key={index}>
           <h6 style={{fontWeight: 'bold'}}>{'Activity ' + (index + 1)}</h6>
@@ -221,8 +252,8 @@ class Add extends Component {
                   menuPlacement="auto"
                   id="inputShift"
                   placeholder="Pilih Aktivitas"
-                  value={this.state.shiftSelected}
-                  onChange={this.handleChangeShift}
+                  value={activity}
+                  onChange={(value) => this.handleChangeUnplannedActivity(value, index)}
                   options={this.state.unplannedactivitiesOptions} />
               </div>
             </div>
@@ -233,8 +264,8 @@ class Add extends Component {
                   menuPlacement="auto"
                   id="inputShift"
                   placeholder="Pilih OP"
-                  value={this.state.shiftSelected}
-                  onChange={this.handleChangeShift}
+                  value={operationnumber}
+                  onChange={(value) => this.handleChangeUnplannedOperationNumber(value, index)}
                   options={this.state.operationnumbersOptions} />
               </div>
             </div>
@@ -246,11 +277,10 @@ class Add extends Component {
                 <input
                   id={'input' + id + 'waktu'}
                   data-index={index}
-                  data-idplannedactivity={id}
                   type="number"
                   className="form-control"
-                  value={2}
-                  readOnly
+                  value={minute}
+                  onChange={this.handleChangeUnplannedMinute}
                   />
                 <small className="form-text text-muted">menit</small>
               </div>
@@ -261,11 +291,10 @@ class Add extends Component {
                 <input
                   id={'input' + id + 'description'}
                   data-index={index}
-                  data-idplannedactivity={id}
-                  type="number"
+                  type="text"
                   className="form-control"
-                  value={2}
-                  readOnly
+                  value={description}
+                  onChange={this.handleChangeUnplannedDescription}
                   />
               </div>
             </div>
@@ -282,158 +311,158 @@ class Add extends Component {
   render() {
     return (
       <Card title="Add" col={6}>
-          {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
-          <form
-            // onSubmit={this.handleSubmit}
-            noValidate>
-            <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
-            <div className="form-group">
-              <label htmlFor="inputModel">Model</label>
-              <Select
-                id="inputModel"
-                placeholder="Pilih Model"
-                value={this.state.modeltypeSelected}
-                onChange={this.handleChangeModeltype}
-                options={this.state.modeltypesOptions} />
-            </div>
-            <div className="row">
-              <div className="col-6">
-                <div className="form-group">
-                  <label htmlFor="inputShift">Shift</label>
-                  <Select
-                    id="inputShift"
-                    placeholder="Pilih Shift"
-                    value={this.state.shiftSelected}
-                    onChange={this.handleChangeShift}
-                    options={this.state.shiftsOptions} />
-                </div>
-              </div>
-              <div className="col-6">
-                <div className="form-group">
-                  <label htmlFor="inputGroup">Group</label>
-                  <Select
-                    id="inputGroup"
-                    placeholder="Pilih Group"
-                    value={this.state.groupSelected}
-                    onChange={this.handleChangeGroup}
-                    options={this.state.groupsOptions} />
-                </div>
-              </div>
-              <div className="col-6">
-                <div className="form-group">
-                  <label htmlFor="inputProccessName">Proccess Name</label>
-                  <Select
-                    id="inputProccessName"
-                    placeholder="Pilih Proccess Name"
-                    value={this.state.proccessnameSelected}
-                    onChange={this.handleChangeProccessname}
-                    options={this.state.proccessnamesOptions} />
-                </div>
-              </div>
-              <div className="col-6">
-                <div className="form-group">
-                  <label htmlFor="inputLineNumber">Line Number</label>
-                  <Select
-                    id="inputLineNumber"
-                    placeholder="Pilih Line Number"
-                    value={this.state.linenumberSelected}
-                    onChange={this.handleChangeLinenumber}
-                    options={this.state.linenumbersOptions} />
-                </div>
+        {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
+        <form
+          // onSubmit={this.handleSubmit}
+          noValidate>
+          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
+          <div className="form-group">
+            <label htmlFor="inputModel">Model</label>
+            <Select
+              id="inputModel"
+              placeholder="Pilih Model"
+              value={this.state.modeltypeSelected}
+              onChange={this.handleChangeModeltype}
+              options={this.state.modeltypesOptions} />
+          </div>
+          <div className="row">
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputShift">Shift</label>
+                <Select
+                  id="inputShift"
+                  placeholder="Pilih Shift"
+                  value={this.state.shiftSelected}
+                  onChange={this.handleChangeShift}
+                  options={this.state.shiftsOptions} />
               </div>
             </div>
-            <div className="row">
-              <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="inputTarget">Target</label>
-                  <input
-                    id="inputTarget"
-                    type="number"
-                    className="form-control"
-                    name="targetAmount"
-                    value={this.state.targetAmount}
-                    onChange={this.handleChangeNumber}
-                    />
-                </div>
-              </div>
-              <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="inputAktual">Aktual</label>
-                  <input
-                    id="inputAktual"
-                    type="number"
-                    className="form-control"
-                    name="actualAmount"
-                    value={this.state.actualAmount}
-                    onChange={this.handleChangeNumber}
-                    />
-                </div>
-              </div>
-              <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="inputOk">OK</label>
-                  <input
-                    id="inputOk"
-                    type="number"
-                    className="form-control"
-                    name="okAmount"
-                    value={this.state.okAmount}
-                    onChange={this.handleChangeNumber}
-                    />
-                </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputGroup">Group</label>
+                <Select
+                  id="inputGroup"
+                  placeholder="Pilih Group"
+                  value={this.state.groupSelected}
+                  onChange={this.handleChangeGroup}
+                  options={this.state.groupsOptions} />
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="inputStartAt">Start</label>
-              <DatePicker
-                id="inputStartAt"
-                className="form-control"
-                selected={this.state.startAt}
-                onChange={this.handleChangeStart}
-                showTimeSelect
-                dateFormat="dd/MM/yyyy p"
-                timeIntervals={1}
-                showDisabledMonthNavigation
-              />
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputProccessName">Proccess Name</label>
+                <Select
+                  id="inputProccessName"
+                  placeholder="Pilih Proccess Name"
+                  value={this.state.proccessnameSelected}
+                  onChange={this.handleChangeProccessname}
+                  options={this.state.proccessnamesOptions} />
+              </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="inputFinishAt">Finish</label>
-              <DatePicker
-                id="inputFinishAt"
-                className="form-control"
-                selected={this.state.finishAt}
-                onChange={this.handleChangeFinish}
-                showTimeSelect
-                dateFormat="dd/MM/yyyy p"
-                timeIntervals={1}
-                showDisabledMonthNavigation
-              />
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputLineNumber">Line Number</label>
+                <Select
+                  id="inputLineNumber"
+                  placeholder="Pilih Line Number"
+                  value={this.state.linenumberSelected}
+                  onChange={this.handleChangeLinenumber}
+                  options={this.state.linenumbersOptions} />
+              </div>
             </div>
-            <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
-            <div className="row">
-              {this.renderPlannedActivity().map((component, i) => {
-                return (<div className="col-4" key={i}>{component}</div>);
-              })}
+          </div>
+          <div className="row">
+            <div className="col-4">
+              <div className="form-group">
+                <label htmlFor="inputTarget">Target</label>
+                <input
+                  id="inputTarget"
+                  type="number"
+                  className="form-control"
+                  name="targetAmount"
+                  value={this.state.targetAmount}
+                  onChange={this.handleChangeNumber}
+                  />
+              </div>
             </div>
-            <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
-            <div className="form-group">
-              <label htmlFor="inputJumlahUnplannedActivities">Jumlah Unplanned Activity</label>
-              <input
-                id="inputJumlahUnplannedActivities"
-                type="number"
-                className="form-control"
-                value={this.state.unplannedactivitiesJumlah}
-                onChange={this.handleChangeNumberUnplannedActivitiesJumlah} />
+            <div className="col-4">
+              <div className="form-group">
+                <label htmlFor="inputAktual">Aktual</label>
+                <input
+                  id="inputAktual"
+                  type="number"
+                  className="form-control"
+                  name="actualAmount"
+                  value={this.state.actualAmount}
+                  onChange={this.handleChangeNumber}
+                  />
+              </div>
             </div>
-            <div className="ml-5">
-              {this.renderUnplannedActivity().map(component => {
-                return component;
-              })}
+            <div className="col-4">
+              <div className="form-group">
+                <label htmlFor="inputOk">OK</label>
+                <input
+                  id="inputOk"
+                  type="number"
+                  className="form-control"
+                  name="okAmount"
+                  value={this.state.okAmount}
+                  onChange={this.handleChangeNumber}
+                  />
+              </div>
             </div>
-          </form> :
-          <div className="text-center">
-            <span>access denied</span>
-          </div>}                             
+          </div>
+          <div className="form-group">
+            <label htmlFor="inputStartAt">Start</label>
+            <DatePicker
+              id="inputStartAt"
+              className="form-control"
+              selected={this.state.startAt}
+              onChange={this.handleChangeStart}
+              showTimeSelect
+              dateFormat="dd/MM/yyyy p"
+              timeIntervals={1}
+              showDisabledMonthNavigation
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="inputFinishAt">Finish</label>
+            <DatePicker
+              id="inputFinishAt"
+              className="form-control"
+              selected={this.state.finishAt}
+              onChange={this.handleChangeFinish}
+              showTimeSelect
+              dateFormat="dd/MM/yyyy p"
+              timeIntervals={1}
+              showDisabledMonthNavigation
+            />
+          </div>
+          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
+          <div className="row">
+            {this.renderPlannedActivity().map((component, i) => {
+              return (<div className="col-4" key={i}>{component}</div>);
+            })}
+          </div>
+          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
+          <div className="form-group">
+            <label htmlFor="inputJumlahUnplannedActivities">Jumlah Unplanned Activity</label>
+            <input
+              id="inputJumlahUnplannedActivities"
+              type="number"
+              className="form-control"
+              value={this.state.unplannedactivitiesJumlah}
+              onChange={this.handleChangeNumberUnplannedActivitiesJumlah} />
+          </div>
+          <div className="ml-5">
+            {this.renderUnplannedActivity().map(component => {
+              return component;
+            })}
+          </div>
+        </form> :
+        <div className="text-center">
+          <span>access denied</span>
+        </div>}                         
       </Card>
     )
   }
