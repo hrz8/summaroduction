@@ -12,6 +12,7 @@ import AnonRoute from './components/AnonRoute';
 import PrivateRoute from './components/PrivateRoute';
 
 import Production from './components/dashboard/production/List';
+import ProductionAdd from './components/dashboard/production/Add';
 
 import './App.scss';
 
@@ -33,6 +34,7 @@ const App = (props) => {
           />
           <AnonRoute exact path="/login" auth={props.store.auth} component={Login} />
           <PrivateRoute exact path="/dashboard/production" auth={props.store.auth} component={Production} />
+          <PrivateRoute exact path="/dashboard/production/add" auth={props.store.auth} component={ProductionAdd} />
         </Container>
       </main>
       <Footer />
@@ -40,5 +42,5 @@ const App = (props) => {
   );
 }
 
-const mapState = (state) => ({ store: state });
+const mapState = state => ({ store: state });
 export default connect(mapState)(App);

@@ -104,5 +104,5 @@ class Sidebar extends Component {
   }
 }
 
-const mapState = (state) => ({ store: state });
+const mapState = state => ({ store: state });
 export default connect(mapState)(withRouter(Sidebar));
