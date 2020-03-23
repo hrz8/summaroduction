@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
 import { axios_get } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
- 
+
 import 'react-datepicker/dist/react-datepicker.css';
 
 class Add extends Component {
@@ -34,6 +34,7 @@ class Add extends Component {
       modeltypeSelected: null,
       // planned activity
       plannedactivities: [],
+      plannedactivitiesToSend: [],
       // params
       targetAmount: 1515,
       actualAmount: 0,
@@ -51,6 +52,8 @@ class Add extends Component {
     this.handleChangeNumber = this.handleChangeNumber.bind(this);
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeFinish = this.handleChangeFinish.bind(this);
+    // activities
+    this.handleChangePlanned = this.handleChangePlanned.bind(this);
   }
 
   componentDidMount = async () => {
@@ -90,11 +93,18 @@ class Add extends Component {
         proccessnamesOptions: proccessnames.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         linenumbersOptions: linenumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
-      }, () => console.log(this.state));
+      }, () => {
+        this.state.plannedactivities.forEach(item => {
+          this.setState(prevState => ({
+            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { id: item.id, minute: 0 }]
+          }))
+        });
+      });
     }
     catch(err) {
-      this.props.dispatch(logout());
-      this.props.history.push('/login');
+      throw err
+      // this.props.dispatch(logout());
+      // this.props.history.push('/login');
     }
   }
 
@@ -117,20 +127,36 @@ class Add extends Component {
     }, () => console.log(this.state));
   }
 
-  renderPlannedActivity = () => {
-    const plannedactivityElem = (index, id, name) => (
-      <div className="form-group" key={index}>
-        <label htmlFor={'input' + id}>{name}</label>
-        <input
-          id={'input' + id}
-          type="number"
-          className="form-control classPlannedActivity"
-          value={this.state.actualAmount}
-          onChange={this.handleChangeNumber}
-          />
-      </div>
+  handleChangePlanned = (e) => {
+    let plannedactivitiesToSendTemp = [ ...this.state.plannedactivitiesToSend ];
+    plannedactivitiesToSendTemp[e.target.dataset.index] = {
+      id: e.target.dataset.idplannedactivity,
+      minute: parseInt(e.target.value)
+    };
+    this.setState(
+      { plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => console.log(this.state)
     );
+  }
+
+  renderPlannedActivity = () => {
     let plannedactivitiesForm = [];
+    const plannedactivityElem = (index, id, name) => {
+      const minute = this.state.plannedactivitiesToSend[index] ? this.state.plannedactivitiesToSend[index].minute : 0;
+      return (
+        <div className="form-group" key={index}>
+          <label htmlFor={'input' + id}>{name}</label>
+          <input
+            id={'input' + id}
+            data-index={index}
+            data-idplannedactivity={id}
+            type="number"
+            className="form-control classPlannedActivity"
+            value={minute}
+            onChange={this.handleChangePlanned}
+            />
+        </div>
+      )
+    };
     this.state.plannedactivities.forEach((item, i) => {
       plannedactivitiesForm.push(plannedactivityElem(i, item.id, item.name));
     });
@@ -144,6 +170,7 @@ class Add extends Component {
           <form
             // onSubmit={this.handleSubmit}
             noValidate>
+              <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
             <div className="form-group">
               <label htmlFor="inputShift">Shift</label>
               <Select
@@ -256,11 +283,11 @@ class Add extends Component {
                 showDisabledMonthNavigation
               />
             </div>
-            <h5 style={{textDecorationLine: 'underline'}}>Planning Down Time</h5>
+            <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
             {this.renderPlannedActivity().map(component => {
               return component;
             })}
-            <h5 style={{textDecorationLine: 'underline'}}>Unplanning Down Time</h5>
+            <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
           </form> :
           <div className="text-center">
             <span>access denied</span>
