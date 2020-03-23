@@ -44,8 +44,8 @@ class Add extends Component {
       targetAmount: 1515,
       actualAmount: 0,
       okAmount: 0,
-      startAt: new Date(),
-      finishAt: new Date(),
+      startAt: (new Date()).getTime(),
+      finishAt: (new Date()).getTime(),
       // operation number
       operationnumbers: [],
       operationnumbersOptions: []
