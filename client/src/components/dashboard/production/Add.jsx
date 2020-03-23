@@ -35,13 +35,20 @@ class Add extends Component {
       // planned activity
       plannedactivities: [],
       plannedactivitiesToSend: [],
+      // unplanned activity
+      unplannedactivities: [],
+      unplannedactivitiesOptions: [],
+      unplannedactivitiesToSend: [],
+      unplannedactivitiesJumlah: 0,
       // params
       targetAmount: 1515,
       actualAmount: 0,
       okAmount: 0,
       startAt: new Date(),
       finishAt: new Date(),
-      operationnumbers: []
+      // operation number
+      operationnumbers: [],
+      operationnumbersOptions: []
     }
     this.handleChangeShift = this.handleChangeShift.bind(this);
     this.handleChangeGroup = this.handleChangeGroup.bind(this);
@@ -86,13 +93,19 @@ class Add extends Component {
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/planned-activity`,
         this.props.store.auth.access_token
       );
+      const unplannedactivities = await axios_get(
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/unplanned-activity`,
+        this.props.store.auth.access_token
+      );
       this.setState({
-        shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities,
+        shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
         shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         groupsOptions: groups.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         proccessnamesOptions: proccessnames.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         linenumbersOptions: linenumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
-        modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
+        modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        operationnumbersOptions: operationnumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
       }, () => {
         this.state.plannedactivities.forEach(item => {
           this.setState(prevState => ({
@@ -130,7 +143,7 @@ class Add extends Component {
   handleChangePlanned = (e) => {
     let plannedactivitiesToSendTemp = [ ...this.state.plannedactivitiesToSend ];
     plannedactivitiesToSendTemp[e.target.dataset.index] = {
-      id: e.target.dataset.idplannedactivity,
+      activity: e.target.dataset.idplannedactivity,
       minute: parseInt(e.target.value)
     };
     this.setState(
@@ -162,7 +175,80 @@ class Add extends Component {
       plannedactivitiesForm.push(plannedactivityElem(i, item.id, item.name));
     });
     return plannedactivitiesForm;
-}
+  }
+
+  renderUnplannedActivity = () => {
+    let unplannedactivitiesForm = [];
+    const unplannedactivityElem = (index, id, name) => {
+      // const minute = this.state.plannedactivitiesToSend[index] ? this.state.plannedactivitiesToSend[index].minute : 0;
+      return (
+        <>
+          <h6 style={{fontWeight: 'bold'}}>{'Activity ' + (index + 1)}</h6>
+          <div className="row" key={index}>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputShift">Activity</label>
+                <Select
+                  menuPlacement="auto"
+                  id="inputShift"
+                  placeholder="Pilih Aktivitas"
+                  value={this.state.shiftSelected}
+                  onChange={this.handleChangeShift}
+                  options={this.state.unplannedactivitiesOptions} />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputShift">Operation Number</label>
+                <Select
+                  menuPlacement="auto"
+                  id="inputShift"
+                  placeholder="Pilih OP"
+                  value={this.state.shiftSelected}
+                  onChange={this.handleChangeShift}
+                  options={this.state.operationnumbersOptions} />
+              </div>
+            </div>
+          </div>
+          <div className="row" key={index}>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor={'input' + id + 'waktu'}>Waktu</label>
+                <input
+                  id={'input' + id + 'waktu'}
+                  data-index={index}
+                  data-idplannedactivity={id}
+                  type="number"
+                  className="form-control"
+                  value={2}
+                  readOnly
+                  />
+                <small className="form-text text-muted">menit</small>
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group" key={index}>
+                <label htmlFor={'input' + id + 'description'}>Remarks</label>
+                <input
+                  id={'input' + id + 'description'}
+                  data-index={index}
+                  data-idplannedactivity={id}
+                  type="number"
+                  className="form-control"
+                  value={2}
+                  readOnly
+                  />
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    };
+    for (let i = 0; i < this.state.unplannedactivitiesJumlah ; i++) {
+      unplannedactivitiesForm.push(unplannedactivityElem(i));
+    }
+    return unplannedactivitiesForm;
+  }
 
   render() {
     return (
@@ -301,6 +387,21 @@ class Add extends Component {
               })}
             </div>
             <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
+            <div className="form-group">
+              <label htmlFor="inputJumlahUnplannedActivities">Jumlah Unplanned Activity</label>
+              <input
+                id="inputJumlahUnplannedActivities"
+                type="number"
+                className="form-control"
+                name="unplannedactivitiesJumlah"
+                value={this.state.unplannedactivitiesJumlah}
+                onChange={this.handleChangeNumber} />
+            </div>
+            <div className="ml-5">
+              {this.renderUnplannedActivity().map(component => {
+                return component;
+              })}
+            </div>
           </form> :
           <div className="text-center">
             <span>access denied</span>
