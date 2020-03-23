@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Select from 'react-select';
+import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
 import { axios_get } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
+ 
+import 'react-datepicker/dist/react-datepicker.css';
 
 class Add extends Component {
   constructor(props) {
@@ -29,6 +32,12 @@ class Add extends Component {
       modeltypes: [],
       modeltypesOptions: [],
       modeltypeSelected: null,
+      // params
+      targetAmount: 1515,
+      actualAmount: 0,
+      okAmount: 0,
+      startAt: new Date(),
+      finishAt: new Date(),
       operationnumbers: []
     }
     this.handleChangeShift = this.handleChangeShift.bind(this);
@@ -36,9 +45,13 @@ class Add extends Component {
     this.handleChangeProccessname = this.handleChangeProccessname.bind(this);
     this.handleChangeLinenumber = this.handleChangeLinenumber.bind(this);
     this.handleChangeModeltype = this.handleChangeModeltype.bind(this);
+    // handle general
+    this.handleChangeNumber = this.handleChangeNumber.bind(this);
+    this.handleChangeStart = this.handleChangeStart.bind(this);
+    this.handleChangeFinish = this.handleChangeFinish.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     try {
       const shifts = await axios_get(
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/shift`, this.props.store.auth.access_token
@@ -71,29 +84,26 @@ class Add extends Component {
       this.props.dispatch(logout());
       this.props.history.push('/login');
     }
-    
-    // axios.post(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3028/operator/detail`, { id: this.state.id })
-    //   .then(response => {
-    //     const roleOptions = [
-    //       { value: 'su', label: 'Super Admin' },
-    //       { value: 'admin', label: 'Admin' },
-    //       { value: 'operator', label: 'Operator' }
-    //     ];
-    //     const myRole = roleOptions.find(o => o.value === response.data.message.role);
-    //     this.setState({
-    //       code: response.data.message.code,
-    //       name: response.data.message.name,
-    //       role: myRole.label
-    //     });
-    //   })
-    //   .catch(err => console.log(err.response.data.message));
   }
 
-  handleChangeShift(shiftSelected) { this.setState({ shiftSelected }, () => console.log(this.state)) }
-  handleChangeGroup(groupSelected) { this.setState({ groupSelected }, () => console.log(this.state)) }
-  handleChangeProccessname(proccessnameSelected) { this.setState({ proccessnameSelected }, () => console.log(this.state)) }
-  handleChangeLinenumber(linenumberSelected) { this.setState({ linenumberSelected }, () => console.log(this.state)) }
-  handleChangeModeltype(modeltypeSelected) { this.setState({ modeltypeSelected }, () => console.log(this.state)) }
+  // select handle
+  handleChangeShift = shiftSelected => { this.setState({ shiftSelected }, () => console.log(this.state)) }
+  handleChangeGroup = groupSelected => { this.setState({ groupSelected }, () => console.log(this.state)) }
+  handleChangeProccessname = proccessnameSelected => { this.setState({ proccessnameSelected }, () => console.log(this.state)) }
+  handleChangeLinenumber = linenumberSelected => { this.setState({ linenumberSelected }, () => console.log(this.state)) }
+  handleChangeModeltype = modeltypeSelected => { this.setState({ modeltypeSelected }, () => console.log(this.state)) }
+
+  // time handle
+  handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }, () => console.log(this.state)) };
+
+  handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }, () => console.log(this.state)) };
+
+  // number handle
+  handleChangeNumber = e => {
+    this.setState({
+        [e.target.name]: parseInt(e.target.value)
+    }, () => console.log(this.state));
+  }
 
   render() {
     return (
@@ -146,6 +156,71 @@ class Add extends Component {
                 value={this.state.modeltypeSelected}
                 onChange={this.handleChangeModeltype}
                 options={this.state.modeltypesOptions} />
+            </div>
+            <div className="row">
+              <div className="col-4">
+                <div className="form-group">
+                  <label htmlFor="inputTarget">Target</label>
+                  <input
+                    id="inputTarget"
+                    type="number"
+                    className="form-control"
+                    name="targetAmount"
+                    value={this.state.targetAmount}
+                    onChange={this.handleChangeNumber}
+                    />
+                </div>
+              </div>
+              <div className="col-4">
+                <div className="form-group">
+                  <label htmlFor="inputAktual">Aktual</label>
+                  <input
+                    id="inputAktual"
+                    type="number"
+                    className="form-control"
+                    name="actualAmount"
+                    value={this.state.actualAmount}
+                    onChange={this.handleChangeNumber}
+                    />
+                </div>
+              </div>
+              <div className="col-4">
+                <div className="form-group">
+                  <label htmlFor="inputOk">OK</label>
+                  <input
+                    id="inputOk"
+                    type="number"
+                    className="form-control"
+                    name="okAmount"
+                    value={this.state.okAmount}
+                    onChange={this.handleChangeNumber}
+                    />
+                </div>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Start</label>
+              <DatePicker
+                className="form-control"
+                selected={this.state.startAt}
+                onChange={this.handleChangeStart}
+                showTimeSelect
+                dateFormat="dd/MM/yyyy p"
+                timeIntervals={1}
+                showDisabledMonthNavigation
+              />
+            </div>
+            <div className="form-group">
+              <label>Finish</label>
+              <DatePicker
+                className="form-control"
+                selected={this.state.finishAt}
+                onChange={this.handleChangeFinish}
+                showTimeSelect
+                dateFormat="dd/MM/yyyy p"
+                timeIntervals={1}
+                showDisabledMonthNavigation
+              />
             </div>
           </form> :
           <div className="text-center">

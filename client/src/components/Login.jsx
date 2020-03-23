@@ -14,13 +14,13 @@ class Login extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onChange(e) {
+  onChange = e => {
       this.setState({
           [e.target.name]: e.target.value
       });
   }
 
-  async onSubmit(e) {
+  onSubmit = async e => {
     e.preventDefault();
     const user = {
       username: this.state.username,
