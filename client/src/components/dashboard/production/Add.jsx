@@ -32,6 +32,8 @@ class Add extends Component {
       modeltypes: [],
       modeltypesOptions: [],
       modeltypeSelected: null,
+      // planned activity
+      plannedactivities: [],
       // params
       targetAmount: 1515,
       actualAmount: 0,
@@ -54,25 +56,35 @@ class Add extends Component {
   componentDidMount = async () => {
     try {
       const shifts = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/shift`, this.props.store.auth.access_token
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/shift`,
+        this.props.store.auth.access_token
       );
       const groups = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/group`, this.props.store.auth.access_token
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/group`,
+        this.props.store.auth.access_token
       );
       const proccessnames = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/proccess-name`, this.props.store.auth.access_token
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/proccess-name`,
+        this.props.store.auth.access_token
       );
       const linenumbers = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/line-number`, this.props.store.auth.access_token
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/line-number`,
+        this.props.store.auth.access_token
       );
       const modeltypes = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/model-type`, this.props.store.auth.access_token
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/model-type`,
+        this.props.store.auth.access_token
       );
       const operationnumbers = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/operation-number`, this.props.store.auth.access_token
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/operation-number`,
+        this.props.store.auth.access_token
+      );
+      const plannedactivities = await axios_get(
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/planned-activity`,
+        this.props.store.auth.access_token
       );
       this.setState({
-        shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers,
+        shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities,
         shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         groupsOptions: groups.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         proccessnamesOptions: proccessnames.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
@@ -104,6 +116,26 @@ class Add extends Component {
         [e.target.name]: parseInt(e.target.value)
     }, () => console.log(this.state));
   }
+
+  renderPlannedActivity = () => {
+    const plannedactivityElem = (index, id, name) => (
+      <div className="form-group" key={index}>
+        <label htmlFor={'input' + id}>{name}</label>
+        <input
+          id={'input' + id}
+          type="number"
+          className="form-control classPlannedActivity"
+          value={this.state.actualAmount}
+          onChange={this.handleChangeNumber}
+          />
+      </div>
+    );
+    let plannedactivitiesForm = [];
+    this.state.plannedactivities.forEach((item, i) => {
+      plannedactivitiesForm.push(plannedactivityElem(i, item.id, item.name));
+    });
+    return plannedactivitiesForm;
+}
 
   render() {
     return (
@@ -199,8 +231,9 @@ class Add extends Component {
               </div>
             </div>
             <div className="form-group">
-              <label>Start</label>
+              <label htmlFor="inputStartAt">Start</label>
               <DatePicker
+                id="inputStartAt"
                 className="form-control"
                 selected={this.state.startAt}
                 onChange={this.handleChangeStart}
@@ -211,8 +244,9 @@ class Add extends Component {
               />
             </div>
             <div className="form-group">
-              <label>Finish</label>
+              <label htmlFor="inputFinishAt">Finish</label>
               <DatePicker
+                id="inputFinishAt"
                 className="form-control"
                 selected={this.state.finishAt}
                 onChange={this.handleChangeFinish}
@@ -222,6 +256,11 @@ class Add extends Component {
                 showDisabledMonthNavigation
               />
             </div>
+            <h5 style={{textDecorationLine: 'underline'}}>Planning Down Time</h5>
+            {this.renderPlannedActivity().map(component => {
+              return component;
+            })}
+            <h5 style={{textDecorationLine: 'underline'}}>Unplanning Down Time</h5>
           </form> :
           <div className="text-center">
             <span>access denied</span>
