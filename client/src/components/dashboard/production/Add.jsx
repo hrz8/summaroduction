@@ -61,6 +61,7 @@ class Add extends Component {
     this.handleChangeFinish = this.handleChangeFinish.bind(this);
     // activities
     this.handleChangePlanned = this.handleChangePlanned.bind(this);
+    this.handleChangeNumberUnplannedActivitiesJumlah = this.handleChangeNumberUnplannedActivitiesJumlah.bind(this);
   }
 
   componentDidMount = async () => {
@@ -136,7 +137,7 @@ class Add extends Component {
   // number handle
   handleChangeNumber = e => {
     this.setState({
-        [e.target.name]: parseInt(e.target.value)
+      [e.target.name]: parseInt(e.target.value)
     }, () => console.log(this.state));
   }
 
@@ -149,6 +150,34 @@ class Add extends Component {
     this.setState(
       { plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => console.log(this.state)
     );
+  }
+
+  handleChangeNumberUnplannedActivitiesJumlah = (e) => {
+    const newLength = parseInt(e.target.value);
+    const prevLength = parseInt(this.state.unplannedactivitiesJumlah);
+    if (newLength >= 0) {
+      this.setState({ unplannedactivitiesJumlah: parseInt(e.target.value) }, () => {
+        if (newLength > prevLength) {
+          let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+          unplannedactivitiesToSendTemp[unplannedactivitiesToSendTemp.length] = {
+            minute: null,
+            activity: null,
+            operationNumber: null,
+            description: null
+          }
+          this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+        }
+        else {
+          let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+          unplannedactivitiesToSendTemp.pop();
+          this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+        }
+        
+      });
+    }
+    else if (newLength === 0) {
+      this.setState({ unplannedactivitiesToSend: [] })
+    }
   }
 
   renderPlannedActivity = () => {
@@ -182,9 +211,9 @@ class Add extends Component {
     const unplannedactivityElem = (index, id, name) => {
       // const minute = this.state.plannedactivitiesToSend[index] ? this.state.plannedactivitiesToSend[index].minute : 0;
       return (
-        <>
+        <div key={index}>
           <h6 style={{fontWeight: 'bold'}}>{'Activity ' + (index + 1)}</h6>
-          <div className="row" key={index}>
+          <div className="row">
             <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputShift">Activity</label>
@@ -241,7 +270,7 @@ class Add extends Component {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )
     };
     for (let i = 0; i < this.state.unplannedactivitiesJumlah ; i++) {
@@ -393,9 +422,8 @@ class Add extends Component {
                 id="inputJumlahUnplannedActivities"
                 type="number"
                 className="form-control"
-                name="unplannedactivitiesJumlah"
                 value={this.state.unplannedactivitiesJumlah}
-                onChange={this.handleChangeNumber} />
+                onChange={this.handleChangeNumberUnplannedActivitiesJumlah} />
             </div>
             <div className="ml-5">
               {this.renderUnplannedActivity().map(component => {
