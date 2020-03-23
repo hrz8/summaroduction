@@ -154,6 +154,7 @@ class Add extends Component {
             value={minute}
             onChange={this.handleChangePlanned}
             />
+            <small className="form-text text-muted">menit</small>
         </div>
       )
     };
@@ -170,43 +171,7 @@ class Add extends Component {
           <form
             // onSubmit={this.handleSubmit}
             noValidate>
-              <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
-            <div className="form-group">
-              <label htmlFor="inputShift">Shift</label>
-              <Select
-                id="inputShift"
-                placeholder="Pilih Shift"
-                value={this.state.shiftSelected}
-                onChange={this.handleChangeShift}
-                options={this.state.shiftsOptions} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="inputGroup">Group</label>
-              <Select
-                id="inputGroup"
-                placeholder="Pilih Group"
-                value={this.state.groupSelected}
-                onChange={this.handleChangeGroup}
-                options={this.state.groupsOptions} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="inputProccessName">Proccess Name</label>
-              <Select
-                id="inputProccessName"
-                placeholder="Pilih Proccess Name"
-                value={this.state.proccessnameSelected}
-                onChange={this.handleChangeProccessname}
-                options={this.state.proccessnamesOptions} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="inputLineNumber">Line Number</label>
-              <Select
-                id="inputLineNumber"
-                placeholder="Pilih Line Number"
-                value={this.state.linenumberSelected}
-                onChange={this.handleChangeLinenumber}
-                options={this.state.linenumbersOptions} />
-            </div>
+            <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
             <div className="form-group">
               <label htmlFor="inputModel">Model</label>
               <Select
@@ -215,6 +180,52 @@ class Add extends Component {
                 value={this.state.modeltypeSelected}
                 onChange={this.handleChangeModeltype}
                 options={this.state.modeltypesOptions} />
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <div className="form-group">
+                  <label htmlFor="inputShift">Shift</label>
+                  <Select
+                    id="inputShift"
+                    placeholder="Pilih Shift"
+                    value={this.state.shiftSelected}
+                    onChange={this.handleChangeShift}
+                    options={this.state.shiftsOptions} />
+                </div>
+              </div>
+              <div className="col-6">
+                <div className="form-group">
+                  <label htmlFor="inputGroup">Group</label>
+                  <Select
+                    id="inputGroup"
+                    placeholder="Pilih Group"
+                    value={this.state.groupSelected}
+                    onChange={this.handleChangeGroup}
+                    options={this.state.groupsOptions} />
+                </div>
+              </div>
+              <div className="col-6">
+                <div className="form-group">
+                  <label htmlFor="inputProccessName">Proccess Name</label>
+                  <Select
+                    id="inputProccessName"
+                    placeholder="Pilih Proccess Name"
+                    value={this.state.proccessnameSelected}
+                    onChange={this.handleChangeProccessname}
+                    options={this.state.proccessnamesOptions} />
+                </div>
+              </div>
+              <div className="col-6">
+                <div className="form-group">
+                  <label htmlFor="inputLineNumber">Line Number</label>
+                  <Select
+                    id="inputLineNumber"
+                    placeholder="Pilih Line Number"
+                    value={this.state.linenumberSelected}
+                    onChange={this.handleChangeLinenumber}
+                    options={this.state.linenumbersOptions} />
+                </div>
+              </div>
             </div>
             <div className="row">
               <div className="col-4">
@@ -284,9 +295,11 @@ class Add extends Component {
               />
             </div>
             <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
-            {this.renderPlannedActivity().map(component => {
-              return component;
-            })}
+            <div className="row">
+              {this.renderPlannedActivity().map((component, i) => {
+                return (<div className="col-4" key={i}>{component}</div>);
+              })}
+            </div>
             <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
           </form> :
           <div className="text-center">

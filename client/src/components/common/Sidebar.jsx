@@ -50,7 +50,7 @@ class Sidebar extends Component {
                     <div className="collapsible-body d-block">
                       <ul>
                         <li>
-                          <NavLink to="/dashboard/production" className="waves-effect pl-4"><FontAwesomeIcon icon={faIndustry} />&emsp;Master</NavLink>
+                          <NavLink to="/dashboard/production" className="waves-effect pl-4"><FontAwesomeIcon icon={faIndustry} />&emsp;Main</NavLink>
                         </li>
                       </ul>
                     </div>
