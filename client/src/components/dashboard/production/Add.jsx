@@ -363,15 +363,14 @@ class Add extends Component {
         modelType: this.state.modeltypeSelected.value,
         targetAmount, actualAmount, okAmount, startAt, finishAt,
         plannedActivities: this.state.plannedactivitiesToSend,
-        unplannedactivities: this.state.unplannedactivitiesToSend
+        unplannedActivities: this.state.unplannedactivitiesToSend
       }
       try {
-        console.log(this.state.unplannedactivitiesToSend)
-        // const newProduction = await axios_post(
-        //   `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
-        //   reqBody, this.props.store.auth.access_token
-        // );
-        // this.props.history.push('./detail/' + newProduction.id);
+        const newProduction = await axios_post(
+          `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
+          reqBody, this.props.store.auth.access_token
+        );
+        this.props.history.push('./detail/' + newProduction.id);
       }
       catch(err) {
         const { statusCode } = err.response.data;
@@ -499,7 +498,8 @@ class Add extends Component {
               selected={this.state.startAt}
               onChange={this.handleChangeStart}
               showTimeSelect
-              dateFormat="dd/MM/yyyy p"
+              dateFormat="dd/MM/yyyy HH:mm"
+              timeFormat="HH:mm"
               timeIntervals={1}
               showDisabledMonthNavigation
             />
@@ -512,7 +512,8 @@ class Add extends Component {
               selected={this.state.finishAt}
               onChange={this.handleChangeFinish}
               showTimeSelect
-              dateFormat="dd/MM/yyyy p"
+              dateFormat="dd/MM/yyyy HH:mm"
+              timeFormat="HH:mm"
               timeIntervals={1}
               showDisabledMonthNavigation
             />

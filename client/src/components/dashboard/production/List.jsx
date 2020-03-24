@@ -47,7 +47,7 @@ class List extends Component {
         Header: 'Date',
         Cell: ({ original }) => (
           <Moment format="DD/MM/YYYY">
-            {original.createdAt}
+            {original.startAt}
           </Moment>
         ),
         width: 100
@@ -58,34 +58,34 @@ class List extends Component {
         width: 150
       },
       {
+        Header: 'Proccess Name',
+        accessor: 'proccessName.name',
+        width: 150
+      },
+      {
+        Header: 'Model',
+        accessor: 'modelType.name',
+        width: 100
+      },
+      {
         Header: 'Shift',
         Cell: ({ original }) => (
-          <div>{original.shift.name + ' - ' + original.shift.description}</div>
+          <span>{original.shift.name + ' - ' + original.shift.description}</span>
         ),
         width: 150
       },
       {
         Header: 'Group',
         Cell: ({ original }) => (
-          <div>{original.group.name + ' - ' + original.group.description}</div>
+          <span>{original.group.name + ' - ' + original.group.description}</span>
         ),
         width: 110
       },
       {
-        Header: 'Proccess Name',
-        accessor: 'proccessName.name',
-        width: 170
-      },
-      {
         Header: 'Line',
         Cell: ({ original }) => (
-          <div>{original.lineNumber.name + ' - ' + original.lineNumber.description}</div>
+          <span>{original.lineNumber.name + ' - ' + original.lineNumber.description}</span>
         ),
-        width: 100
-      },
-      {
-        Header: 'Model',
-        accessor: 'modelType.name',
         width: 100
       },
       {
@@ -106,9 +106,72 @@ class List extends Component {
       {
         Header: 'NG',
         Cell: ({ original }) => (
-          <div>{parseInt(original.actualAmount) - parseInt(original.okAmount)}</div>
+          <span>{parseInt(original.actualAmount) - parseInt(original.okAmount)}</span>
         ),
         width: 100
+      },
+      {
+        Header: 'Start At',
+        Cell: ({ original }) => (
+          <Moment format="HH:mm">
+            {original.startAt}
+          </Moment>
+        ),
+        width: 100
+      },
+      {
+        Header: 'Finish At',
+        Cell: ({ original }) => (
+          <Moment format="HH:mm">
+            {original.finishAt}
+          </Moment>
+        ),
+        width: 100
+      },
+      {
+        Header: 'Planned Operation (minute)',
+        Cell: ({ original }) => (
+          <span>{((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000}</span>
+        ),
+        width: 250
+      },
+      {
+        Header: 'Down Time (minute)',
+        Cell: ({ original }) => {
+          let dtAmountP = 0;
+          let dtAmountU = 0;
+          original.plannedActivities.forEach(item => {
+            dtAmountP += item.minute;
+          })
+          original.unplannedActivities.forEach(item => {
+            dtAmountU += item.minute;
+          })
+          return (
+            <ul>
+              <li>Planning: {dtAmountP}</li>
+              <li>Unplanning: {dtAmountU}</li>
+              <li>Total: {dtAmountP + dtAmountU}</li>
+            </ul>
+          )
+        },
+        width: 180
+      },
+      {
+        Header: 'Work Time (minute)',
+        Cell: ({ original }) => {
+          let totalTime = ((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000;
+          let dtAmount = 0;
+          original.plannedActivities.forEach(item => {
+            dtAmount += item.minute;
+          })
+          original.unplannedActivities.forEach(item => {
+            dtAmount += item.minute;
+          })
+          return (
+            <span>{totalTime - dtAmount}</span>
+          )
+        },
+        width: 180
       },
       {
         Header: 'Action',
