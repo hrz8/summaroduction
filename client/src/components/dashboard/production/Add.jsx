@@ -136,7 +136,14 @@ class Add extends Component {
       this.state.linenumberSelected !== null &&
       this.state.modeltypeSelected !== null &&
       this.state.actualAmount !== 0;
-    return coreFieldIsValid;
+    let secondaryFieldIsValid = true;
+    for (let i = 0; i < this.state.unplannedactivitiesToSend.length; i++) {
+      if (this.state.unplannedactivitiesToSend[i].activity === null) {
+        secondaryFieldIsValid = false;
+        break;
+      }
+    }
+    return coreFieldIsValid && secondaryFieldIsValid;
   }
 
   // select handle
@@ -282,7 +289,7 @@ class Add extends Component {
             </div>
             <div className="col-6">
               <div className="form-group">
-                <label htmlFor="inputShift">Operation Number</label>
+                <label htmlFor="inputShift">Op No.</label>
                 <Select
                   menuPlacement="auto"
                   id="inputShift"
@@ -290,6 +297,7 @@ class Add extends Component {
                   value={operationnumber}
                   onChange={(value) => this.handleChangeUnplannedOperationNumber(value, index)}
                   options={this.state.operationnumbersOptions} />
+                <small className="form-text text-muted">dapat dikosongkan</small>
               </div>
             </div>
           </div>
@@ -358,11 +366,12 @@ class Add extends Component {
         unplannedactivities: this.state.unplannedactivitiesToSend
       }
       try {
-        const newProduction = await axios_post(
-          `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
-          reqBody, this.props.store.auth.access_token
-        );
-        this.props.history.push('./detail/' + newProduction.id);
+        console.log(this.state.unplannedactivitiesToSend)
+        // const newProduction = await axios_post(
+        //   `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
+        //   reqBody, this.props.store.auth.access_token
+        // );
+        // this.props.history.push('./detail/' + newProduction.id);
       }
       catch(err) {
         const { statusCode } = err.response.data;

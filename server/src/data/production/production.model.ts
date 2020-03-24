@@ -27,9 +27,9 @@ export class ProdUnplannedActivity {
   @prop({ required: true, ref: UnplannedActivity })
   public activity!: Ref<UnplannedActivity>;
 
-  @prop({ required: true, ref: OperationNumber })
+  @prop({ ref: OperationNumber })
 
-  public operationNumber!: Ref<OperationNumber>;
+  public operationNumber?: Ref<OperationNumber>;
 
   @IsString()
   @prop({ default: "" })
