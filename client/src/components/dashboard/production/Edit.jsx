@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
-import { axios_get, axios_post } from '../../../helpers';
+import { axios_get, axios_post, axios_put } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -126,7 +126,7 @@ class Edit extends Component {
         modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         modeltypeSelected: { value: mainData.modelType.id, label: `${mainData.modelType.name} ${mainData.modelType.description}` },
         // operation
-        targetAmount, actualAmount, okAmount, startAt: new Date(startAt), finishAt: new Date(finishAt),
+        targetAmount, actualAmount, okAmount, startAt: new Date(startAt).getTime(), finishAt: new Date(finishAt).getTime(),
         // activity
         unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         unplannedactivitiesJumlah: mainData.unplannedActivities.length,
@@ -393,7 +393,7 @@ class Edit extends Component {
     if (this.isFormValid()) {
       const { targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
       const reqBody = {
-        code: this.generateUnique(),
+        id: this.state.id,
         shift: this.state.shiftSelected.value,
         group: this.state.groupSelected.value,
         proccessName: this.state.proccessnameSelected.value,
@@ -404,8 +404,8 @@ class Edit extends Component {
         unplannedActivities: this.state.unplannedactivitiesToSend
       }
       try {
-        const newProduction = await axios_post(
-          `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
+        const newProduction = await axios_put(
+          `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${this.state.id}`,
           reqBody, this.props.store.auth.access_token
         );
         this.props.history.push('./detail/' + newProduction.id);

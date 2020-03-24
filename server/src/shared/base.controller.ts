@@ -155,7 +155,7 @@ export class BaseController<TModel extends BaseModel> {
     const editData: TModel = await this.dataService.updateAsync(message);
 
     if (!editData) {
-        throw new NotFoundException('unknown id');
+      throw new NotFoundException('unknown id');
     }
 
     response.message = "successfully updated";
