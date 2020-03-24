@@ -12,7 +12,8 @@ import {
   faCubes,
   faRandom,
   faListOl,
-  faBriefcase} from '@fortawesome/free-solid-svg-icons';
+  faBriefcase,
+  faKey} from '@fortawesome/free-solid-svg-icons';
 import logo from '../../logo.png';
 
 class Sidebar extends Component {
@@ -89,6 +90,16 @@ class Sidebar extends Component {
                         </li>
                         <li>
                           <NavLink to="/dashboard/operation-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faBriefcase} />&emsp;Operation Numbers</NavLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Account</a>
+                    <div className="collapsible-body d-block">
+                      <ul>
+                        <li>
+                          <NavLink to="/account/change-password" className="waves-effect pl-4"><FontAwesomeIcon icon={faKey} />&emsp;Password</NavLink>
                         </li>
                       </ul>
                     </div>

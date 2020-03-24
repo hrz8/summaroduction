@@ -18,10 +18,18 @@ export const axios_get = async (url, access_token) => {
     return results.data.data;
   }
   catch(err) {
-    const { statusCode } = err.response.data;
-    if (statusCode === 401) {
-      alert('session habis');
-      throw err;
-    }
+    throw err;
+  }
+}
+
+export const axios_post = async (url, body, access_token) => {
+  try {
+    const results = await axios.post(
+      url, body, { headers: { Authorization: `Bearer ${access_token}` } }
+    );
+    return results.data.data;
+  }
+  catch(err) {
+    throw err;
   }
 }

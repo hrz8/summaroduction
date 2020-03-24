@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import ReactTable from 'react-table-6';
 import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { axios_get } from '../../../helpers';
 
 class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
       q: '',
+      productions: []
     }
   }
 
@@ -18,6 +20,18 @@ class List extends Component {
     this.setState({
       [e.target.name]: e.target.value
     });
+  }
+
+  drawTable = async () => {
+    try {
+      const productions = await axios_get(
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
+        this.props.store.auth.access_token
+      );
+    }
+    catch(err) {
+      throw err;
+    }
   }
 
   render() {

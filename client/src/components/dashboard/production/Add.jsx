@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
-import { axios_get } from '../../../helpers';
+import { axios_get, axios_post } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -119,9 +119,12 @@ class Add extends Component {
       });
     }
     catch(err) {
-      throw err
-      // this.props.dispatch(logout());
-      // this.props.history.push('/login');
+      const { statusCode } = err.response.data;
+      if (statusCode === 401) {
+        alert('session habis');
+        this.props.dispatch(logout());
+        this.props.history.push('/login');
+      }
     }
   }
 
@@ -137,23 +140,23 @@ class Add extends Component {
   }
 
   // select handle
-  handleChangeShift = shiftSelected => { this.setState({ shiftSelected }, () => console.log(this.state)) }
-  handleChangeGroup = groupSelected => { this.setState({ groupSelected }, () => console.log(this.state)) }
-  handleChangeProccessname = proccessnameSelected => { this.setState({ proccessnameSelected }, () => console.log(this.state)) }
-  handleChangeLinenumber = linenumberSelected => { this.setState({ linenumberSelected }, () => console.log(this.state)) }
-  handleChangeModeltype = modeltypeSelected => { this.setState({ modeltypeSelected }, () => console.log(this.state)) }
+  handleChangeShift = shiftSelected => { this.setState({ shiftSelected }) }
+  handleChangeGroup = groupSelected => { this.setState({ groupSelected }) }
+  handleChangeProccessname = proccessnameSelected => { this.setState({ proccessnameSelected }) }
+  handleChangeLinenumber = linenumberSelected => { this.setState({ linenumberSelected }) }
+  handleChangeModeltype = modeltypeSelected => { this.setState({ modeltypeSelected }) }
 
   // time handle
-  handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }, () => console.log(this.state)) };
+  handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }) };
 
-  handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }, () => console.log(this.state)) };
+  handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }) };
 
   // number handle
   handleChangeNumber = e => {
     if (parseInt(e.target.value) >= 0) {
       this.setState({
         [e.target.name]: parseInt(e.target.value)
-      }, () => console.log(this.state));
+      });
     }
   }
 
@@ -165,7 +168,7 @@ class Add extends Component {
         minute: parseInt(e.target.value)
       };
       this.setState(
-        { plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => console.log(this.state)
+        { plannedactivitiesToSend: plannedactivitiesToSendTemp }
       );
     }
   }
@@ -185,12 +188,12 @@ class Add extends Component {
             operationNumberObj: null,
             description: ''
           }
-          this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+          this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
         }
         else {
           let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
           unplannedactivitiesToSendTemp.pop();
-          this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+          this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
         }
         
       });
@@ -204,28 +207,28 @@ class Add extends Component {
     let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
     unplannedactivitiesToSendTemp[index].activity = selected.value;
     unplannedactivitiesToSendTemp[index].activityObj = selected;
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
   }
 
   handleChangeUnplannedOperationNumber = (selected, index) => {
     let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
     unplannedactivitiesToSendTemp[index].operationNumber = selected.value;
     unplannedactivitiesToSendTemp[index].operationNumberObj = selected;
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
   }
 
   handleChangeUnplannedMinute = e => {
     if (parseInt(e.target.value) >= 0) {
       let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
       unplannedactivitiesToSendTemp[e.target.dataset.index].minute = parseInt(e.target.value);
-      this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+      this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
     }
   }
 
   handleChangeUnplannedDescription = e => {
     let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
     unplannedactivitiesToSendTemp[e.target.dataset.index].description = e.target.value;
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
   }
 
   renderPlannedActivity = () => {
@@ -339,10 +342,10 @@ class Add extends Component {
     return (result + str.substr(str.length - 8)).toUpperCase();
   }
 
-  handleSubmit = e => {
+  handleSubmit = async e => {
     e.preventDefault();
     if (this.isFormValid()) {
-      const { targetAmount, actualAmount, startAt, finishAt } = this.state;
+      const { targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
       const reqBody = {
         code: this.generateUnique(),
         shift: this.state.shiftSelected.value,
@@ -350,11 +353,25 @@ class Add extends Component {
         proccessName: this.state.proccessnameSelected.value,
         lineNumber: this.state.linenumberSelected.value,
         modelType: this.state.modeltypeSelected.value,
-        targetAmount, actualAmount, startAt, finishAt,
+        targetAmount, actualAmount, okAmount, startAt, finishAt,
         plannedActivities: this.state.plannedactivitiesToSend,
         unplannedactivities: this.state.unplannedactivitiesToSend
       }
-      console.log(reqBody);
+      try {
+        const newProduction = await axios_post(
+          `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production`,
+          reqBody, this.props.store.auth.access_token
+        );
+        this.props.history.push('./detail/' + newProduction.id);
+      }
+      catch(err) {
+        const { statusCode } = err.response.data;
+        if (statusCode === 401) {
+          alert('session habis');
+          this.props.dispatch(logout());
+          this.props.history.push('/login');
+        }
+      }
     }
     else {
       alert("form tidak valid")
