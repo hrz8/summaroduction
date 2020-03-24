@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Select from 'react-select';
-import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
+import moment from 'moment';
 import { axios_get, axios_put } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
-import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class Edit extends Component {
+class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,12 +60,7 @@ class Edit extends Component {
     this.handleChangeProccessname = this.handleChangeProccessname.bind(this);
     this.handleChangeLinenumber = this.handleChangeLinenumber.bind(this);
     this.handleChangeModeltype = this.handleChangeModeltype.bind(this);
-    // handle general
-    this.handleChangeNumber = this.handleChangeNumber.bind(this);
-    this.handleChangeStart = this.handleChangeStart.bind(this);
-    this.handleChangeFinish = this.handleChangeFinish.bind(this);
     // activities
-    this.handleChangePlanned = this.handleChangePlanned.bind(this);
     this.handleChangeNumberUnplannedActivitiesJumlah = this.handleChangeNumberUnplannedActivitiesJumlah.bind(this);
   }
 
@@ -126,7 +121,7 @@ class Edit extends Component {
         modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         modeltypeSelected: { value: mainData.modelType.id, label: `${mainData.modelType.name} ${mainData.modelType.description}` },
         // operation
-        targetAmount, actualAmount, okAmount, startAt: new Date(startAt).getTime(), finishAt: new Date(finishAt).getTime(),
+        targetAmount, actualAmount, okAmount, startAt, finishAt,
         // activity
         unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         unplannedactivitiesJumlah: mainData.unplannedActivities.length,
@@ -195,28 +190,6 @@ class Edit extends Component {
   handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }) };
 
   handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }) };
-
-  // number handle
-  handleChangeNumber = e => {
-    if (parseInt(e.target.value) >= 0) {
-      this.setState({
-        [e.target.name]: parseInt(e.target.value)
-      });
-    }
-  }
-
-  handleChangePlanned = e => {
-    if (parseInt(e.target.value) >= 0) {
-      let plannedactivitiesToSendTemp = [ ...this.state.plannedactivitiesToSend ];
-      plannedactivitiesToSendTemp[e.target.dataset.index] = {
-        activity: e.target.dataset.idplannedactivity,
-        minute: parseInt(e.target.value)
-      };
-      this.setState(
-        { plannedactivitiesToSend: plannedactivitiesToSendTemp }
-      );
-    }
-  }
 
   handleChangeNumberUnplannedActivitiesJumlah = e => {
     const newLength = parseInt(e.target.value);
@@ -290,7 +263,7 @@ class Edit extends Component {
             type="number"
             className="form-control classPlannedActivity"
             value={minute}
-            onChange={this.handleChangePlanned}
+            disabled
             />
             <small className="form-text text-muted">menit</small>
         </div>
@@ -377,6 +350,17 @@ class Edit extends Component {
     return unplannedactivitiesForm;
   }
 
+  generateUnique = () => {
+    const length = 5;
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    const str = (new Date()).getTime().toString(16);
+    return (result + str.substr(str.length - 8)).toUpperCase();
+  }
+
   handleSubmit = async e => {
     e.preventDefault();
     if (this.isFormValid()) {
@@ -415,7 +399,7 @@ class Edit extends Component {
 
   render() {
     return (
-      <Card title="Edit" col={6}>
+      <Card title="Detail" col={6}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
         <form
           onSubmit={this.handleSubmit}
@@ -489,7 +473,7 @@ class Edit extends Component {
                   className="form-control"
                   name="targetAmount"
                   value={this.state.targetAmount}
-                  onChange={this.handleChangeNumber}
+                  disabled
                   />
               </div>
             </div>
@@ -502,7 +486,7 @@ class Edit extends Component {
                   className="form-control"
                   name="actualAmount"
                   value={this.state.actualAmount}
-                  onChange={this.handleChangeNumber}
+                  disabled
                   />
               </div>
             </div>
@@ -515,38 +499,34 @@ class Edit extends Component {
                   className="form-control"
                   name="okAmount"
                   value={this.state.okAmount}
-                  onChange={this.handleChangeNumber}
+                  disabled
                   />
               </div>
             </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="inputStartAt">Start</label>
-            <DatePicker
-              id="inputStartAt"
-              className="form-control"
-              selected={this.state.startAt}
-              onChange={this.handleChangeStart}
-              showTimeSelect
-              dateFormat="dd/MM/yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              showDisabledMonthNavigation
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="inputFinishAt">Finish</label>
-            <DatePicker
-              id="inputFinishAt"
-              className="form-control"
-              selected={this.state.finishAt}
-              onChange={this.handleChangeFinish}
-              showTimeSelect
-              dateFormat="dd/MM/yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              showDisabledMonthNavigation
-            />
+          <div className="row">
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputStartAt">Start</label>
+                <input
+                  id="inputStartAt"
+                  className="form-control"
+                  value={moment(this.state.startAt).format('DD/MM/YYYY HH:mm')}
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputFinishAt">Finish</label>
+                <input
+                  id="inputFinishAt"
+                  className="form-control"
+                  value={moment(this.state.finishAt).format('DD/MM/YYYY HH:mm')}
+                  disabled
+                />
+              </div>
+            </div>
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
           <div className="row">
@@ -555,29 +535,18 @@ class Edit extends Component {
             })}
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
-          <div className="form-group">
-            <label htmlFor="inputJumlahUnplannedActivities">Jumlah Unplanned Activity</label>
-            <input
-              id="inputJumlahUnplannedActivities"
-              type="number"
-              className="form-control"
-              value={this.state.unplannedactivitiesJumlah}
-              onChange={this.handleChangeNumberUnplannedActivitiesJumlah} />
-          </div>
-          <div className="ml-5">
-            {this.renderUnplannedActivity().map(component => {
-              return component;
-            })}
-          </div>
+          {this.renderUnplannedActivity().map(component => {
+            return component;
+          })}
           <div className="d-flex">
             <Link to="/dashboard/production"
               className="btn btn-cc btn-cc-white btn-cc-radius-normal ml-0 py-2 px-5">
               <i><FontAwesomeIcon icon={faArrowLeft} /></i>&nbsp;Semua
             </Link>
-            <button type="submit"
+            <Link to={{pathname: `/dashboard/production/edit/${this.state.id}`}}
               className="ml-auto btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5">
-              <i><FontAwesomeIcon icon={faSave} /></i>&nbsp;Simpan
-            </button>
+              <i><FontAwesomeIcon icon={faEdit} /></i>&nbsp;Edit
+            </Link>
           </div>
         </form> :
         <div className="text-center">
@@ -589,4 +558,4 @@ class Edit extends Component {
 }
 
 const mapState = state => ({ store: state });
-export default connect(mapState)(Edit);
+export default connect(mapState)(Detail);
