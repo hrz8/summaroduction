@@ -8,13 +8,15 @@ import { logout } from '../../../store/actions/auth';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
-import { faArrowLeft, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class Add extends Component {
+class Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: this.props.match.params.productionId,
+      mainData: null,
       // shift
       shifts: [],
       shiftsOptions: [],
@@ -69,6 +71,10 @@ class Add extends Component {
 
   componentDidMount = async () => {
     try {
+      const mainData = await axios_get(
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${this.state.id}?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`,
+        this.props.store.auth.access_token
+      );
       const shifts = await axios_get(
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/shift`,
         this.props.store.auth.access_token
@@ -101,19 +107,51 @@ class Add extends Component {
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/unplanned-activity`,
         this.props.store.auth.access_token
       );
+      const { targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
       this.setState({
-        shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
+        mainData, shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
+        // shift
         shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
+        shiftSelected: { value: mainData.shift.id, label: `${mainData.shift.name} - ${mainData.shift.description}` },
+        // group
         groupsOptions: groups.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
+        groupSelected: { value: mainData.group.id, label: `${mainData.group.name} - ${mainData.group.description}` },
+        // proccess name
         proccessnamesOptions: proccessnames.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        proccessnameSelected: { value: mainData.proccessName.id, label: `${mainData.proccessName.name} ${mainData.proccessName.description}` },
+        // line number
         linenumbersOptions: linenumbers.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
+        linenumberSelected: { value: mainData.lineNumber.id, label: `${mainData.lineNumber.name} - ${mainData.lineNumber.description}` },
+        // model type
         modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        modeltypeSelected: { value: mainData.modelType.id, label: `${mainData.modelType.name} ${mainData.modelType.description}` },
+        // operation
+        targetAmount, actualAmount, okAmount, startAt: new Date(startAt), finishAt: new Date(finishAt),
+        // activity
         unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        unplannedactivitiesJumlah: mainData.unplannedActivities.length,
         operationnumbersOptions: operationnumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
       }, () => {
         this.state.plannedactivities.forEach(item => {
           this.setState(prevState => ({
-            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { activity: item.id, minute: 0 }]
+            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, {
+              activity: item.id,
+              minute: mainData.plannedActivities.filter(f_item => f_item.activity.id === item.id)[0].minute
+            }
+          ]
+          }))
+        });
+        mainData.unplannedActivities.forEach(item => {
+          this.setState(prevState => ({
+            unplannedactivitiesToSend: [...prevState.unplannedactivitiesToSend, {
+              minute: item.minute,
+              description: item.description,
+              activity: item.activity.id,
+              activityObj: { value: item.activity.id, label: item.activity.name },
+              operationNumber: item.operationNumber ? item.operationNumber.id : null,
+              operationNumberObj: item.operationNumber ? { value: item.operationNumber.id, label: item.operationNumber.name } : null
+            }
+          ]
           }))
         });
       });
@@ -266,7 +304,7 @@ class Add extends Component {
 
   renderUnplannedActivity = () => {
     let unplannedactivitiesForm = [];
-    const unplannedactivityElem = (index) => {
+    const unplannedactivityElem = index => {
       const activity = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].activityObj : null;
       const operationnumber = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].operationNumberObj : null;
       const minute = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].minute : 0;
@@ -388,7 +426,7 @@ class Add extends Component {
 
   render() {
     return (
-      <Card title="Add" col={6}>
+      <Card title="Edit" col={6}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
         <form
           onSubmit={this.handleSubmit}
@@ -546,7 +584,7 @@ class Add extends Component {
             </Link>
             <button type="submit"
               className="ml-auto btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5">
-              <i><FontAwesomeIcon icon={faPlusSquare} /></i>&nbsp;Tambahkan
+              <i><FontAwesomeIcon icon={faSave} /></i>&nbsp;Simpan
             </button>
           </div>
         </form> :
@@ -559,4 +597,4 @@ class Add extends Component {
 }
 
 const mapState = state => ({ store: state });
-export default connect(mapState)(Add);
+export default connect(mapState)(Edit);

@@ -33,3 +33,15 @@ export const axios_post = async (url, body, access_token) => {
     throw err;
   }
 }
+
+export const axios_put = async (url, body, access_token) => {
+  try {
+    const results = await axios.put(
+      url, body, { headers: { Authorization: `Bearer ${access_token}` } }
+    );
+    return results.data.data;
+  }
+  catch(err) {
+    throw err;
+  }
+}
