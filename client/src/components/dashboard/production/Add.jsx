@@ -7,6 +7,9 @@ import { axios_get } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import { Link } from 'react-router-dom';
+import { faArrowLeft, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class Add extends Component {
   constructor(props) {
@@ -45,7 +48,7 @@ class Add extends Component {
       actualAmount: 0,
       okAmount: 0,
       startAt: (new Date()).getTime(),
-      finishAt: (new Date()).getTime(),
+      finishAt: (new Date()).getTime() + 3600000,
       // operation number
       operationnumbers: [],
       operationnumbersOptions: []
@@ -100,10 +103,10 @@ class Add extends Component {
       );
       this.setState({
         shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
-        shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
-        groupsOptions: groups.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
+        groupsOptions: groups.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
         proccessnamesOptions: proccessnames.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
-        linenumbersOptions: linenumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
+        linenumbersOptions: linenumbers.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
         modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         operationnumbersOptions: operationnumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
@@ -122,6 +125,17 @@ class Add extends Component {
     }
   }
 
+  isFormValid = () => {
+    const coreFieldIsValid =
+      this.state.shiftSelected !== null &&
+      this.state.groupSelected !== null &&
+      this.state.proccessnameSelected !== null &&
+      this.state.linenumberSelected !== null &&
+      this.state.modeltypeSelected !== null &&
+      this.state.actualAmount !== 0;
+    return coreFieldIsValid;
+  }
+
   // select handle
   handleChangeShift = shiftSelected => { this.setState({ shiftSelected }, () => console.log(this.state)) }
   handleChangeGroup = groupSelected => { this.setState({ groupSelected }, () => console.log(this.state)) }
@@ -136,20 +150,24 @@ class Add extends Component {
 
   // number handle
   handleChangeNumber = e => {
-    this.setState({
-      [e.target.name]: parseInt(e.target.value)
-    }, () => console.log(this.state));
+    if (parseInt(e.target.value) >= 0) {
+      this.setState({
+        [e.target.name]: parseInt(e.target.value)
+      }, () => console.log(this.state));
+    }
   }
 
-  handleChangePlanned = (e) => {
-    let plannedactivitiesToSendTemp = [ ...this.state.plannedactivitiesToSend ];
-    plannedactivitiesToSendTemp[e.target.dataset.index] = {
-      activity: e.target.dataset.idplannedactivity,
-      minute: parseInt(e.target.value)
-    };
-    this.setState(
-      { plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => console.log(this.state)
-    );
+  handleChangePlanned = e => {
+    if (parseInt(e.target.value) >= 0) {
+      let plannedactivitiesToSendTemp = [ ...this.state.plannedactivitiesToSend ];
+      plannedactivitiesToSendTemp[e.target.dataset.index] = {
+        activity: e.target.dataset.idplannedactivity,
+        minute: parseInt(e.target.value)
+      };
+      this.setState(
+        { plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => console.log(this.state)
+      );
+    }
   }
 
   handleChangeNumberUnplannedActivitiesJumlah = e => {
@@ -197,9 +215,11 @@ class Add extends Component {
   }
 
   handleChangeUnplannedMinute = e => {
-    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
-    unplannedactivitiesToSendTemp[e.target.dataset.index].minute = parseInt(e.target.value);
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+    if (parseInt(e.target.value) >= 0) {
+      let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
+      unplannedactivitiesToSendTemp[e.target.dataset.index].minute = parseInt(e.target.value);
+      this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp }, () => console.log(this.state));
+    }
   }
 
   handleChangeUnplannedDescription = e => {
@@ -308,12 +328,45 @@ class Add extends Component {
     return unplannedactivitiesForm;
   }
 
+  generateUnique = () => {
+    const length = 5;
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    const str = (new Date()).getTime().toString(16);
+    return (result + str.substr(str.length - 8)).toUpperCase();
+  }
+
+  handleSubmit = e => {
+    e.preventDefault();
+    if (this.isFormValid()) {
+      const { targetAmount, actualAmount, startAt, finishAt } = this.state;
+      const reqBody = {
+        code: this.generateUnique(),
+        shift: this.state.shiftSelected.value,
+        group: this.state.groupSelected.value,
+        proccessName: this.state.proccessnameSelected.value,
+        lineNumber: this.state.linenumberSelected.value,
+        modelType: this.state.modeltypeSelected.value,
+        targetAmount, actualAmount, startAt, finishAt,
+        plannedActivities: this.state.plannedactivitiesToSend,
+        unplannedactivities: this.state.unplannedactivitiesToSend
+      }
+      console.log(reqBody);
+    }
+    else {
+      alert("form tidak valid")
+    }
+  }
+
   render() {
     return (
       <Card title="Add" col={6}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
         <form
-          // onSubmit={this.handleSubmit}
+          onSubmit={this.handleSubmit}
           noValidate>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
           <div className="form-group">
@@ -458,6 +511,16 @@ class Add extends Component {
             {this.renderUnplannedActivity().map(component => {
               return component;
             })}
+          </div>
+          <div className="d-flex">
+            <Link to="/dashboard/production"
+              className="btn btn-cc btn-cc-white btn-cc-radius-normal ml-0 py-2 px-5">
+              <i><FontAwesomeIcon icon={faArrowLeft} /></i>&nbsp;Semua
+            </Link>
+            <button type="submit"
+              className="ml-auto btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5">
+              <i><FontAwesomeIcon icon={faPlusSquare} /></i>&nbsp;Tambahkan
+            </button>
           </div>
         </form> :
         <div className="text-center">
