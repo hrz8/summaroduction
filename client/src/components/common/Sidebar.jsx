@@ -94,6 +94,18 @@ class Sidebar extends Component {
                       </ul>
                     </div>
                   </li>
+                  {this.props.store.auth.role === 'su' &&
+                    <li>
+                      <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Users</a>
+                      <div className="collapsible-body d-block">
+                        <ul>
+                          <li>
+                            <NavLink to="/dashboard/users" className="waves-effect pl-4"><FontAwesomeIcon icon={faUsers} />&emsp;Manage</NavLink>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  }
                   <li>
                     <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Account</a>
                     <div className="collapsible-body d-block">

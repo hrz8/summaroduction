@@ -5,11 +5,12 @@ import 'react-table-6/react-table.css';
 import Moment from 'react-moment';
 import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { axios_get } from '../../../helpers';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
+import { CSVLink } from 'react-csv';
 
 class List extends Component {
   constructor(props) {
@@ -26,7 +27,8 @@ class List extends Component {
       // searchProccessName: '',
       // searchModelType: '',
       searchStartDate: null,
-      searchEndDate: null
+      searchEndDate: null,
+      downloadTapped: false
     }
     this.handleChangeProccessName = this.handleChangeProccessName.bind(this);
     this.handleChangeModelType = this.handleChangeModelType.bind(this);
@@ -131,16 +133,20 @@ class List extends Component {
     this.drawTable(queryString);
   }
 
+  exportCSV() {
+    this.csvLink.link.click();
+  }
+
   render() {
     const columns = [
       {
         Header: 'Date',
         Cell: ({ original }) => (
-          <Moment format="DD/MM/YYYY">
+          <Moment format="dddd DD/MM/YYYY">
             {original.startAt}
           </Moment>
         ),
-        width: 100
+        width: 200
       },
       {
         Header: 'Kode',
@@ -388,6 +394,33 @@ class List extends Component {
                 onClick={this.handleSearch}>
                 <FontAwesomeIcon icon={faSearch} />&ensp;Cari
               </button>
+            </div>
+            <div className="col-md-2 p-md-1 pl-md-3 text-center text-md-left">
+              <button
+                className="btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
+                onClick={this.exportCSV}
+                disabled={!this.state.downloadTapped}
+                >
+                <FontAwesomeIcon icon={faDownload} />&ensp;Download
+              </button>
+              <CSVLink 
+                  data={[
+                    { firstname: "Ahmed", lastname: "Tomi", email: "ah@smthing.co.com" },
+                    { firstname: "Raed", lastname: "Labes", email: "rl@smthing.co.com" },
+                    { firstname: "Yezzi", lastname: "Min l3b", email: "ymin@cocococo.com" }
+                  ]} 
+                  headers={[
+                    { label: "First Name", key: "firstname" },
+                    { label: "Last Name", key: "lastname" },
+                    { label: "Email", key: "email" }
+                  ]}
+                  filename={`summary_production_${(new Date()).getTime()}.csv`}
+                  target="_blank"
+                  style={{ display: 'none' }}
+                  ref={(r) => this.csvLink = r}
+                  >
+                  Download
+              </CSVLink>
             </div>
             <div className="col-md-3 ml-md-auto text-center text-md-right">
               <Link
