@@ -18,6 +18,7 @@ class List extends Component {
     this.state = {
       q: '',
       productions: [],
+      productionsCSV: [],
       proccessnames: [],
       proccessnamesoptions: [{ value: '', label: '-- Semua --' }],
       proccessnamesselected: null,
@@ -35,6 +36,7 @@ class List extends Component {
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.exportCSV = this.exportCSV.bind(this);
   }
 
   componentDidMount = async () => {
@@ -131,9 +133,10 @@ class List extends Component {
       queryString += (query.q || query.searchProccessName || query.searchModelType) ? `;${v}` : `&filter=${v}`;
     }
     this.drawTable(queryString);
+    this.setState({ downloadTapped: true });
   }
 
-  exportCSV() {
+  exportCSV = () => {
     this.csvLink.link.click();
   }
 
@@ -404,15 +407,17 @@ class List extends Component {
                 <FontAwesomeIcon icon={faDownload} />&ensp;Download
               </button>
               <CSVLink 
-                  data={[
-                    { firstname: "Ahmed", lastname: "Tomi", email: "ah@smthing.co.com" },
-                    { firstname: "Raed", lastname: "Labes", email: "rl@smthing.co.com" },
-                    { firstname: "Yezzi", lastname: "Min l3b", email: "ymin@cocococo.com" }
-                  ]} 
+                  data={this.state.productions} 
                   headers={[
-                    { label: "First Name", key: "firstname" },
-                    { label: "Last Name", key: "lastname" },
-                    { label: "Email", key: "email" }
+                    { label: "Date", key: "startAt" },
+                    { label: "Kode", key: "code" },
+                    { label: "Proccess Name", key: "proccessName.name" },
+                    { label: "Shift", key: "modelType.name" },
+                    { label: "Group", key: "group.name" },
+                    { label: "Line", key: "lineNumber.name" },
+                    { label: "Target", key: "targetAmount" },
+                    { label: "Aktual", key: "actualAmount" },
+                    { label: "OK", key: "okAmount - 9" }
                   ]}
                   filename={`summary_production_${(new Date()).getTime()}.csv`}
                   target="_blank"
