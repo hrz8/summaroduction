@@ -231,52 +231,54 @@ class Detail extends Component {
       return (
         <div key={index}>
           <h6 style={{fontWeight: 'bold'}}>{'Activity ' + (index + 1)}</h6>
-          <div className="row">
-            <div className="col-6">
-              <div className="form-group">
-                <label>Activity</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={activity}
-                  disabled />
+          <div className="ml-5">
+            <div className="row">
+              <div className="col-6">
+                <div className="form-group">
+                  <label>Activity</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={activity}
+                    disabled />
+                </div>
+              </div>
+              <div className="col-6">
+                <div className="form-group">
+                  <label>Op No.</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={operationnumber}
+                    disabled />
+                </div>
               </div>
             </div>
-            <div className="col-6">
-              <div className="form-group">
-                <label>Op No.</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={operationnumber}
-                  disabled />
+            <div className="row" key={index}>
+              <div className="col-6">
+                <div className="form-group">
+                  <label htmlFor={'inputUn' + index + 'waktu'}>Waktu</label>
+                  <input
+                    id={'inputUn' + index + 'waktu'}
+                    data-index={index}
+                    type="number"
+                    className="form-control"
+                    value={minute}
+                    disabled />
+                  <small className="form-text text-muted">menit</small>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="row" key={index}>
-            <div className="col-6">
-              <div className="form-group">
-                <label htmlFor={'inputUn' + index + 'waktu'}>Waktu</label>
-                <input
-                  id={'inputUn' + index + 'waktu'}
-                  data-index={index}
-                  type="number"
-                  className="form-control"
-                  value={minute}
-                  disabled />
-                <small className="form-text text-muted">menit</small>
-              </div>
-            </div>
-            <div className="col-6">
-              <div className="form-group" key={index}>
-                <label htmlFor={'inputUn' + index + 'description'}>Remarks</label>
-                <input
-                  id={'inputUn' + index + 'description'}
-                  data-index={index}
-                  type="text"
-                  className="form-control"
-                  value={description}
-                  disabled />
+              <div className="col-6">
+                <div className="form-group" key={index}>
+                  <label htmlFor={'inputUn' + index + 'description'}>Remarks</label>
+                  <input
+                    id={'inputUn' + index + 'description'}
+                    data-index={index}
+                    type="text"
+                    className="form-control"
+                    value={description}
+                    disabled />
+                </div>
               </div>
             </div>
           </div>

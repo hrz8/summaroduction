@@ -15,6 +15,7 @@ class Add extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      cycleTime: 17.5,
       // shift
       shifts: [],
       shiftsOptions: [],
@@ -119,6 +120,7 @@ class Add extends Component {
       });
     }
     catch(err) {
+      // throw err;
       const { statusCode } = err.response.data;
       if (statusCode === 401) {
         alert('session habis');
@@ -159,6 +161,12 @@ class Add extends Component {
   handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }) };
 
   // number handle
+  handleChangeCT = e => {
+    this.setState({
+      cycleTime: parseFloat(e.target.value)
+    });
+  }
+
   handleChangeNumber = e => {
     if (parseInt(e.target.value) >= 0) {
       this.setState({
@@ -353,8 +361,9 @@ class Add extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     if (this.isFormValid()) {
-      const { targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
+      const { cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
       const reqBody = {
+        cycleTime,
         code: this.generateUnique(),
         shift: this.state.shiftSelected.value,
         group: this.state.groupSelected.value,
@@ -394,14 +403,33 @@ class Add extends Component {
           onSubmit={this.handleSubmit}
           noValidate>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
-          <div className="form-group">
-            <label htmlFor="inputModel">Model</label>
-            <Select
-              id="inputModel"
-              placeholder="Pilih Model"
-              value={this.state.modeltypeSelected}
-              onChange={this.handleChangeModeltype}
-              options={this.state.modeltypesOptions} />
+          <div className="row">
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputCycleTime">Cycle Time</label>
+                <input
+                  id="inputCycleTime"
+                  type="number"
+                  step="0.1"
+                  className="form-control"
+                  name="cycleTime"
+                  value={this.state.cycleTime}
+                  onChange={this.handleChangeCT}
+                  />
+                <small className="form-text text-muted">detik</small>
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputModel">Model</label>
+                <Select
+                  id="inputModel"
+                  placeholder="Pilih Model"
+                  value={this.state.modeltypeSelected}
+                  onChange={this.handleChangeModeltype}
+                  options={this.state.modeltypesOptions} />
+              </div>
+            </div>
           </div>
           <div className="row">
             <div className="col-6">

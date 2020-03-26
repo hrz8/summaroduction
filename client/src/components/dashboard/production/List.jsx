@@ -46,9 +46,9 @@ class List extends Component {
       {
         Header: 'Date',
         Cell: ({ original }) => (
-          <Moment format="DD/MM/YYYY">
+          <Link to={{pathname: `/dashboard/production/detail/${original.id}`}}><Moment format="DD/MM/YYYY">
             {original.startAt}
-          </Moment>
+          </Moment></Link>
         ),
         width: 100
       },
@@ -111,36 +111,6 @@ class List extends Component {
         width: 100
       },
       {
-        Header: '%',
-        Cell: ({ original }) => {
-          return (
-            <ul>
-              <li>OK: {((original.okAmount / original.actualAmount) * 100).toFixed(2)} %</li>
-              <li>NG: {(((parseInt(original.actualAmount) - parseInt(original.okAmount)) / original.actualAmount) * 100).toFixed(2)} %</li>
-            </ul>
-          )
-        },
-        width: 180
-      },
-      {
-        Header: 'Start At',
-        Cell: ({ original }) => (
-          <Moment format="HH:mm">
-            {original.startAt}
-          </Moment>
-        ),
-        width: 100
-      },
-      {
-        Header: 'Finish At',
-        Cell: ({ original }) => (
-          <Moment format="HH:mm">
-            {original.finishAt}
-          </Moment>
-        ),
-        width: 100
-      },
-      {
         Header: 'Operating Time (minute)',
         Cell: ({ original }) => (
           <span>{((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000}</span>
@@ -169,9 +139,9 @@ class List extends Component {
         width: 180
       },
       {
-        Header: 'Work Time (minute)',
+        Header: 'Running Time (minute)',
         Cell: ({ original }) => {
-          let totalTime = ((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000;
+          const totalTime = ((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000;
           let dtAmount = 0;
           original.plannedActivities.forEach(item => {
             dtAmount += item.minute;
@@ -184,6 +154,55 @@ class List extends Component {
           )
         },
         width: 180
+      },
+      {
+        Header: 'Total Time Needed (minute)',
+        Cell: ({ original }) => (
+          <span>{((original.targetAmount * original.cycleTime) / 60).toFixed()}</span>
+        ),
+        width: 250
+      },
+      {
+        Header: '% Quality',
+        Cell: ({ original }) =>  (
+          <ul>
+            <li>NG: {(((parseInt(original.actualAmount) - parseInt(original.okAmount)) / original.actualAmount) * 100).toFixed(2)}%</li>
+            <li>OK: {((original.okAmount / original.actualAmount) * 100).toFixed(2)}%</li>
+          </ul>
+        ),
+        width: 180
+      },
+      {
+        Header: '% Summary',
+        Cell: ({ original }) => {
+          const opTime = ((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000;
+          let planDtTime = 0;
+          let unplanDtTime = 0;
+          original.plannedActivities.forEach(item => {
+            planDtTime += item.minute;
+          });
+          original.unplannedActivities.forEach(item => {
+            unplanDtTime += item.minute;
+          });
+          const totalDtTime = planDtTime + unplanDtTime;
+          const runTime = opTime - totalDtTime;
+          const needTime = ((original.targetAmount * original.cycleTime) / 60).toFixed();
+          const eff = ((runTime / needTime) * 100).toFixed(2);
+          const avail = ((runTime / (opTime - planDtTime)) * 100).toFixed(2);
+          const performance = ((((original.cycleTime * original.actualAmount) / 60) / needTime) * 100).toFixed(2);
+          const qRate = ((original.okAmount / original.actualAmount) * 100).toFixed(2);
+          const oee = ((avail * performance * qRate * 100) / 1000000).toFixed(2);
+          return (
+            <ul>
+              <li>Eff: {eff}%</li>
+              <li>Avail: {avail}%</li>
+              <li>Performance: {performance}%</li>
+              <li>Quality Rate: {qRate}%</li>
+              <li className="font-weight-bold">OEE: {oee}%</li>
+            </ul>
+          )
+        },
+        width: 210
       },
       {
         Header: 'Action',

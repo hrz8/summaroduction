@@ -16,6 +16,7 @@ class Edit extends Component {
     super(props);
     this.state = {
       id: this.props.match.params.productionId,
+      cycleTime: 0,
       code: null,
       // shift
       shifts: [],
@@ -107,9 +108,9 @@ class Edit extends Component {
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/unplanned-activity`,
         this.props.store.auth.access_token
       );
-      const { code, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
+      const { code, cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
       this.setState({
-        code, shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
+        code, cycleTime, shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
         // shift
         shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
         shiftSelected: { value: mainData.shift.id, label: `${mainData.shift.name} - ${mainData.shift.description}` },
@@ -195,6 +196,12 @@ class Edit extends Component {
   handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }) };
 
   handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }) };
+
+  handleChangeCT = e => {
+    this.setState({
+      cycleTime: parseFloat(e.target.value)
+    });
+  }
 
   // number handle
   handleChangeNumber = e => {
@@ -380,9 +387,9 @@ class Edit extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     if (this.isFormValid()) {
-      const { targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
+      const { id, cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
       const reqBody = {
-        id: this.state.id,
+        id, cycleTime,
         shift: this.state.shiftSelected.value,
         group: this.state.groupSelected.value,
         proccessName: this.state.proccessnameSelected.value,
@@ -424,14 +431,33 @@ class Edit extends Component {
             <h4 className="font-weight-bold">{this.state.code}</h4>            
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
-          <div className="form-group">
-            <label htmlFor="inputModel">Model</label>
-            <Select
-              id="inputModel"
-              placeholder="Pilih Model"
-              value={this.state.modeltypeSelected}
-              onChange={this.handleChangeModeltype}
-              options={this.state.modeltypesOptions} />
+          <div className="row">
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputCycleTime">Cycle Time</label>
+                <input
+                  id="inputCycleTime"
+                  type="number"
+                  step="0.1"
+                  className="form-control"
+                  name="cycleTime"
+                  value={this.state.cycleTime}
+                  onChange={this.handleChangeCT}
+                  />
+                <small className="form-text text-muted">detik</small>
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputModel">Model</label>
+                <Select
+                  id="inputModel"
+                  placeholder="Pilih Model"
+                  value={this.state.modeltypeSelected}
+                  onChange={this.handleChangeModeltype}
+                  options={this.state.modeltypesOptions} />
+              </div>
+            </div>
           </div>
           <div className="row">
             <div className="col-6">

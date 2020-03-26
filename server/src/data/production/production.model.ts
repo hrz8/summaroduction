@@ -70,6 +70,10 @@ export class Production extends BaseModel {
   @prop({ required: true })
   public okAmount!: number;
 
+  @IsNumber()
+  @prop({ required: true })
+  public cycleTime!: number;
+
   @prop({ required: true })
   public startAt!: Date
 
