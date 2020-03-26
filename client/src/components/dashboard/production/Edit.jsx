@@ -397,7 +397,7 @@ class Edit extends Component {
           `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${this.state.id}`,
           reqBody, this.props.store.auth.access_token
         );
-        this.props.history.push('./detail/' + newProduction.id);
+        this.props.history.push('../detail/' + newProduction.id);
       }
       catch(err) {
         const { statusCode } = err.response.data;
@@ -572,7 +572,7 @@ class Edit extends Component {
           <div className="d-flex">
             <Link to="/dashboard/production"
               className="btn btn-cc btn-cc-white btn-cc-radius-normal ml-0 py-2 px-5">
-              <i><FontAwesomeIcon icon={faArrowLeft} /></i>&nbsp;Semua
+              <i><FontAwesomeIcon icon={faArrowLeft} /></i>&nbsp;Detil
             </Link>
             <button type="submit"
               className="ml-auto btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5">

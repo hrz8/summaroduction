@@ -111,6 +111,18 @@ class List extends Component {
         width: 100
       },
       {
+        Header: '%',
+        Cell: ({ original }) => {
+          return (
+            <ul>
+              <li>OK: {((original.okAmount / original.actualAmount) * 100).toFixed(2)} %</li>
+              <li>NG: {(((parseInt(original.actualAmount) - parseInt(original.okAmount)) / original.actualAmount) * 100).toFixed(2)} %</li>
+            </ul>
+          )
+        },
+        width: 180
+      },
+      {
         Header: 'Start At',
         Cell: ({ original }) => (
           <Moment format="HH:mm">
@@ -129,7 +141,7 @@ class List extends Component {
         width: 100
       },
       {
-        Header: 'Planned Operation (minute)',
+        Header: 'Operating Time (minute)',
         Cell: ({ original }) => (
           <span>{((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000}</span>
         ),
@@ -150,7 +162,7 @@ class List extends Component {
             <ul>
               <li>Planning: {dtAmountP}</li>
               <li>Unplanning: {dtAmountU}</li>
-              <li>Total: {dtAmountP + dtAmountU}</li>
+              <li className="font-weight-bold">Total: {dtAmountP + dtAmountU}</li>
             </ul>
           )
         },

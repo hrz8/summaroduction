@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Select from 'react-select';
 import Card from '../../common/Card';
 import moment from 'moment';
-import { axios_get, axios_put } from '../../../helpers';
-import { logout } from '../../../store/actions/auth';
+import { axios_get } from '../../../helpers';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
@@ -18,33 +16,21 @@ class Detail extends Component {
       id: this.props.match.params.productionId,
       code: null,
       // shift
-      shifts: [],
-      shiftsOptions: [],
-      shiftSelected: null,
+      shiftSelected: '',
       // group
-      groups: [],
-      groupsOptions: [],
-      groupSelected: null,
+      groupSelected: '',
       // proccessname
-      proccessnames: [],
-      proccessnamesOptions: [],
-      proccessnameSelected: null,
+      proccessnameSelected: '',
       // proccessname
-      linenumbers: [],
-      linenumbersOptions: [],
-      linenumberSelected: null,
+      linenumberSelected: '',
       // proccessname
-      modeltypes: [],
-      modeltypesOptions: [],
-      modeltypeSelected: null,
+      modeltypeSelected: '',
       // planned activity
       plannedactivities: [],
       plannedactivitiesToSend: [],
       // unplanned activity
       unplannedactivities: [],
-      unplannedactivitiesOptions: [],
       unplannedactivitiesToSend: [],
-      unplannedactivitiesJumlah: 0,
       // params
       targetAmount: 1515,
       actualAmount: 0,
@@ -55,11 +41,6 @@ class Detail extends Component {
       operationnumbers: [],
       operationnumbersOptions: []
     }
-    this.handleChangeShift = this.handleChangeShift.bind(this);
-    this.handleChangeGroup = this.handleChangeGroup.bind(this);
-    this.handleChangeProccessname = this.handleChangeProccessname.bind(this);
-    this.handleChangeLinenumber = this.handleChangeLinenumber.bind(this);
-    this.handleChangeModeltype = this.handleChangeModeltype.bind(this);
     // activities
     this.handleChangeNumberUnplannedActivitiesJumlah = this.handleChangeNumberUnplannedActivitiesJumlah.bind(this);
   }
@@ -68,26 +49,6 @@ class Detail extends Component {
     try {
       const mainData = await axios_get(
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${this.state.id}?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`,
-        this.props.store.auth.access_token
-      );
-      const shifts = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/shift`,
-        this.props.store.auth.access_token
-      );
-      const groups = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/group`,
-        this.props.store.auth.access_token
-      );
-      const proccessnames = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/proccess-name`,
-        this.props.store.auth.access_token
-      );
-      const linenumbers = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/line-number`,
-        this.props.store.auth.access_token
-      );
-      const modeltypes = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/model-type`,
         this.props.store.auth.access_token
       );
       const operationnumbers = await axios_get(
@@ -104,27 +65,20 @@ class Detail extends Component {
       );
       const { code, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
       this.setState({
-        code, shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
+        code, operationnumbers, plannedactivities, unplannedactivities,
         // shift
-        shiftsOptions: shifts.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
-        shiftSelected: { value: mainData.shift.id, label: `${mainData.shift.name} - ${mainData.shift.description}` },
+        shiftSelected: `${mainData.shift.name} - ${mainData.shift.description}`,
         // group
-        groupsOptions: groups.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
-        groupSelected: { value: mainData.group.id, label: `${mainData.group.name} - ${mainData.group.description}` },
+        groupSelected: `${mainData.group.name} - ${mainData.group.description}`,
         // proccess name
-        proccessnamesOptions: proccessnames.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
-        proccessnameSelected: { value: mainData.proccessName.id, label: `${mainData.proccessName.name} ${mainData.proccessName.description}` },
+        proccessnameSelected: `${mainData.proccessName.name} ${mainData.proccessName.description}`,
         // line number
-        linenumbersOptions: linenumbers.map(item => ({ value: item.id, label: `${item.name} - ${item.description}` })),
-        linenumberSelected: { value: mainData.lineNumber.id, label: `${mainData.lineNumber.name} - ${mainData.lineNumber.description}` },
+        linenumberSelected: `${mainData.lineNumber.name} - ${mainData.lineNumber.description}`,
         // model type
-        modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
-        modeltypeSelected: { value: mainData.modelType.id, label: `${mainData.modelType.name} ${mainData.modelType.description}` },
+        modeltypeSelected: `${mainData.modelType.name} ${mainData.modelType.description}`,
         // operation
         targetAmount, actualAmount, okAmount, startAt, finishAt,
         // activity
-        unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
-        unplannedactivitiesJumlah: mainData.unplannedActivities.length,
         operationnumbersOptions: operationnumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
       }, () => {
         this.state.plannedactivities.forEach(item => {
@@ -141,10 +95,8 @@ class Detail extends Component {
             unplannedactivitiesToSend: [...prevState.unplannedactivitiesToSend, {
               minute: item.minute,
               description: item.description,
-              activity: item.activity.id,
-              activityObj: { value: item.activity.id, label: item.activity.name },
-              operationNumber: item.operationNumber ? item.operationNumber.id : null,
-              operationNumberObj: item.operationNumber ? { value: item.operationNumber.id, label: item.operationNumber.name } : null
+              activity: item.activity.name,
+              operationNumber: item.operationNumber ? item.operationNumber.name : ''
             }
           ]
           }))
@@ -152,12 +104,13 @@ class Detail extends Component {
       });
     }
     catch(err) {
-      const { statusCode } = err.response.data;
-      if (statusCode === 401) {
-        alert('session habis');
-        this.props.dispatch(logout());
-        this.props.history.push('/login');
-      }
+      throw err;
+      // const { statusCode } = err.response.data;
+      // if (statusCode === 401) {
+      //   alert('session habis');
+      //   this.props.dispatch(logout());
+      //   this.props.history.push('/login');
+      // }
     }
   }
 
@@ -178,13 +131,6 @@ class Detail extends Component {
     }
     return coreFieldIsValid && secondaryFieldIsValid;
   }
-
-  // select handle
-  handleChangeShift = shiftSelected => { this.setState({ shiftSelected }) }
-  handleChangeGroup = groupSelected => { this.setState({ groupSelected }) }
-  handleChangeProccessname = proccessnameSelected => { this.setState({ proccessnameSelected }) }
-  handleChangeLinenumber = linenumberSelected => { this.setState({ linenumberSelected }) }
-  handleChangeModeltype = modeltypeSelected => { this.setState({ modeltypeSelected }) }
 
   // time handle
   handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }) };
@@ -278,8 +224,8 @@ class Detail extends Component {
   renderUnplannedActivity = () => {
     let unplannedactivitiesForm = [];
     const unplannedactivityElem = index => {
-      const activity = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].activityObj : null;
-      const operationnumber = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].operationNumberObj : null;
+      const activity = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].activity : '';
+      const operationnumber = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].operationNumber : '';
       const minute = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].minute : 0;
       const description = this.state.unplannedactivitiesToSend[index] ? this.state.unplannedactivitiesToSend[index].description : '';
       return (
@@ -288,27 +234,22 @@ class Detail extends Component {
           <div className="row">
             <div className="col-6">
               <div className="form-group">
-                <label htmlFor="inputShift">Activity</label>
-                <Select
-                  menuPlacement="auto"
-                  id="inputShift"
-                  placeholder="Pilih Aktivitas"
+                <label>Activity</label>
+                <input
+                  type="text"
+                  className="form-control"
                   value={activity}
-                  onChange={(value) => this.handleChangeUnplannedActivity(value, index)}
-                  options={this.state.unplannedactivitiesOptions} />
+                  disabled />
               </div>
             </div>
             <div className="col-6">
               <div className="form-group">
-                <label htmlFor="inputShift">Op No.</label>
-                <Select
-                  menuPlacement="auto"
-                  id="inputShift"
-                  placeholder="Pilih OP"
+                <label>Op No.</label>
+                <input
+                  type="text"
+                  className="form-control"
                   value={operationnumber}
-                  onChange={(value) => this.handleChangeUnplannedOperationNumber(value, index)}
-                  options={this.state.operationnumbersOptions} />
-                <small className="form-text text-muted">dapat dikosongkan</small>
+                  disabled />
               </div>
             </div>
           </div>
@@ -322,8 +263,7 @@ class Detail extends Component {
                   type="number"
                   className="form-control"
                   value={minute}
-                  onChange={this.handleChangeUnplannedMinute}
-                  />
+                  disabled />
                 <small className="form-text text-muted">menit</small>
               </div>
             </div>
@@ -336,130 +276,80 @@ class Detail extends Component {
                   type="text"
                   className="form-control"
                   value={description}
-                  onChange={this.handleChangeUnplannedDescription}
-                  />
+                  disabled />
               </div>
             </div>
           </div>
         </div>
       )
     };
-    for (let i = 0; i < this.state.unplannedactivitiesJumlah ; i++) {
+    for (let i = 0; i < this.state.unplannedactivitiesToSend.length ; i++) {
       unplannedactivitiesForm.push(unplannedactivityElem(i));
     }
     return unplannedactivitiesForm;
-  }
-
-  generateUnique = () => {
-    const length = 5;
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    const str = (new Date()).getTime().toString(16);
-    return (result + str.substr(str.length - 8)).toUpperCase();
-  }
-
-  handleSubmit = async e => {
-    e.preventDefault();
-    if (this.isFormValid()) {
-      const { targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
-      const reqBody = {
-        id: this.state.id,
-        shift: this.state.shiftSelected.value,
-        group: this.state.groupSelected.value,
-        proccessName: this.state.proccessnameSelected.value,
-        lineNumber: this.state.linenumberSelected.value,
-        modelType: this.state.modeltypeSelected.value,
-        targetAmount, actualAmount, okAmount, startAt, finishAt,
-        plannedActivities: this.state.plannedactivitiesToSend,
-        unplannedActivities: this.state.unplannedactivitiesToSend
-      }
-      try {
-        const newProduction = await axios_put(
-          `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${this.state.id}`,
-          reqBody, this.props.store.auth.access_token
-        );
-        this.props.history.push('./detail/' + newProduction.id);
-      }
-      catch(err) {
-        const { statusCode } = err.response.data;
-        if (statusCode === 401) {
-          alert('session habis');
-          this.props.dispatch(logout());
-          this.props.history.push('/login');
-        }
-      }
-    }
-    else {
-      alert("form tidak valid")
-    }
   }
 
   render() {
     return (
       <Card title="Detail" col={6}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
-        <form
-          onSubmit={this.handleSubmit}
-          noValidate>
+        <>
           <div className="text-center">
             <h4 className="font-weight-bold">{this.state.code}</h4>            
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
           <div className="form-group">
             <label htmlFor="inputModel">Model</label>
-            <Select
+            <input
               id="inputModel"
-              placeholder="Pilih Model"
+              type="text"
+              className="form-control"
               value={this.state.modeltypeSelected}
-              onChange={this.handleChangeModeltype}
-              options={this.state.modeltypesOptions} />
+              disabled />
           </div>
           <div className="row">
             <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputShift">Shift</label>
-                <Select
+                <input
                   id="inputShift"
-                  placeholder="Pilih Shift"
+                  type="text"
+                  className="form-control"
                   value={this.state.shiftSelected}
-                  onChange={this.handleChangeShift}
-                  options={this.state.shiftsOptions} />
+                  disabled />
               </div>
             </div>
             <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputGroup">Group</label>
-                <Select
+                <input
                   id="inputGroup"
-                  placeholder="Pilih Group"
+                  type="text"
+                  className="form-control"
                   value={this.state.groupSelected}
-                  onChange={this.handleChangeGroup}
-                  options={this.state.groupsOptions} />
+                  disabled />
               </div>
             </div>
             <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputProccessName">Proccess Name</label>
-                <Select
+                <input
                   id="inputProccessName"
-                  placeholder="Pilih Proccess Name"
+                  type="text"
+                  className="form-control"
                   value={this.state.proccessnameSelected}
-                  onChange={this.handleChangeProccessname}
-                  options={this.state.proccessnamesOptions} />
+                  disabled />
               </div>
             </div>
             <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputLineNumber">Line Number</label>
-                <Select
+                <input
                   id="inputLineNumber"
-                  placeholder="Pilih Line Number"
+                  type="text"
+                  className="form-control"
                   value={this.state.linenumberSelected}
-                  onChange={this.handleChangeLinenumber}
-                  options={this.state.linenumbersOptions} />
+                  disabled />
               </div>
             </div>
           </div>
@@ -548,7 +438,7 @@ class Detail extends Component {
               <i><FontAwesomeIcon icon={faEdit} /></i>&nbsp;Edit
             </Link>
           </div>
-        </form> :
+        </> :
         <div className="text-center">
           <span>access denied</span>
         </div>}                         
