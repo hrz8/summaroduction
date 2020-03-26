@@ -14,6 +14,7 @@ class Detail extends Component {
     super(props);
     this.state = {
       id: this.props.match.params.productionId,
+      cycleTime: 0,
       code: null,
       // shift
       shiftSelected: '',
@@ -63,9 +64,9 @@ class Detail extends Component {
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/unplanned-activity`,
         this.props.store.auth.access_token
       );
-      const { code, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
+      const { code, cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
       this.setState({
-        code, operationnumbers, plannedactivities, unplannedactivities,
+        code, cycleTime, operationnumbers, plannedactivities, unplannedactivities,
         // shift
         shiftSelected: `${mainData.shift.name} - ${mainData.shift.description}`,
         // group
@@ -292,13 +293,60 @@ class Detail extends Component {
   }
 
   render() {
+    const opTime = ((new Date(this.state.finishAt)).getTime() - (new Date(this.state.startAt)).getTime()) / 60000;
+    let planDtTime = 0;
+    let unplanDtTime = 0;
+    this.state.plannedactivitiesToSend.forEach(item => {
+      planDtTime += item.minute;
+    });
+    this.state.unplannedactivitiesToSend.forEach(item => {
+      unplanDtTime += item.minute;
+    });
+    const totalDtTime = planDtTime + unplanDtTime;
+    const runTime = opTime - totalDtTime;
+    const needTime = ((this.state.targetAmount * this.state.cycleTime) / 60).toFixed();
+    const eff = ((runTime / needTime) * 100).toFixed(2);
+    const avail = ((runTime / (opTime - planDtTime)) * 100).toFixed(2);
+    const performance = ((((this.state.cycleTime * this.state.actualAmount) / 60) / needTime) * 100).toFixed(2);
+    const ng = (((this.state.actualAmount - this.state.okAmount) / this.state.actualAmount) * 100).toFixed(2)
+    const qRate = ((this.state.okAmount / this.state.actualAmount) * 100).toFixed(2);
+    const oee = ((avail * performance * qRate * 100) / 1000000).toFixed(2);
     return (
-      <Card title="Detail" col={6}>
+      <Card title="Detail" col={8}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
         <>
           <div className="text-center">
             <h4 className="font-weight-bold">{this.state.code}</h4>            
           </div>
+          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Summary</h5>
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th className="font-reset">CT</th>
+                <th className="font-reset">OK</th>
+                <th className="font-reset">NG</th>
+                <th className="font-reset">Eff</th>
+                <th className="font-reset">Avail</th>
+                <th className="font-reset">Performance</th>
+                <th className="font-reset">Quality Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="font-italic">
+                <td className="font-reset">{this.state.cycleTime} detik</td>
+                <td className="font-reset">{qRate}%</td>
+                <td className="font-reset">{ng}%</td>
+                <td className="font-reset">{eff}%</td>
+                <td className="font-reset">{avail}%</td>
+                <td className="font-reset">{performance}%</td>
+                <td className="font-reset">{qRate}%</td>
+              </tr>
+              <tr className="font-italic">
+                <td colSpan="6" className="font-weight-bold font-medium">OEE</td>
+                <td className="font-weight-bold color-secondary font-medium">{oee}%</td>
+              </tr>
+            </tbody>
+          </table>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
           <div className="form-group">
             <label htmlFor="inputModel">Model</label>
@@ -420,13 +468,13 @@ class Detail extends Component {
               </div>
             </div>
           </div>
-          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
+          <h5><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</span> <span className="font-italic font-weight-bold color-secondary">{planDtTime} menit</span></h5>
           <div className="row">
             {this.renderPlannedActivity().map((component, i) => {
               return (<div className="col-4" key={i}>{component}</div>);
             })}
           </div>
-          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</h5>
+          <h5><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</span> <span className="font-italic font-weight-bold color-secondary">{unplanDtTime} menit</span></h5>
           {this.renderUnplannedActivity().map(component => {
             return component;
           })}

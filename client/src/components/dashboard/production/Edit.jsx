@@ -596,7 +596,7 @@ class Edit extends Component {
             })}
           </div>
           <div className="d-flex">
-            <Link to="/dashboard/production"
+            <Link to={{pathname: `/dashboard/production/detail/${this.state.id}`}}
               className="btn btn-cc btn-cc-white btn-cc-radius-normal ml-0 py-2 px-5">
               <i><FontAwesomeIcon icon={faArrowLeft} /></i>&nbsp;Detil
             </Link>

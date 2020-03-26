@@ -166,7 +166,7 @@ class List extends Component {
         Header: '% Quality',
         Cell: ({ original }) =>  (
           <ul>
-            <li>NG: {(((parseInt(original.actualAmount) - parseInt(original.okAmount)) / original.actualAmount) * 100).toFixed(2)}%</li>
+            <li>NG: {(((original.actualAmount - original.okAmount) / original.actualAmount) * 100).toFixed(2)}%</li>
             <li>OK: {((original.okAmount / original.actualAmount) * 100).toFixed(2)}%</li>
           </ul>
         ),
