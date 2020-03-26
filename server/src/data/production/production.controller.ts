@@ -1,16 +1,91 @@
-import { Controller, UseGuards, Post, Res, Body, HttpStatus, Param, BadRequestException, Delete, Put } from '@nestjs/common';
+import { Controller, UseGuards, Post, Res, Body, HttpStatus, Param, BadRequestException, Delete, Put, Query, Get } from '@nestjs/common';
 import { BaseController } from '../../shared/base.controller';
 import { ProductionService } from './production.service';
 import { Production, ProdPlannedActivity, ProdUnplannedActivity } from './production.model';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { ActionResponse } from '../../shared/base.response';
+import { ActionResponse, GetResponse } from '../../shared/base.response';
 import { ValidateObjectId } from '../../shared/pipes/validate-object-id.pipe';
+import { ValidateQueryInteger } from 'src/shared/pipes/validate-query-integer.pipe';
+import { BasicQueryMessage, BasicFilterMessage } from 'src/shared/base.message';
+import { mongoose } from '@typegoose/typegoose';
 
 @UseGuards(JwtAuthGuard)
 @Controller('production')
 export class ProductionController extends BaseController<Production> {
   constructor(private readonly productionService: ProductionService) {
     super(productionService);
+  }
+
+  @Get()
+  public async get(@Res() res, @Query(new ValidateQueryInteger()) queryString: BasicQueryMessage): Promise<GetResponse<Production>>
+  {
+    let response: GetResponse<Production> = new GetResponse<Production>();
+    let data: Array<Production> = new Array<Production>();
+    let filterMessage: BasicFilterMessage<any> = new BasicFilterMessage<Production>();
+   
+    if (Object.keys(queryString).length) {
+      const regexColon: RegExp = /^(\w+):(\w+(?:\-\w+)?)$/;
+
+      if (queryString.filter) {
+        const filters = queryString.filter.split(";");
+        filters.forEach(item => {
+          const filter = item.match(regexColon);
+          if (filter[1] === 'date') {
+            const rangeDate = filter[2].split("-");
+            const startDate = Number(rangeDate[0]);
+            const endDate = Number(rangeDate[1]);
+            filterMessage.filter.startAt = {
+              $gte: new Date(startDate),
+              $lte: new Date(endDate)
+            }
+          }
+          else {
+            const regexDecimal: RegExp = /^\d+$/;
+            if (regexDecimal.test(filter[2])) {
+              filterMessage.filter[filter[1]] = Number(filter[2]);
+            }
+            else {
+              if (mongoose.Types.ObjectId.isValid(filter[2])) {
+                if (filter[1] !== '_id') {
+                  filterMessage.filter[filter[1]] = filter[2];
+                }
+              }
+              else {
+                filterMessage.filter[filter[1]] = new RegExp(filter[2], 'i');
+              }
+            }
+          }
+        });
+      }
+
+      if (queryString.sort) {
+        const order = queryString.sort.match(regexColon);
+        filterMessage.sort[order[1]] = order[2];
+      }
+
+      if (queryString.populate) {
+        const regexComma: RegExp = /^([\w\.]+)(,[\w\.]+)*?$/;
+        if (regexComma.test(queryString.populate)) {
+          filterMessage.populate = queryString.populate.replace(/,/g, ' ');
+        }
+      }
+
+      filterMessage.limit = queryString.limit;
+      filterMessage.offset = queryString.offset;
+    }
+
+    try {
+      data = await this.productionService.findAsync(filterMessage);
+    }
+    catch {
+      data = await this.productionService.findAsync(new BasicFilterMessage<Production>());
+    }
+
+    response.message = data.length ? "successfully fetched" : "data is empty";
+    response.total = data.length;
+    response.data = data;
+
+    return res.status(HttpStatus.OK).json(response);
   }
 
   @Post(':id/planned-activity')

@@ -8,18 +8,48 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { axios_get } from '../../../helpers';
+import Select from 'react-select';
+import DatePicker from 'react-datepicker';
 
 class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
       q: '',
-      productions: []
+      productions: [],
+      proccessnames: [],
+      proccessnamesoptions: [{ value: '', label: '-- Semua --' }],
+      proccessnamesselected: null,
+      modeltypes: [],
+      modeltypesoptions: [{ value: '', label: '-- Semua --' }],
+      modeltypesselected: null,
+      // searchProccessName: '',
+      // searchModelType: '',
+      searchStartDate: null,
+      searchEndDate: null
     }
+    this.handleChangeProccessName = this.handleChangeProccessName.bind(this);
+    this.handleChangeModelType = this.handleChangeModelType.bind(this);
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.handleEndDateChange = this.handleEndDateChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   componentDidMount = async () => {
     await this.drawTable();
+    const proccessnames = await axios_get(
+      `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/proccess-name`,
+      this.props.store.auth.access_token
+    );
+    const modeltypes = await axios_get(
+      `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/model-type`,
+      this.props.store.auth.access_token
+    );
+    this.setState(prevState => ({
+      proccessnames, modeltypes,
+      proccessnamesoptions: [...prevState.proccessnamesoptions, ...proccessnames.map(item => ({ value: item.id, label: item.name }))],
+      modeltypesoptions: [...prevState.modeltypesoptions, ...modeltypes.map(item => ({ value: item.id, label: item.name }))]
+    }));
   }
 
   handleChange = e => {
@@ -28,17 +58,77 @@ class List extends Component {
     });
   }
 
-  drawTable = async () => {
+  handleChangeProccessName(proccessnamesselected) {
+    this.setState({ proccessnamesselected });
+  }
+
+  handleChangeModelType(modeltypesselected) {
+    this.setState({ modeltypesselected });
+  }
+
+  handleStartDateChange = searchStartDate => {
+    this.setState({
+      searchStartDate
+    }, () => {
+      if (!this.state.searchStartDate) {
+        this.setState({ searchEndDate: null });
+      }
+    });
+  };
+
+  handleEndDateChange = date => {
+    let searchEndDate = new Date();
+    if (date && new Date().toDateString() !== date.toDateString()) {
+      date.setHours(23,59,0,0);
+      searchEndDate = date;
+    }
+    if (this.state.searchStartDate) {
+      this.setState({ searchEndDate });
+    }
+  };
+
+  drawTable = async (url = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`) => {
     try {
       const productions = await axios_get(
-        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`,
+        url,
         this.props.store.auth.access_token
       );
-      this.setState({ productions });
+      this.setState({ productions }, () => console.log(this.state));
     }
     catch(err) {
       throw err;
     }
+  }
+
+  handleSearch() {
+    if (this.state.searchStartDate && !this.state.searchEndDate) {      
+      alert("masukkan end date");
+      return;
+    }
+    let queryString = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`;
+    const query = { 
+      q: this.state.q,
+      searchProccessName: this.state.proccessnamesselected && this.state.proccessnamesselected.value,
+      searchModelType: this.state.modeltypesselected && this.state.modeltypesselected.value,
+      searchStartDate: (new Date(this.state.searchStartDate)).getTime(),
+      searchEndDate: (new Date(this.state.searchEndDate)).getTime()
+    };
+    if (query.q) {
+      queryString += `&filter=code:${query.q}`;
+    }
+    if (query.searchProccessName) {
+      let v = `proccessName:${query.searchProccessName}`;
+      queryString += (query.q) ? `;${v}` : `&filter=${v}`;
+    }
+    if (query.searchModelType) {
+      let v = `modelType:${query.searchModelType}`;
+      queryString += (query.q || query.searchProccessName) ? `;${v}` : `&filter=${v}`;
+    }
+    if (query.searchStartDate && query.searchEndDate) {
+      let v = `date:${query.searchStartDate}-${query.searchEndDate}`;
+      queryString += (query.q || query.searchProccessName || query.searchModelType) ? `;${v}` : `&filter=${v}`;
+    }
+    this.drawTable(queryString);
   }
 
   render() {
@@ -46,15 +136,19 @@ class List extends Component {
       {
         Header: 'Date',
         Cell: ({ original }) => (
-          <Link to={{pathname: `/dashboard/production/detail/${original.id}`}}><Moment format="DD/MM/YYYY">
+          <Moment format="DD/MM/YYYY">
             {original.startAt}
-          </Moment></Link>
+          </Moment>
         ),
         width: 100
       },
       {
-        Header: 'Code',
-        accessor: 'code',
+        Header: 'Kode',
+        Cell: ({ original }) => (
+          <Link to={{pathname: `/dashboard/production/detail/${original.id}`}}>
+            {original.code}
+          </Link>
+        ),
         width: 150
       },
       {
@@ -235,7 +329,7 @@ class List extends Component {
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
         <>
           <div className="row align-items-center">
-            <div className="col-md-3 pr-md-1 mb-md-0 mb-2">
+            <div className="col-md-2 pr-md-1 mb-md-0 mb-2">
               <label className="sr-only" htmlFor="search-dt">Cari</label>
               <div className="input-with-icon">
                 <input
@@ -243,11 +337,50 @@ class List extends Component {
                   name="q"
                   className="form-control bg-grey focus"
                   id="search-dt"
-                  placeholder="Cari..."
+                  placeholder="Kode..."
                   value={this.state.q}
                   onChange={this.handleChange}></input>
                 <i><FontAwesomeIcon icon={faSearch} /></i>
               </div>
+            </div>
+            <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+              <Select
+                placeholder="Pilih Proccess"
+                onChange={this.handleChangeProccessName}
+                options={this.state.proccessnamesoptions}
+              />
+            </div>
+            <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+              <Select
+                placeholder="Pilih Model"
+                onChange={this.handleChangeModelType}
+                options={this.state.modeltypesoptions}
+              />
+            </div>
+            <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+              <DatePicker
+                placeholderText="Start Date (00:00)"
+                className="form-control"
+                selected={this.state.searchStartDate}
+                onChange={this.handleStartDateChange}
+                dateFormat="dd/MM/yyyy"
+                maxDate={new Date()}
+                showDisabledMonthNavigation
+                isClearable
+              />
+            </div>
+            <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+              <DatePicker
+                placeholderText="End Date (23:59)"
+                className="form-control"
+                selected={this.state.searchEndDate}
+                onChange={this.handleEndDateChange}
+                dateFormat="dd/MM/yyyy"
+                maxDate={new Date()}
+                minDate={this.state.searchStartDate}
+                showDisabledMonthNavigation
+                isClearable
+              />
             </div>
             <div className="col-md-2 p-md-1 text-center text-md-left">
               <button
