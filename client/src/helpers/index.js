@@ -45,3 +45,5 @@ export const axios_put = async (url, body, access_token) => {
     throw err;
   }
 }
+
+  export const percentage = (num) => Math.min(Math.max(parseFloat(num), 0), 100)

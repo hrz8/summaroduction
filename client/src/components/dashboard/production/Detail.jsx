@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Card from '../../common/Card';
 import moment from 'moment';
-import { axios_get } from '../../../helpers';
+import { axios_get, percentage } from '../../../helpers';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
@@ -61,12 +61,13 @@ class Detail extends Component {
     const totalDtTime = planDtTime + unplanDtTime;
     const runTime = opTime - totalDtTime;
     const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
-    const eff = parseFloat(((runTime / needTime) * 100).toFixed(2));
-    const avail = parseFloat(((runTime / (opTime - planDtTime)) * 100).toFixed(2));
-    const performance = parseFloat(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2));
-    const ngRate = parseFloat(((ng / production.actualAmount) * 100).toFixed(2));
-    const qRate = parseFloat(((production.okAmount / production.actualAmount) * 100).toFixed(2));
-    const oee = parseFloat(((avail * performance * qRate * 100) / 1000000).toFixed(2));
+    // percentage
+    const eff = parseFloat(percentage(((runTime / needTime) * 100).toFixed(2)));
+    const avail = parseFloat(percentage(((runTime / (opTime - planDtTime)) * 100).toFixed(2)));
+    const performance = parseFloat(percentage(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2)));
+    const ngRate = parseFloat(percentage(((ng / production.actualAmount) * 100).toFixed(2)));
+    const qRate = parseFloat(percentage(((production.okAmount / production.actualAmount) * 100).toFixed(2)));
+    const oee = parseFloat(percentage(((avail * performance * qRate * 100) / 1000000).toFixed(2)));
     return {
       opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ngRate, qRate, oee
     }
