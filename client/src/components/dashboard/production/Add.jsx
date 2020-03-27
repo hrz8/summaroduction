@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
-import { axios_get, axios_post } from '../../../helpers';
+import { axios_get, axios_post, getTarget } from '../../../helpers';
 import { logout } from '../../../store/actions/auth';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -45,7 +45,7 @@ class Add extends Component {
       unplannedactivitiesToSend: [],
       unplannedactivitiesJumlah: 0,
       // params
-      targetAmount: 1515,
+      targetAmount: 0,
       actualAmount: 0,
       okAmount: 0,
       startAt: (new Date()).getTime(),
@@ -155,9 +155,17 @@ class Add extends Component {
   handleChangeModeltype = modeltypeSelected => { this.setState({ modeltypeSelected }) }
 
   // time handle
-  handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }) };
+  handleChangeStart = startAt => { 
+    this.setState({ startAt: startAt.getTime() }, () => {
+      this.setState({ targetAmount: getTarget(this.state) });
+    });
+  };
 
-  handleChangeFinish = finishAt => { this.setState({ finishAt: finishAt.getTime() }) };
+  handleChangeFinish = finishAt => { 
+    this.setState({ finishAt: finishAt.getTime() }, () => {
+      this.setState({ targetAmount: getTarget(this.state) });
+    });
+  };
 
   // number handle
   handleChangeCT = e => {
@@ -181,9 +189,9 @@ class Add extends Component {
         activity: e.target.dataset.idplannedactivity,
         minute: parseInt(e.target.value)
       };
-      this.setState(
-        { plannedactivitiesToSend: plannedactivitiesToSendTemp }
-      );
+      this.setState({ plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => {
+        this.setState({ targetAmount: getTarget(this.state) })
+      });
     }
   }
 

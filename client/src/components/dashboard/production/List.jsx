@@ -7,7 +7,7 @@ import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { axios_get, percentage } from '../../../helpers';
+import { axios_get, oeeList } from '../../../helpers';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import { CSVLink } from 'react-csv';
@@ -18,7 +18,7 @@ class List extends Component {
     this.state = {
       q: '',
       productions: [],
-      productionsCSV: [],
+      productionsExtends: [],
       proccessnames: [],
       proccessnamesoptions: [{ value: '', label: '-- Semua --' }],
       proccessnamesselected: null,
@@ -35,32 +35,6 @@ class List extends Component {
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
-  }
-
-  oee = (production) => {
-    const ng = production.actualAmount - production.okAmount;
-    const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
-    let planDtTime = 0;
-    let unplanDtTime = 0;
-    production.plannedActivities.forEach(item => {
-      planDtTime += item.minute;
-    });
-    production.unplannedActivities.forEach(item => {
-      unplanDtTime += item.minute;
-    });
-    const totalDtTime = planDtTime + unplanDtTime;
-    const runTime = opTime - totalDtTime;
-    const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
-    // percentage
-    const eff = parseFloat(percentage(((runTime / needTime) * 100).toFixed(2)));
-    const avail = parseFloat(percentage(((runTime / (opTime - planDtTime)) * 100).toFixed(2)));
-    const performance = parseFloat(percentage(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2)));
-    const ngRate = parseFloat(percentage(((ng / production.actualAmount) * 100).toFixed(2)));
-    const qRate = parseFloat(percentage(((production.okAmount / production.actualAmount) * 100).toFixed(2)));
-    const oee = parseFloat(percentage(((avail * performance * qRate * 100) / 1000000).toFixed(2)));
-    return {
-      opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ngRate, qRate, oee
-    }
   }
 
   componentDidMount = async () => {
@@ -86,11 +60,11 @@ class List extends Component {
     });
   }
 
-  handleChangeProccessName(proccessnamesselected) {
+  handleChangeProccessName = proccessnamesselected => {
     this.setState({ proccessnamesselected });
   }
 
-  handleChangeModelType(modeltypesselected) {
+  handleChangeModelType = modeltypesselected => {
     this.setState({ modeltypesselected });
   }
 
@@ -123,8 +97,8 @@ class List extends Component {
       );
       this.setState({ productions }, () => {
         this.setState({
-          productionsCSV: this.state.productions.map(item => {
-            const dataOee = this.oee(item);
+          productionsExtends: this.state.productions.map(item => {
+            const dataOee = oeeList(item);
             return { ...item, ...dataOee };
           })
         }, () => console.log(this.state))
@@ -135,7 +109,7 @@ class List extends Component {
     }
   }
 
-  handleSearch() {
+  handleSearch = () => {
     if (this.state.searchStartDate && !this.state.searchEndDate) {      
       alert("masukkan end date");
       return;
@@ -171,7 +145,7 @@ class List extends Component {
     this.csvLink.link.click();
   }
 
-  render() {
+  render = () =>  {
     const columns = [
       {
         Header: 'Date',
@@ -239,60 +213,36 @@ class List extends Component {
       },
       {
         Header: 'NG',
-        Cell: ({ original }) => (
-          <span>{parseInt(original.actualAmount) - parseInt(original.okAmount)}</span>
-        ),
+        accessor: 'ng',
         width: 100
       },
       {
         Header: 'Operating Time (minute)',
-        Cell: ({ original }) => (
-          <span>{((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000}</span>
-        ),
+        accessor: 'opTime',
         width: 250
       },
       {
         Header: 'Down Time (minute)',
-        Cell: ({ original }) => {
-          let dtAmountP = 0;
-          let dtAmountU = 0;
-          original.plannedActivities.forEach(item => {
-            dtAmountP += item.minute;
-          })
-          original.unplannedActivities.forEach(item => {
-            dtAmountU += item.minute;
-          })
-          return (
-            <ul>
-              <li>Planning: {dtAmountP}</li>
-              <li>Unplanning: {dtAmountU}</li>
-              <li className="font-weight-bold">Total: {dtAmountP + dtAmountU}</li>
-            </ul>
-          )
-        },
+        Cell: ({ original }) => (
+          <ul>
+            <li>Planning: {original.planDtTime}</li>
+            <li>Unplanning: {original.unplanDtTime}</li>
+            <li className="font-weight-bold">Total: {original.totalDtTime}</li>
+          </ul>
+        ),
         width: 180
       },
       {
         Header: 'Running Time (minute)',
-        Cell: ({ original }) => {
-          const totalTime = ((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000;
-          let dtAmount = 0;
-          original.plannedActivities.forEach(item => {
-            dtAmount += item.minute;
-          })
-          original.unplannedActivities.forEach(item => {
-            dtAmount += item.minute;
-          })
-          return (
-            <span>{totalTime - dtAmount}</span>
-          )
-        },
+        Cell: ({ original }) => (
+          <span>{original.runTime}</span>
+        ),
         width: 180
       },
       {
         Header: 'Total Time Needed (minute)',
         Cell: ({ original }) => (
-          <span>{((original.targetAmount * original.cycleTime) / 60).toFixed()}</span>
+          <span>{original.needTime}</span>
         ),
         width: 250
       },
@@ -300,26 +250,23 @@ class List extends Component {
         Header: '% Quality',
         Cell: ({ original }) =>  (
           <ul>
-            <li>NG: {(((original.actualAmount - original.okAmount) / original.actualAmount) * 100).toFixed(2)}%</li>
-            <li>OK: {((original.okAmount / original.actualAmount) * 100).toFixed(2)}%</li>
+            <li>NG: {original.ngRate}%</li>
+            <li>OK: {original.qRate}%</li>
           </ul>
         ),
         width: 180
       },
       {
         Header: '% Summary',
-        Cell: ({ original }) => {
-          const dataOee = this.oee(original);
-          return (
-            <ul>
-              <li>Eff: {dataOee.eff}%</li>
-              <li>Avail: {dataOee.avail}%</li>
-              <li>Performance: {dataOee.performance}%</li>
-              <li>Quality Rate: {dataOee.qRate}%</li>
-              <li className="font-weight-bold">OEE: {dataOee.oee}%</li>
-            </ul>
-          )
-        },
+        Cell: ({ original }) => (
+          <ul>
+            <li>Eff: {original.eff}%</li>
+            <li>Avail: {original.avail}%</li>
+            <li>Performance: {original.performance}%</li>
+            <li>Quality Rate: {original.qRate}%</li>
+            <li className="font-weight-bold">OEE: {original.oee}%</li>
+          </ul>
+        ),
         width: 210
       },
       {
@@ -422,7 +369,7 @@ class List extends Component {
                 <FontAwesomeIcon icon={faDownload} />&ensp;Download
               </button>
               <CSVLink 
-                  data={this.state.productionsCSV} 
+                  data={this.state.productionsExtends} 
                   headers={[
                     { label: "Date", key: "startAt" },
                     { label: "Kode", key: "code" },
@@ -465,7 +412,7 @@ class List extends Component {
             </div>
           </div>
           <ReactTable 
-            data={this.state.productions}
+            data={this.state.productionsExtends}
             columns={columns}
             pageSize={10}
             minRows={2} />
