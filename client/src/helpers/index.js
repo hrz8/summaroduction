@@ -46,60 +46,49 @@ export const axios_put = async (url, body, access_token) => {
   }
 }
 
-// for detail, add, edit
-export const oee = (production) => {
-  const ng = production.actualAmount - production.okAmount;
-  const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
-  let planDtTime = 0;
-  let unplanDtTime = 0;
-  production.plannedactivitiesToSend.forEach(item => {
-    planDtTime += item.minute;
-  });
-  production.unplannedactivitiesToSend.forEach(item => {
-    unplanDtTime += item.minute;
-  });
-  const totalDtTime = planDtTime + unplanDtTime;
-  const runTime = opTime - totalDtTime;
-  const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
-  // percentage
-  const eff = parseFloat(percentage(((runTime / needTime) * 100).toFixed(2)));
-  const avail = parseFloat(percentage(((runTime / (opTime - planDtTime)) * 100).toFixed(2)));
-  const performance = parseFloat(percentage(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2)));
-  const ngRate = parseFloat(percentage(((ng / production.actualAmount) * 100).toFixed(2)));
-  const qRate = parseFloat(percentage(((production.okAmount / production.actualAmount) * 100).toFixed(2)));
-  const oee = parseFloat(percentage(((avail * performance * qRate * 100) / 1000000).toFixed(2)));
-  return {
-    opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ngRate, qRate, oee
-  }
-}
-
-export const oeeList = (production) => {
-  const ng = production.actualAmount - production.okAmount;
-  const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
-  let planDtTime = 0;
-  let unplanDtTime = 0;
-  production.plannedActivities.forEach(item => {
-    planDtTime += item.minute;
-  });
-  production.unplannedActivities.forEach(item => {
-    unplanDtTime += item.minute;
-  });
-  const totalDtTime = planDtTime + unplanDtTime;
-  const runTime = opTime - totalDtTime;
-  const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
-  // percentage
-  const eff = parseFloat(percentage(((runTime / needTime) * 100).toFixed(2)));
-  const avail = parseFloat(percentage(((runTime / (opTime - planDtTime)) * 100).toFixed(2)));
-  const performance = parseFloat(percentage(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2)));
-  const ngRate = parseFloat(percentage(((ng / production.actualAmount) * 100).toFixed(2)));
-  const qRate = parseFloat(percentage(((production.okAmount / production.actualAmount) * 100).toFixed(2)));
-  const oee = parseFloat(percentage(((avail * performance * qRate * 100) / 1000000).toFixed(2)));
-  return {
-    opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ngRate, qRate, oee
-  }
-}
-
 export const percentage = (num) => Math.min(Math.max(parseFloat(num), 0), 100);
+
+export const oee = (production) => {
+  const fy = production.okAmount + production.reuseAmount;
+  const ng = production.actualAmount - production.okAmount;
+  const ng2 = production.actualAmount - fy;
+  const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
+  let planDtTime = 0;
+  let unplanDtTime = 0;
+  if (production.plannedActivities && production.unplannedActivities) {
+    production.plannedActivities.forEach(item => {
+      planDtTime += item.minute;
+    });
+    production.unplannedActivities.forEach(item => {
+      unplanDtTime += item.minute;
+    });
+  }
+  else {
+    production.plannedactivitiesToSend.forEach(item => {
+      planDtTime += item.minute;
+    });
+    production.unplannedactivitiesToSend.forEach(item => {
+      unplanDtTime += item.minute;
+    });
+  }
+  const totalDtTime = planDtTime + unplanDtTime;
+  const runTime = opTime - totalDtTime;
+  const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
+  // percentage
+  const eff = parseFloat(percentage(((runTime / needTime) * 100).toFixed(2)));
+  const avail = parseFloat(percentage(((runTime / (opTime - planDtTime)) * 100).toFixed(2)));
+  const performance = parseFloat(percentage(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2)));
+  const ngRate = parseFloat(percentage(((ng / production.actualAmount) * 100).toFixed(2)));
+  const ngRate2 = parseFloat(percentage(((ng2 / production.actualAmount) * 100).toFixed(2)));
+  const qRate = parseFloat(percentage(((production.okAmount / production.actualAmount) * 100).toFixed(2)));
+  const qRate2 = parseFloat(percentage(((fy / production.actualAmount) * 100).toFixed(2)));
+  const oee = parseFloat(percentage(((avail * performance * qRate * 100) / 1000000).toFixed(2)));
+  const oee2 = parseFloat(percentage(((avail * performance * qRate2 * 100) / 1000000).toFixed(2)));
+  return {
+    fy, opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2
+  }
+}
+
 
 export const getTarget = (state) => {
   const perHour = Math.floor(Math.floor((3600 / state.cycleTime)).toFixed() * 0.96).toFixed(2);

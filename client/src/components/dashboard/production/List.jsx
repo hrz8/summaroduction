@@ -7,7 +7,7 @@ import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { axios_get, oeeList } from '../../../helpers';
+import { axios_get, oee } from '../../../helpers';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import { CSVLink } from 'react-csv';
@@ -98,7 +98,7 @@ class List extends Component {
       this.setState({ productions }, () => {
         this.setState({
           productionsExtends: this.state.productions.map(item => {
-            const dataOee = oeeList(item);
+            const dataOee = oee(item);
             return { ...item, ...dataOee };
           })
         }, () => console.log(this.state))
@@ -212,8 +212,18 @@ class List extends Component {
         width: 100
       },
       {
+        Header: 'FY (+Reuse)',
+        accessor: 'fy',
+        width: 150
+      },
+      {
         Header: 'NG',
         accessor: 'ng',
+        width: 100
+      },
+      {
+        Header: 'Reuse',
+        accessor: 'reuseAmount',
         width: 100
       },
       {
@@ -257,6 +267,16 @@ class List extends Component {
         width: 180
       },
       {
+        Header: '% Quality (+Reuse)',
+        Cell: ({ original }) =>  (
+          <ul>
+            <li>NG: {original.ngRate2}%</li>
+            <li>OK: {original.qRate2}%</li>
+          </ul>
+        ),
+        width: 180
+      },
+      {
         Header: '% Summary',
         Cell: ({ original }) => (
           <ul>
@@ -264,7 +284,9 @@ class List extends Component {
             <li>Avail: {original.avail}%</li>
             <li>Performance: {original.performance}%</li>
             <li>Quality Rate: {original.qRate}%</li>
+            <li>Quality Rate 2: {original.qRate2}%</li>
             <li className="font-weight-bold">OEE: {original.oee}%</li>
+            <li className="font-weight-bold">OEE 2: {original.oee2}%</li>
           </ul>
         ),
         width: 210
@@ -374,13 +396,16 @@ class List extends Component {
                     { label: "Date", key: "startAt" },
                     { label: "Kode", key: "code" },
                     { label: "Proccess Name", key: "proccessName.name" },
-                    { label: "Shift", key: "modelType.name" },
+                    { label: "Shift", key: "shift.name" },
+                    { label: "Model", key: "modelType.name" },
                     { label: "Group", key: "group.name" },
                     { label: "Line", key: "lineNumber.name" },
                     { label: "Target", key: "targetAmount" },
                     { label: "Aktual", key: "actualAmount" },
                     { label: "OK", key: "okAmount" },
                     { label: "NG", key: "ng" },
+                    { label: "Reuse", key: "reuseAmount" },
+                    { label: "Final Amount", key: "fy" },
                     { label: "Operating Time", key: "opTime" },
                     { label: "Planned Down Time", key: "planDtTime" },
                     { label: "Unplanning Down Time", key: "unplanDtTime" },

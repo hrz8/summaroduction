@@ -72,6 +72,10 @@ export class Production extends BaseModel {
 
   @IsNumber()
   @prop({ required: true })
+  public reuseAmount!: number;
+
+  @IsNumber()
+  @prop({ required: true })
   public cycleTime!: number;
 
   @prop({ required: true })

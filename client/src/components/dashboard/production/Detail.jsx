@@ -37,6 +37,7 @@ class Detail extends Component {
       targetAmount: 1515,
       actualAmount: 0,
       okAmount: 0,
+      reuseAmount: 0,
       startAt: (new Date()).getTime(),
       finishAt: (new Date()).getTime() + 3600000,
       // operation number
@@ -65,7 +66,7 @@ class Detail extends Component {
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/unplanned-activity`,
         this.props.store.auth.access_token
       );
-      const { code, cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
+      const { code, cycleTime, targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt } = mainData;
       this.setState({
         code, cycleTime, operationnumbers, plannedactivities, unplannedactivities,
         // shift
@@ -79,7 +80,7 @@ class Detail extends Component {
         // model type
         modeltypeSelected: `${mainData.modelType.name} ${mainData.modelType.description}`,
         // operation
-        targetAmount, actualAmount, okAmount, startAt, finishAt,
+        targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt,
         // activity
         operationnumbersOptions: operationnumbers.map(item => ({ value: item.id, label: `${item.name} ${item.description}` }))
       }, () => {
@@ -295,39 +296,47 @@ class Detail extends Component {
   render() {
     const dataOee = oee(this.state);
     return (
-      <Card title="Detail" col={8}>
+      <Card title="Detail" col={11}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
         <>
           <div className="text-center">
             <h4 className="font-weight-bold">{this.state.code}</h4>            
           </div>
-          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Summary</h5>
+          <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Summary&nbsp;<small>CT: {this.state.cycleTime}s</small></h5>
           <div className="table-responsive">
             <table className="table">
                 <thead>
                   <tr>
-                    <th className="font-reset">CT</th>
                     <th className="font-reset">OK</th>
                     <th className="font-reset">NG</th>
+                    <th className="font-reset">OK(+RE)</th>
+                    <th className="font-reset">NG(+RE)</th>
                     <th className="font-reset">Efficiency</th>
                     <th className="font-reset">Availability</th>
                     <th className="font-reset">Performance</th>
                     <th className="font-reset">QualityRate</th>
+                    <th className="font-reset">QualityRate2</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="font-italic">
-                    <td className="font-reset">{this.state.cycleTime} detik</td>
                     <td className="font-reset">{dataOee.qRate}%</td>
                     <td className="font-reset">{dataOee.ngRate}%</td>
+                    <td className="font-reset">{dataOee.qRate2}%</td>
+                    <td className="font-reset">{dataOee.ngRate2}%</td>
                     <td className="font-reset">{dataOee.eff}%</td>
                     <td className="font-reset">{dataOee.avail}%</td>
                     <td className="font-reset">{dataOee.performance}%</td>
                     <td className="font-reset">{dataOee.qRate}%</td>
+                    <td className="font-reset">{dataOee.qRate2}%</td>
                   </tr>
                   <tr className="font-italic">
-                    <td colSpan="6" className="font-weight-bold font-medium">OEE</td>
+                    <td colSpan="8" className="font-weight-bold font-medium">OEE</td>
                     <td className="font-weight-bold color-secondary font-medium">{dataOee.oee}%</td>
+                  </tr>
+                  <tr className="font-italic">
+                    <td colSpan="8" className="font-weight-bold font-medium">OEE2</td>
+                    <td className="font-weight-bold color-secondary font-medium">{dataOee.oee2}%</td>
                   </tr>
                 </tbody>
               </table>
@@ -389,7 +398,7 @@ class Detail extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-3">
+            <div className="col-2">
               <div className="form-group">
                 <label htmlFor="inputTarget">Target</label>
                 <input
@@ -402,7 +411,7 @@ class Detail extends Component {
                   />
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-2">
               <div className="form-group">
                 <label htmlFor="inputAktual">Aktual</label>
                 <input
@@ -415,7 +424,20 @@ class Detail extends Component {
                   />
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-2">
+              <div className="form-group">
+                <label htmlFor="inputNG">NG</label>
+                <input
+                  id="inputNG"
+                  type="number"
+                  className="form-control"
+                  name="ngAmount"
+                  value={dataOee.ng}
+                  disabled
+                  />
+              </div>
+            </div>
+            <div className="col-2">
               <div className="form-group">
                 <label htmlFor="inputOk">OK</label>
                 <input
@@ -428,15 +450,28 @@ class Detail extends Component {
                   />
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-2">
               <div className="form-group">
-                <label htmlFor="inputNG">NG</label>
+                <label htmlFor="inputReuse">Reuse</label>
                 <input
-                  id="inputNG"
+                  id="inputReuse"
                   type="number"
                   className="form-control"
-                  name="ngAmount"
-                  value={dataOee.ng}
+                  name="reuseAmount"
+                  value={this.state.reuseAmount}
+                  disabled
+                  />
+              </div>
+            </div>
+            <div className="col-2">
+              <div className="form-group">
+                <label htmlFor="inputFY">Final OK</label>
+                <input
+                  id="inputFY"
+                  type="number"
+                  className="form-control"
+                  name="fyAmount"
+                  value={this.state.reuseAmount + this.state.okAmount}
                   disabled
                   />
               </div>

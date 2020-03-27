@@ -48,6 +48,7 @@ class Add extends Component {
       targetAmount: 0,
       actualAmount: 0,
       okAmount: 0,
+      reuseAmount: 0,
       startAt: (new Date()).getTime(),
       finishAt: (new Date()).getTime() + 3600000,
       // operation number
@@ -368,7 +369,7 @@ class Add extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     if (this.isFormValid()) {
-      const { cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
+      const { cycleTime, targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt } = this.state;
       const reqBody = {
         cycleTime,
         code: this.generateUnique(),
@@ -377,7 +378,7 @@ class Add extends Component {
         proccessName: this.state.proccessnameSelected.value,
         lineNumber: this.state.linenumberSelected.value,
         modelType: this.state.modeltypeSelected.value,
-        targetAmount, actualAmount, okAmount, startAt, finishAt,
+        targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt,
         plannedActivities: this.state.plannedactivitiesToSend,
         unplannedActivities: this.state.unplannedactivitiesToSend
       }
@@ -485,7 +486,7 @@ class Add extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputTarget">Target</label>
                 <input
@@ -498,7 +499,7 @@ class Add extends Component {
                   />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputAktual">Aktual</label>
                 <input
@@ -511,7 +512,7 @@ class Add extends Component {
                   />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputOk">OK</label>
                 <input
@@ -520,6 +521,19 @@ class Add extends Component {
                   className="form-control"
                   name="okAmount"
                   value={this.state.okAmount}
+                  onChange={this.handleChangeNumber}
+                  />
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputReuse">Reuse</label>
+                <input
+                  id="inputReuse"
+                  type="number"
+                  className="form-control"
+                  name="reuseAmount"
+                  value={this.state.reuseAmount}
                   onChange={this.handleChangeNumber}
                   />
               </div>
