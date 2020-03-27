@@ -25,8 +25,6 @@ class List extends Component {
       modeltypes: [],
       modeltypesoptions: [{ value: '', label: '-- Semua --' }],
       modeltypesselected: null,
-      // searchProccessName: '',
-      // searchModelType: '',
       searchStartDate: null,
       searchEndDate: null,
       downloadTapped: false
@@ -37,6 +35,31 @@ class List extends Component {
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
+  }
+
+  oee = (production) => {
+    const ng = production.actualAmount - production.okAmount;
+    const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
+    let planDtTime = 0;
+    let unplanDtTime = 0;
+    production.plannedActivities.forEach(item => {
+      planDtTime += item.minute;
+    });
+    production.unplannedActivities.forEach(item => {
+      unplanDtTime += item.minute;
+    });
+    const totalDtTime = planDtTime + unplanDtTime;
+    const runTime = opTime - totalDtTime;
+    const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
+    const eff = parseFloat(((runTime / needTime) * 100).toFixed(2));
+    const avail = parseFloat(((runTime / (opTime - planDtTime)) * 100).toFixed(2));
+    const performance = parseFloat(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2));
+    const ngRate = parseFloat(((ng / production.actualAmount) * 100).toFixed(2));
+    const qRate = parseFloat(((production.okAmount / production.actualAmount) * 100).toFixed(2));
+    const oee = parseFloat(((avail * performance * qRate * 100) / 1000000).toFixed(2));
+    return {
+      opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ngRate, qRate, oee
+    }
   }
 
   componentDidMount = async () => {
@@ -97,7 +120,14 @@ class List extends Component {
         url,
         this.props.store.auth.access_token
       );
-      this.setState({ productions }, () => console.log(this.state));
+      this.setState({ productions }, () => {
+        this.setState({
+          productionsCSV: this.state.productions.map(item => {
+            const dataOee = this.oee(item);
+            return { ...item, ...dataOee };
+          })
+        }, () => console.log(this.state))
+      });
     }
     catch(err) {
       throw err;
@@ -278,30 +308,14 @@ class List extends Component {
       {
         Header: '% Summary',
         Cell: ({ original }) => {
-          const opTime = ((new Date(original.finishAt)).getTime() - (new Date(original.startAt)).getTime()) / 60000;
-          let planDtTime = 0;
-          let unplanDtTime = 0;
-          original.plannedActivities.forEach(item => {
-            planDtTime += item.minute;
-          });
-          original.unplannedActivities.forEach(item => {
-            unplanDtTime += item.minute;
-          });
-          const totalDtTime = planDtTime + unplanDtTime;
-          const runTime = opTime - totalDtTime;
-          const needTime = ((original.targetAmount * original.cycleTime) / 60).toFixed();
-          const eff = ((runTime / needTime) * 100).toFixed(2);
-          const avail = ((runTime / (opTime - planDtTime)) * 100).toFixed(2);
-          const performance = ((((original.cycleTime * original.actualAmount) / 60) / needTime) * 100).toFixed(2);
-          const qRate = ((original.okAmount / original.actualAmount) * 100).toFixed(2);
-          const oee = ((avail * performance * qRate * 100) / 1000000).toFixed(2);
+          const dataOee = this.oee(original);
           return (
             <ul>
-              <li>Eff: {eff}%</li>
-              <li>Avail: {avail}%</li>
-              <li>Performance: {performance}%</li>
-              <li>Quality Rate: {qRate}%</li>
-              <li className="font-weight-bold">OEE: {oee}%</li>
+              <li>Eff: {dataOee.eff}%</li>
+              <li>Avail: {dataOee.avail}%</li>
+              <li>Performance: {dataOee.performance}%</li>
+              <li>Quality Rate: {dataOee.qRate}%</li>
+              <li className="font-weight-bold">OEE: {dataOee.oee}%</li>
             </ul>
           )
         },
@@ -407,7 +421,7 @@ class List extends Component {
                 <FontAwesomeIcon icon={faDownload} />&ensp;Download
               </button>
               <CSVLink 
-                  data={this.state.productions} 
+                  data={this.state.productionsCSV} 
                   headers={[
                     { label: "Date", key: "startAt" },
                     { label: "Kode", key: "code" },
@@ -417,7 +431,21 @@ class List extends Component {
                     { label: "Line", key: "lineNumber.name" },
                     { label: "Target", key: "targetAmount" },
                     { label: "Aktual", key: "actualAmount" },
-                    { label: "OK", key: "okAmount - 9" }
+                    { label: "OK", key: "okAmount" },
+                    { label: "NG", key: "ng" },
+                    { label: "Operating Time", key: "opTime" },
+                    { label: "Planned Down Time", key: "planDtTime" },
+                    { label: "Unplanning Down Time", key: "unplanDtTime" },
+                    { label: "Total Down Time", key: "totalDtTime" },
+                    { label: "Running Time", key: "runTime" },
+                    { label: "Total Time Needed", key: "needTime" },
+                    { label: "% NG", key: "ngRate" },
+                    { label: "% OK", key: "qRate" },
+                    { label: "Efficiency", key: "eff" },
+                    { label: "Availability", key: "avail" },
+                    { label: "Performance", key: "performance" },
+                    { label: "Quality Rate", key: "qRate" },
+                    { label: "OEE", key: "oee" }
                   ]}
                   filename={`summary_production_${(new Date()).getTime()}.csv`}
                   target="_blank"

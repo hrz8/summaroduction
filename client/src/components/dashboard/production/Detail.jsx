@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import { faArrowLeft, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { logout } from '../../../store/actions/auth';
 
 class Detail extends Component {
   constructor(props) {
@@ -44,6 +45,31 @@ class Detail extends Component {
     }
     // activities
     this.handleChangeNumberUnplannedActivitiesJumlah = this.handleChangeNumberUnplannedActivitiesJumlah.bind(this);
+  }
+
+  oee = (production) => {
+    const ng = production.actualAmount - production.okAmount;
+    const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
+    let planDtTime = 0;
+    let unplanDtTime = 0;
+    production.plannedactivitiesToSend.forEach(item => {
+      planDtTime += item.minute;
+    });
+    production.unplannedactivitiesToSend.forEach(item => {
+      unplanDtTime += item.minute;
+    });
+    const totalDtTime = planDtTime + unplanDtTime;
+    const runTime = opTime - totalDtTime;
+    const needTime = parseFloat(((production.targetAmount * production.cycleTime) / 60).toFixed());
+    const eff = parseFloat(((runTime / needTime) * 100).toFixed(2));
+    const avail = parseFloat(((runTime / (opTime - planDtTime)) * 100).toFixed(2));
+    const performance = parseFloat(((((production.cycleTime * production.actualAmount) / 60) / needTime) * 100).toFixed(2));
+    const ngRate = parseFloat(((ng / production.actualAmount) * 100).toFixed(2));
+    const qRate = parseFloat(((production.okAmount / production.actualAmount) * 100).toFixed(2));
+    const oee = parseFloat(((avail * performance * qRate * 100) / 1000000).toFixed(2));
+    return {
+      opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ngRate, qRate, oee
+    }
   }
 
   componentDidMount = async () => {
@@ -105,13 +131,12 @@ class Detail extends Component {
       });
     }
     catch(err) {
-      throw err;
-      // const { statusCode } = err.response.data;
-      // if (statusCode === 401) {
-      //   alert('session habis');
-      //   this.props.dispatch(logout());
-      //   this.props.history.push('/login');
-      // }
+      const { statusCode } = err.response.data;
+      if (statusCode === 401) {
+        alert('session habis');
+        this.props.dispatch(logout());
+        this.props.history.push('/login');
+      }
     }
   }
 
@@ -293,24 +318,7 @@ class Detail extends Component {
   }
 
   render() {
-    const opTime = ((new Date(this.state.finishAt)).getTime() - (new Date(this.state.startAt)).getTime()) / 60000;
-    let planDtTime = 0;
-    let unplanDtTime = 0;
-    this.state.plannedactivitiesToSend.forEach(item => {
-      planDtTime += item.minute;
-    });
-    this.state.unplannedactivitiesToSend.forEach(item => {
-      unplanDtTime += item.minute;
-    });
-    const totalDtTime = planDtTime + unplanDtTime;
-    const runTime = opTime - totalDtTime;
-    const needTime = ((this.state.targetAmount * this.state.cycleTime) / 60).toFixed();
-    const eff = ((runTime / needTime) * 100).toFixed(2);
-    const avail = ((runTime / (opTime - planDtTime)) * 100).toFixed(2);
-    const performance = ((((this.state.cycleTime * this.state.actualAmount) / 60) / needTime) * 100).toFixed(2);
-    const ng = (((this.state.actualAmount - this.state.okAmount) / this.state.actualAmount) * 100).toFixed(2)
-    const qRate = ((this.state.okAmount / this.state.actualAmount) * 100).toFixed(2);
-    const oee = ((avail * performance * qRate * 100) / 1000000).toFixed(2);
+    const dataOee = this.oee(this.state);
     return (
       <Card title="Detail" col={8}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
@@ -319,34 +327,36 @@ class Detail extends Component {
             <h4 className="font-weight-bold">{this.state.code}</h4>            
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Summary</h5>
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th className="font-reset">CT</th>
-                <th className="font-reset">OK</th>
-                <th className="font-reset">NG</th>
-                <th className="font-reset">Eff</th>
-                <th className="font-reset">Avail</th>
-                <th className="font-reset">Performance</th>
-                <th className="font-reset">Quality Rate</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="font-italic">
-                <td className="font-reset">{this.state.cycleTime} detik</td>
-                <td className="font-reset">{qRate}%</td>
-                <td className="font-reset">{ng}%</td>
-                <td className="font-reset">{eff}%</td>
-                <td className="font-reset">{avail}%</td>
-                <td className="font-reset">{performance}%</td>
-                <td className="font-reset">{qRate}%</td>
-              </tr>
-              <tr className="font-italic">
-                <td colSpan="6" className="font-weight-bold font-medium">OEE</td>
-                <td className="font-weight-bold color-secondary font-medium">{oee}%</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="table-responsive">
+            <table className="table">
+                <thead>
+                  <tr>
+                    <th className="font-reset">CT</th>
+                    <th className="font-reset">OK</th>
+                    <th className="font-reset">NG</th>
+                    <th className="font-reset">Efficiency</th>
+                    <th className="font-reset">Availability</th>
+                    <th className="font-reset">Performance</th>
+                    <th className="font-reset">QualityRate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="font-italic">
+                    <td className="font-reset">{this.state.cycleTime} detik</td>
+                    <td className="font-reset">{dataOee.qRate}%</td>
+                    <td className="font-reset">{dataOee.ngRate}%</td>
+                    <td className="font-reset">{dataOee.eff}%</td>
+                    <td className="font-reset">{dataOee.avail}%</td>
+                    <td className="font-reset">{dataOee.performance}%</td>
+                    <td className="font-reset">{dataOee.qRate}%</td>
+                  </tr>
+                  <tr className="font-italic">
+                    <td colSpan="6" className="font-weight-bold font-medium">OEE</td>
+                    <td className="font-weight-bold color-secondary font-medium">{dataOee.oee}%</td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Condition</h5>
           <div className="form-group">
             <label htmlFor="inputModel">Model</label>
@@ -404,7 +414,7 @@ class Detail extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputTarget">Target</label>
                 <input
@@ -417,7 +427,7 @@ class Detail extends Component {
                   />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputAktual">Aktual</label>
                 <input
@@ -430,7 +440,7 @@ class Detail extends Component {
                   />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputOk">OK</label>
                 <input
@@ -439,6 +449,19 @@ class Detail extends Component {
                   className="form-control"
                   name="okAmount"
                   value={this.state.okAmount}
+                  disabled
+                  />
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputNG">NG</label>
+                <input
+                  id="inputNG"
+                  type="number"
+                  className="form-control"
+                  name="ngAmount"
+                  value={dataOee.ng}
                   disabled
                   />
               </div>
@@ -468,13 +491,13 @@ class Detail extends Component {
               </div>
             </div>
           </div>
-          <h5><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</span> <span className="font-italic font-weight-bold color-secondary">{planDtTime} menit</span></h5>
+          <h5><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</span> <span className="font-italic font-weight-bold color-secondary">{dataOee.planDtTime} menit</span></h5>
           <div className="row">
             {this.renderPlannedActivity().map((component, i) => {
               return (<div className="col-4" key={i}>{component}</div>);
             })}
           </div>
-          <h5><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</span> <span className="font-italic font-weight-bold color-secondary">{unplanDtTime} menit</span></h5>
+          <h5><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Unplanning Down Time</span> <span className="font-italic font-weight-bold color-secondary">{dataOee.unplanDtTime} menit</span></h5>
           {this.renderUnplannedActivity().map(component => {
             return component;
           })}

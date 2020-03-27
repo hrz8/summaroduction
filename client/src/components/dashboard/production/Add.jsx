@@ -120,7 +120,6 @@ class Add extends Component {
       });
     }
     catch(err) {
-      // throw err;
       const { statusCode } = err.response.data;
       if (statusCode === 401) {
         alert('session habis');
