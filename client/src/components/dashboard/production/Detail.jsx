@@ -308,9 +308,8 @@ class Detail extends Component {
                 <thead>
                   <tr>
                     <th className="font-reset">OK</th>
-                    <th className="font-reset">NG</th>
                     <th className="font-reset">OK(+RE)</th>
-                    <th className="font-reset">NG(+RE)</th>
+                    <th className="font-reset">NG</th>
                     <th className="font-reset">Efficiency</th>
                     <th className="font-reset">Availability</th>
                     <th className="font-reset">Performance</th>
@@ -321,9 +320,8 @@ class Detail extends Component {
                 <tbody>
                   <tr className="font-italic">
                     <td className="font-reset">{dataOee.qRate}%</td>
-                    <td className="font-reset">{dataOee.ngRate}%</td>
                     <td className="font-reset">{dataOee.qRate2}%</td>
-                    <td className="font-reset">{dataOee.ngRate2}%</td>
+                    <td className="font-reset">{dataOee.ngRate}%</td>
                     <td className="font-reset">{dataOee.eff}%</td>
                     <td className="font-reset">{dataOee.avail}%</td>
                     <td className="font-reset">{dataOee.performance}%</td>
@@ -331,11 +329,11 @@ class Detail extends Component {
                     <td className="font-reset">{dataOee.qRate2}%</td>
                   </tr>
                   <tr className="font-italic">
-                    <td colSpan="8" className="font-weight-bold font-medium">OEE</td>
+                    <td colSpan="7" className="font-weight-bold font-medium">OEE</td>
                     <td className="font-weight-bold color-secondary font-medium">{dataOee.oee}%</td>
                   </tr>
                   <tr className="font-italic">
-                    <td colSpan="8" className="font-weight-bold font-medium">OEE2</td>
+                    <td colSpan="7" className="font-weight-bold font-medium">OEE2</td>
                     <td className="font-weight-bold color-secondary font-medium">{dataOee.oee2}%</td>
                   </tr>
                 </tbody>

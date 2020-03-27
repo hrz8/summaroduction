@@ -84,8 +84,21 @@ export const oee = (production) => {
   const qRate2 = parseFloat(percentage(((fy / production.actualAmount) * 100).toFixed(2)));
   const oee = parseFloat(percentage(((avail * performance * qRate * 100) / 1000000).toFixed(2)));
   const oee2 = parseFloat(percentage(((avail * performance * qRate2 * 100) / 1000000).toFixed(2)));
+  // comma
+  const effComma = eff.toString().replace('.', ',');
+  const availComma = avail.toString().replace('.', ',');
+  const performanceComma = performance.toString().replace('.', ',');
+  const ngRateComma = ngRate.toString().replace('.', ',');
+  const ngRate2Comma = ngRate2.toString().replace('.', ',');
+  const qRateComma = qRate.toString().replace('.', ',');
+  const qRate2Comma = qRate2.toString().replace('.', ',');
+  const oeeComma = oee.toString().replace('.', ',');
+  const oee2Comma = oee2.toString().replace('.', ',');
   return {
-    fy, opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2
+    fy, opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, 
+    eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2,
+    effComma, availComma, performanceComma, ngRateComma, ngRate2Comma, qRateComma,
+    qRate2Comma, oeeComma, oee2Comma
   }
 }
 

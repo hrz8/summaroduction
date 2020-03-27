@@ -50,6 +50,7 @@ class Edit extends Component {
       targetAmount: 1515,
       actualAmount: 0,
       okAmount: 0,
+      reuseAmount: 0,
       startAt: (new Date()).getTime(),
       finishAt: (new Date()).getTime() + 3600000,
       // operation number
@@ -108,7 +109,7 @@ class Edit extends Component {
         `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/unplanned-activity`,
         this.props.store.auth.access_token
       );
-      const { code, cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = mainData;
+      const { code, cycleTime, targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt } = mainData;
       this.setState({
         code, cycleTime, shifts, groups, proccessnames, linenumbers, modeltypes, operationnumbers, plannedactivities, unplannedactivities,
         // shift
@@ -127,7 +128,7 @@ class Edit extends Component {
         modeltypesOptions: modeltypes.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         modeltypeSelected: { value: mainData.modelType.id, label: `${mainData.modelType.name} ${mainData.modelType.description}` },
         // operation
-        targetAmount, actualAmount, okAmount, startAt: new Date(startAt).getTime(), finishAt: new Date(finishAt).getTime(),
+        targetAmount, actualAmount, okAmount, reuseAmount, startAt: new Date(startAt).getTime(), finishAt: new Date(finishAt).getTime(),
         // activity
         unplannedactivitiesOptions: unplannedactivities.map(item => ({ value: item.id, label: `${item.name} ${item.description}` })),
         unplannedactivitiesJumlah: mainData.unplannedActivities.length,
@@ -395,7 +396,7 @@ class Edit extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     if (this.isFormValid()) {
-      const { id, cycleTime, targetAmount, actualAmount, okAmount, startAt, finishAt } = this.state;
+      const { id, cycleTime, targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt } = this.state;
       const reqBody = {
         id, cycleTime,
         shift: this.state.shiftSelected.value,
@@ -403,7 +404,7 @@ class Edit extends Component {
         proccessName: this.state.proccessnameSelected.value,
         lineNumber: this.state.linenumberSelected.value,
         modelType: this.state.modeltypeSelected.value,
-        targetAmount, actualAmount, okAmount, startAt, finishAt,
+        targetAmount, actualAmount, okAmount, reuseAmount, startAt, finishAt,
         plannedActivities: this.state.plannedactivitiesToSend,
         unplannedActivities: this.state.unplannedactivitiesToSend
       }
@@ -514,7 +515,7 @@ class Edit extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputTarget">Target</label>
                 <input
@@ -527,7 +528,7 @@ class Edit extends Component {
                   />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputAktual">Aktual</label>
                 <input
@@ -540,7 +541,7 @@ class Edit extends Component {
                   />
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputOk">OK</label>
                 <input
@@ -549,6 +550,19 @@ class Edit extends Component {
                   className="form-control"
                   name="okAmount"
                   value={this.state.okAmount}
+                  onChange={this.handleChangeNumber}
+                  />
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputReuse">Reuse</label>
+                <input
+                  id="inputReuse"
+                  type="number"
+                  className="form-control"
+                  name="reuseAmount"
+                  value={this.state.reuseAmount}
                   onChange={this.handleChangeNumber}
                   />
               </div>

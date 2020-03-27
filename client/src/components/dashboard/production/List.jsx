@@ -101,7 +101,7 @@ class List extends Component {
             const dataOee = oee(item);
             return { ...item, ...dataOee };
           })
-        }, () => console.log(this.state))
+        })
       });
     }
     catch(err) {
@@ -142,7 +142,10 @@ class List extends Component {
   }
 
   exportCSV = () => {
-    this.csvLink.link.click();
+    this.cariButton.click();
+    setTimeout(() => {
+      this.csvLink.link.click();
+    }, 1000);
   }
 
   render = () =>  {
@@ -270,7 +273,6 @@ class List extends Component {
         Header: '% Quality (+Reuse)',
         Cell: ({ original }) =>  (
           <ul>
-            <li>NG: {original.ngRate2}%</li>
             <li>OK: {original.qRate2}%</li>
           </ul>
         ),
@@ -378,7 +380,8 @@ class List extends Component {
             <div className="col-md-2 p-md-1 text-center text-md-left">
               <button
                 className="btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
-                onClick={this.handleSearch}>
+                onClick={this.handleSearch}
+                ref={(r) => this.cariButton = r}>
                 <FontAwesomeIcon icon={faSearch} />&ensp;Cari
               </button>
             </div>
@@ -414,11 +417,14 @@ class List extends Component {
                     { label: "Total Time Needed", key: "needTime" },
                     { label: "% NG", key: "ngRate" },
                     { label: "% OK", key: "qRate" },
+                    { label: "% OK (+Reuse)", key: "qRate2" },
                     { label: "Efficiency", key: "eff" },
                     { label: "Availability", key: "avail" },
                     { label: "Performance", key: "performance" },
                     { label: "Quality Rate", key: "qRate" },
-                    { label: "OEE", key: "oee" }
+                    { label: "Quality Rate (+Reuse)", key: "qRate2" },
+                    { label: "OEE", key: "oee" },
+                    { label: "OEE (+Reuse)", key: "oee2" }
                   ]}
                   filename={`summary_production_${(new Date()).getTime()}.csv`}
                   target="_blank"
