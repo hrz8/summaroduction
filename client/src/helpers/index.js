@@ -46,6 +46,18 @@ export const axios_put = async (url, body, access_token) => {
   }
 }
 
+export const axios_delete = async (url, access_token) => {
+  try {
+    const results = await axios.delete(
+      url, { headers: { Authorization: `Bearer ${access_token}` } }
+    );
+    return results.data.data;
+  }
+  catch (err) {
+    throw err;
+  }
+}
+
 export const percentage = (num) => Math.min(Math.max(parseFloat(num), 0), 100);
 
 export const oee = (production) => {

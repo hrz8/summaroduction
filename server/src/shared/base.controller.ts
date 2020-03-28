@@ -26,7 +26,7 @@ export class BaseController<TModel extends BaseModel> {
     let filterMessage: BasicFilterMessage<TModel> = new BasicFilterMessage<TModel>();
    
     if (Object.keys(queryString).length) {
-      const regexColon: RegExp = /^(\w+):(\w+(?:\-\w+)?)$/;
+      const regexColon: RegExp = /^(\w+):([\s\w]+(?:\-\w+)?)$/;
 
       if (queryString.filter) {
         const filters = queryString.filter.split(";");
