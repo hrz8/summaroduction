@@ -41,6 +41,21 @@ import ModelTypeAdd from './components/dashboard/modeltype/Add';
 import ModelTypeDetail from './components/dashboard/modeltype/Detail';
 import ModelTypeEdit from './components/dashboard/modeltype/Edit';
 
+import PlannedActivity from './components/dashboard/plannedactivity/List';
+import PlannedActivityAdd from './components/dashboard/plannedactivity/Add';
+import PlannedActivityDetail from './components/dashboard/plannedactivity/Detail';
+import PlannedActivityEdit from './components/dashboard/plannedactivity/Edit';
+
+import UnplannedActivity from './components/dashboard/unplannedactivity/List';
+import UnplannedActivityAdd from './components/dashboard/unplannedactivity/Add';
+import UnplannedActivityDetail from './components/dashboard/unplannedactivity/Detail';
+import UnplannedActivityEdit from './components/dashboard/unplannedactivity/Edit';
+
+import OperationNumber from './components/dashboard/operationnumber/List';
+import OperationNumberAdd from './components/dashboard/operationnumber/Add';
+import OperationNumberDetail from './components/dashboard/operationnumber/Detail';
+import OperationNumberEdit from './components/dashboard/operationnumber/Edit';
+
 import './App.scss';
 
 const App = (props) => {
@@ -90,6 +105,21 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/model-type/add" auth={props.store.auth} component={ModelTypeAdd} />
           <PrivateRoute exact path="/dashboard/model-type/detail/:colId" auth={props.store.auth} component={ModelTypeDetail} />
           <PrivateRoute exact path="/dashboard/model-type/edit/:colId" auth={props.store.auth} component={ModelTypeEdit} />
+
+          <PrivateRoute exact path="/dashboard/planned-activity" auth={props.store.auth} component={PlannedActivity} />
+          <PrivateRoute exact path="/dashboard/planned-activity/add" auth={props.store.auth} component={PlannedActivityAdd} />
+          <PrivateRoute exact path="/dashboard/planned-activity/detail/:colId" auth={props.store.auth} component={PlannedActivityDetail} />
+          <PrivateRoute exact path="/dashboard/planned-activity/edit/:colId" auth={props.store.auth} component={PlannedActivityEdit} />
+
+          <PrivateRoute exact path="/dashboard/unplanned-activity" auth={props.store.auth} component={UnplannedActivity} />
+          <PrivateRoute exact path="/dashboard/unplanned-activity/add" auth={props.store.auth} component={UnplannedActivityAdd} />
+          <PrivateRoute exact path="/dashboard/unplanned-activity/detail/:colId" auth={props.store.auth} component={UnplannedActivityDetail} />
+          <PrivateRoute exact path="/dashboard/unplanned-activity/edit/:colId" auth={props.store.auth} component={UnplannedActivityEdit} />
+
+          <PrivateRoute exact path="/dashboard/operation-number" auth={props.store.auth} component={OperationNumber} />
+          <PrivateRoute exact path="/dashboard/operation-number/add" auth={props.store.auth} component={OperationNumberAdd} />
+          <PrivateRoute exact path="/dashboard/operation-number/detail/:colId" auth={props.store.auth} component={OperationNumberDetail} />
+          <PrivateRoute exact path="/dashboard/operation-number/edit/:colId" auth={props.store.auth} component={OperationNumberEdit} />
             
         </Container>
       </main>

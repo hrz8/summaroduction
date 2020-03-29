@@ -151,6 +151,40 @@ class List extends Component {
   render = () =>  {
     const columns = [
       {
+        Header: 'Kode',
+        Cell: ({ original }) => (
+          <Link to={{ pathname: `/dashboard/production/detail/${original.id}` }}>
+            {original.code}
+          </Link>
+        ),
+        width: 150
+      },
+      {
+        Header: 'Action',
+        sortable: false,
+        width: 250,
+        Cell: ({ original }) => (
+          <>
+            <Link to={{ pathname: `/dashboard/production/detail/${original.id}` }}
+              className="btn btn-cc btn-cc-primary btn-cc-radius-normal p-1 mb-1">
+              <FontAwesomeIcon icon={faInfoCircle} />&nbsp;Detil
+            </Link>
+            <Link to={{ pathname: `/dashboard/production/edit/${original.id}` }}
+              className="btn btn-cc btn-cc-primary btn-cc-radius-normal p-1 mb-1">
+              <FontAwesomeIcon icon={faEdit} />&nbsp;Edit
+            </Link>
+            {this.props.store.auth.role === "su" ?
+              <button
+                className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
+                data-id={original.id}
+                data-name={original.name}
+                onClick={this.handleDelete}>
+                <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Hapus
+            </button> : <></>}
+          </>
+        )
+      },
+      {
         Header: 'Date',
         Cell: ({ original }) => (
           <Moment format="dddd DD/MM/YYYY">
@@ -158,15 +192,6 @@ class List extends Component {
           </Moment>
         ),
         width: 200
-      },
-      {
-        Header: 'Kode',
-        Cell: ({ original }) => (
-          <Link to={{pathname: `/dashboard/production/detail/${original.id}`}}>
-            {original.code}
-          </Link>
-        ),
-        width: 150
       },
       {
         Header: 'Proccess Name',
@@ -292,32 +317,7 @@ class List extends Component {
           </ul>
         ),
         width: 210
-      },
-      {
-        Header: 'Action',
-        sortable: false,
-        width: 250,
-        Cell: ({ original }) => (
-          <>
-            <Link to={{pathname: `/dashboard/production/detail/${original.id}`}}
-              className="btn btn-cc btn-cc-primary btn-cc-radius-normal p-1 mb-1">
-              <FontAwesomeIcon icon={faInfoCircle} />&nbsp;Detil
-            </Link>
-            <Link to={{pathname: `/dashboard/production/edit/${original.id}`}}
-              className="btn btn-cc btn-cc-primary btn-cc-radius-normal p-1 mb-1">
-              <FontAwesomeIcon icon={faEdit} />&nbsp;Edit
-            </Link>
-            {this.props.store.auth.role === "su" ?
-            <button
-              className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
-              data-id={original.id}
-              data-name={original.name}
-              onClick={this.handleDelete}>
-              <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Hapus
-            </button> : <></>}
-          </>
-        )
-      },
+      }
     ];
     return (
       <Card title={"Production"} col={12}>
