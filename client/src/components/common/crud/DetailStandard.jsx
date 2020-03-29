@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faEdit } from '@fortawesome/free-solid-svg-icons';
 import Card from '../../common/Card';
-import { axios_get } from '../../../helpers';
+import { axios_get, handle_error } from '../../../helpers';
 
 class DetailStandard extends Component {
   constructor(props) {
@@ -17,12 +17,16 @@ class DetailStandard extends Component {
   }
 
   componentDidMount = async () => {
-    const data = await axios_get(
-      `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/${this.props.uri}/${this.state.id}`,
-      this.props.store.auth.access_token
-    );
-    
-    this.setState({ name: data.name, description: data.description });
+    try {
+      const data = await axios_get(
+        `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/${this.props.uri}/${this.state.id}`,
+        this.props.store.auth.access_token
+      );
+      this.setState({ name: data.name, description: data.description });
+    }
+    catch (err) {
+      handle_error(err.response.data.statusCode);
+    }
   }
 
   render = () => {

@@ -19,6 +19,7 @@ import ProductionEdit from './components/dashboard/production/Edit';
 import Shift from './components/dashboard/shift/List';
 import ShiftAdd from './components/dashboard/shift/Add';
 import ShiftDetail from './components/dashboard/shift/Detail';
+import ShiftEdit from './components/dashboard/shift/Edit';
 
 import './App.scss';
 
@@ -48,6 +49,7 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/shift" auth={props.store.auth} component={Shift} />
           <PrivateRoute exact path="/dashboard/shift/add" auth={props.store.auth} component={ShiftAdd} />
           <PrivateRoute exact path="/dashboard/shift/detail/:colId" auth={props.store.auth} component={ShiftDetail} />
+          <PrivateRoute exact path="/dashboard/shift/edit/:colId" auth={props.store.auth} component={ShiftEdit} />
             
         </Container>
       </main>
