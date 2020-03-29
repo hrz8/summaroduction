@@ -56,7 +56,7 @@ class EditStandard extends Component {
 
   render = () => {
     return (
-      <Card title={`Tambah Data ${this.props.label}`} col={6}>
+      <Card title={`Edit Data ${this.props.label}`} col={6}>
         <form
           onSubmit={this.handleSubmit}
           noValidate>
