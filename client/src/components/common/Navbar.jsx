@@ -13,7 +13,9 @@ import {
   faEdit,
   faInfoCircle,
   faKey,
-  faIndustry} from '@fortawesome/free-solid-svg-icons';
+  faIndustry,
+  faUsers,
+  faAdjust} from '@fortawesome/free-solid-svg-icons';
 import { logout } from '../../store/actions/auth';
 
 
@@ -24,7 +26,9 @@ const breadcrumbData1 = [
 ]
 
 const breadcrumbData2 = [
-  { name: 'production', label: "Production", logo: faIndustry, link: "/dashboard/production" },
+  { name: 'production', label: "Productions", logo: faIndustry, link: "/dashboard/production" },
+  { name: 'shift', label: "Shifts", logo: faAdjust, link: "/dashboard/shift" },
+  { name: 'group', label: "Groups", logo: faUsers, link: "/dashboard/group" },
   { name: 'change-password', label: "Change Password", logo: faKey, link: "/account/change-password" }
 ]
 

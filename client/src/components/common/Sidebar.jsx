@@ -7,13 +7,13 @@ import {
   faIndustry,
   faAdjust,
   faUsers,
-  faSpinner,
   faGripLines,
   faCubes,
   faRandom,
   faListOl,
   faBriefcase,
-  faKey} from '@fortawesome/free-solid-svg-icons';
+  faKey,
+  faBoxOpen} from '@fortawesome/free-solid-svg-icons';
 import logo from '../../logo.png';
 
 class Sidebar extends Component {
@@ -57,23 +57,23 @@ class Sidebar extends Component {
                     </div>
                   </li>
                   <li>
-                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Options</a>
+                    <a href="/#" className="collapsible-header disable-anchor waves-effect arrow-r">Condition</a>
                     <div className="collapsible-body d-block">
                       <ul>
                         <li>
-                          <NavLink to="/dashboard/shift" className="waves-effect pl-4"><FontAwesomeIcon icon={faAdjust} />&emsp;Shift</NavLink>
+                          <NavLink to="/dashboard/shift" className="waves-effect pl-4"><FontAwesomeIcon icon={faAdjust} />&emsp;Shifts</NavLink>
                         </li>
                         <li>
-                          <NavLink to="/dashboard/group" className="waves-effect pl-4"><FontAwesomeIcon icon={faUsers} />&emsp;Group</NavLink>
+                          <NavLink to="/dashboard/group" className="waves-effect pl-4"><FontAwesomeIcon icon={faUsers} />&emsp;Groups</NavLink>
                         </li>
                         <li>
-                          <NavLink to="/dashboard/proccess-name" className="waves-effect pl-4"><FontAwesomeIcon icon={faSpinner} />&emsp;Proccess Name</NavLink>
+                          <NavLink to="/dashboard/proccess-name" className="waves-effect pl-4"><FontAwesomeIcon icon={faBoxOpen} />&emsp;Proccess</NavLink>
                         </li>
                         <li>
-                          <NavLink to="/dashboard/line-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faGripLines} />&emsp;Line Number</NavLink>
+                          <NavLink to="/dashboard/line-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faGripLines} />&emsp;Line Numbers</NavLink>
                         </li>
                         <li>
-                          <NavLink to="/dashboard/model" className="waves-effect pl-4"><FontAwesomeIcon icon={faCubes} />&emsp;Model</NavLink>
+                          <NavLink to="/dashboard/model" className="waves-effect pl-4"><FontAwesomeIcon icon={faCubes} />&emsp;Models</NavLink>
                         </li>
                       </ul>
                     </div>
