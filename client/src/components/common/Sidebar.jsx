@@ -73,7 +73,7 @@ class Sidebar extends Component {
                           <NavLink to="/dashboard/line-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faGripLines} />&emsp;Line Numbers</NavLink>
                         </li>
                         <li>
-                          <NavLink to="/dashboard/model" className="waves-effect pl-4"><FontAwesomeIcon icon={faCubes} />&emsp;Models</NavLink>
+                          <NavLink to="/dashboard/model-type" className="waves-effect pl-4"><FontAwesomeIcon icon={faCubes} />&emsp;Models</NavLink>
                         </li>
                       </ul>
                     </div>

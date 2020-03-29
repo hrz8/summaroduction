@@ -26,6 +26,21 @@ import GroupAdd from './components/dashboard/group/Add';
 import GroupDetail from './components/dashboard/group/Detail';
 import GroupEdit from './components/dashboard/group/Edit';
 
+import ProccessName from './components/dashboard/proccessname/List';
+import ProccessNameAdd from './components/dashboard/proccessname/Add';
+import ProccessNameDetail from './components/dashboard/proccessname/Detail';
+import ProccessNameEdit from './components/dashboard/proccessname/Edit';
+
+import LineNumber from './components/dashboard/linenumber/List';
+import LineNumberAdd from './components/dashboard/linenumber/Add';
+import LineNumberDetail from './components/dashboard/linenumber/Detail';
+import LineNumberEdit from './components/dashboard/linenumber/Edit';
+
+import ModelType from './components/dashboard/modeltype/List';
+import ModelTypeAdd from './components/dashboard/modeltype/Add';
+import ModelTypeDetail from './components/dashboard/modeltype/Detail';
+import ModelTypeEdit from './components/dashboard/modeltype/Edit';
+
 import './App.scss';
 
 const App = (props) => {
@@ -60,6 +75,21 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/group/add" auth={props.store.auth} component={GroupAdd} />
           <PrivateRoute exact path="/dashboard/group/detail/:colId" auth={props.store.auth} component={GroupDetail} />
           <PrivateRoute exact path="/dashboard/group/edit/:colId" auth={props.store.auth} component={GroupEdit} />
+
+          <PrivateRoute exact path="/dashboard/proccess-name" auth={props.store.auth} component={ProccessName} />
+          <PrivateRoute exact path="/dashboard/proccess-name/add" auth={props.store.auth} component={ProccessNameAdd} />
+          <PrivateRoute exact path="/dashboard/proccess-name/detail/:colId" auth={props.store.auth} component={ProccessNameDetail} />
+          <PrivateRoute exact path="/dashboard/proccess-name/edit/:colId" auth={props.store.auth} component={ProccessNameEdit} />
+
+          <PrivateRoute exact path="/dashboard/line-number" auth={props.store.auth} component={LineNumber} />
+          <PrivateRoute exact path="/dashboard/line-number/add" auth={props.store.auth} component={LineNumberAdd} />
+          <PrivateRoute exact path="/dashboard/line-number/detail/:colId" auth={props.store.auth} component={LineNumberDetail} />
+          <PrivateRoute exact path="/dashboard/line-number/edit/:colId" auth={props.store.auth} component={LineNumberEdit} />
+
+          <PrivateRoute exact path="/dashboard/model-type" auth={props.store.auth} component={ModelType} />
+          <PrivateRoute exact path="/dashboard/model-type/add" auth={props.store.auth} component={ModelTypeAdd} />
+          <PrivateRoute exact path="/dashboard/model-type/detail/:colId" auth={props.store.auth} component={ModelTypeDetail} />
+          <PrivateRoute exact path="/dashboard/model-type/edit/:colId" auth={props.store.auth} component={ModelTypeEdit} />
             
         </Container>
       </main>

@@ -37,7 +37,7 @@ const breadcrumbData2 = [
   { name: 'group', label: "Groups", logo: faUsers, link: "/dashboard/group" },
   { name: 'proccess-name', label: "Proccess Names", logo: faBoxOpen, link: "/dashboard/proccess-name" },
   { name: 'line-number', label: "Line Numbers", logo: faGripLines, link: "/dashboard/line-number" },
-  { name: 'model', label: "Models", logo: faCubes, link: "/dashboard/model" },
+  { name: 'model-type', label: "Models", logo: faCubes, link: "/dashboard/model-type" },
   { name: 'planned-activity', label: "Planned Activities", logo: faListOl, link: "/dashboard/planned-activity" },
   { name: 'unplanned-activity', label: "Unplanned Activities", logo: faRandom, link: "/dashboard/unplanned-activity" },
   { name: 'operation-number', label: "Operation Numbers", logo: faBriefcase, link: "/dashboard/operation-number" },
