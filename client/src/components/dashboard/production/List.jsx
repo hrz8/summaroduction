@@ -7,7 +7,7 @@ import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { axios_get, oee, handle_error } from '../../../helpers';
+import { axios_get, oee, handle_error, axios_delete } from '../../../helpers';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import { CSVLink } from 'react-csv';
@@ -109,7 +109,7 @@ class List extends Component {
     }
   }
 
-  handleSearch = () => {
+  handleSearch = async () => {
     if (this.state.searchStartDate && !this.state.searchEndDate) {      
       alert("masukkan end date");
       return;
@@ -137,8 +137,21 @@ class List extends Component {
       let v = `date:${query.searchStartDate}-${query.searchEndDate}`;
       queryString += (query.q || query.searchProccessName || query.searchModelType) ? `;${v}` : `&filter=${v}`;
     }
-    this.drawTable(queryString);
+    await this.drawTable(queryString);
     this.setState({ downloadTapped: true });
+  }
+
+  handleDelete = async e => {
+    if (window.confirm(`Hapus data dengan id ${e.target.dataset.id} (${e.target.dataset.name}) ?`)) {
+      try {
+        const deleted = await axios_delete(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${e.target.dataset.id}`, this.props.store.auth.access_token)
+        alert(`Data dengan id ${deleted.id} (${deleted.name}) berhasil dihapus.`);
+        await this.drawTable();
+      }
+      catch (err) {
+        handle_error(err.response.data.statusCode);
+      }
+    }
   }
 
   exportCSV = () => {
