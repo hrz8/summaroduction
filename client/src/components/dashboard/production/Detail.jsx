@@ -110,24 +110,6 @@ class Detail extends Component {
     }
   }
 
-  isFormValid = () => {
-    const coreFieldIsValid =
-      this.state.shiftSelected !== null &&
-      this.state.groupSelected !== null &&
-      this.state.proccessnameSelected !== null &&
-      this.state.linenumberSelected !== null &&
-      this.state.modeltypeSelected !== null &&
-      this.state.actualAmount !== 0;
-    let secondaryFieldIsValid = true;
-    for (let i = 0; i < this.state.unplannedactivitiesToSend.length; i++) {
-      if (this.state.unplannedactivitiesToSend[i].activity === null) {
-        secondaryFieldIsValid = false;
-        break;
-      }
-    }
-    return coreFieldIsValid && secondaryFieldIsValid;
-  }
-
   // time handle
   handleChangeStart = startAt => { this.setState({ startAt: startAt.getTime() }) };
 
@@ -162,35 +144,7 @@ class Detail extends Component {
       this.setState({ unplannedactivitiesToSend: [] });
     }
   }
-
-  handleChangeUnplannedActivity = (selected, index) => {
-    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
-    unplannedactivitiesToSendTemp[index].activity = selected.value;
-    unplannedactivitiesToSendTemp[index].activityObj = selected;
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
-  }
-
-  handleChangeUnplannedOperationNumber = (selected, index) => {
-    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
-    unplannedactivitiesToSendTemp[index].operationNumber = selected.value;
-    unplannedactivitiesToSendTemp[index].operationNumberObj = selected;
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
-  }
-
-  handleChangeUnplannedMinute = e => {
-    if (parseInt(e.target.value) >= 0) {
-      let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
-      unplannedactivitiesToSendTemp[e.target.dataset.index].minute = parseInt(e.target.value);
-      this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
-    }
-  }
-
-  handleChangeUnplannedDescription = e => {
-    let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
-    unplannedactivitiesToSendTemp[e.target.dataset.index].description = e.target.value;
-    this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
-  }
-
+  
   renderPlannedActivity = () => {
     let plannedactivitiesForm = [];
     const plannedactivityElem = (index, id, name) => {
