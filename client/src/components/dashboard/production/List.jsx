@@ -20,11 +20,21 @@ class List extends Component {
       productions: [],
       productionsExtends: [],
       proccessnames: [],
-      proccessnamesoptions: [{ value: '', label: '-- Semua --' }],
+      proccessnamesoptions: [{ value: '', label: '-- Semua Proccess --' }],
       proccessnamesselected: null,
       modeltypes: [],
-      modeltypesoptions: [{ value: '', label: '-- Semua --' }],
+      modeltypesoptions: [{ value: '', label: '-- Semua Model --' }],
       modeltypesselected: null,
+      shifts: [],
+      shiftsoptions: [{ value: '', label: '-- Semua Shift--' }],
+      shiftsselected: null,
+      linenumbers: [],
+      linenumbersoptions: [{ value: '', label: '-- Semua Line --' }],
+      linenumbersselected: null,
+      groups: [],
+      groupsoptions: [{ value: '', label: '-- Semua Group --' }],
+      groupsselected: null,
+      //dat
       searchStartDate: null,
       searchEndDate: null,
       downloadTapped: false
@@ -47,10 +57,25 @@ class List extends Component {
       `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/model-type`,
       this.props.store.auth.access_token
     );
+    const shifts = await axios_get(
+      `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/shift`,
+      this.props.store.auth.access_token
+    );
+    const linenumbers = await axios_get(
+      `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/line-number`,
+      this.props.store.auth.access_token
+    );
+    const groups = await axios_get(
+      `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/group`,
+      this.props.store.auth.access_token
+    );
     this.setState(prevState => ({
-      proccessnames, modeltypes,
+      proccessnames, modeltypes, shifts, linenumbers, groups,
       proccessnamesoptions: [...prevState.proccessnamesoptions, ...proccessnames.map(item => ({ value: item.id, label: item.name }))],
-      modeltypesoptions: [...prevState.modeltypesoptions, ...modeltypes.map(item => ({ value: item.id, label: item.name }))]
+      modeltypesoptions: [...prevState.modeltypesoptions, ...modeltypes.map(item => ({ value: item.id, label: item.name }))],
+      shiftsoptions: [...prevState.shiftsoptions, ...shifts.map(item => ({ value: item.id, label: item.name }))],
+      linenumbersoptions: [...prevState.linenumbersoptions, ...linenumbers.map(item => ({ value: item.id, label: item.name }))],
+      groupsoptions: [...prevState.groupsoptions, ...groups.map(item => ({ value: item.id, label: item.name }))]
     }));
   }
 
@@ -66,6 +91,18 @@ class List extends Component {
 
   handleChangeModelType = modeltypesselected => {
     this.setState({ modeltypesselected });
+  }
+
+  handleChangeShift = shiftsselected => {
+    this.setState({ shiftsselected });
+  }
+
+  handleChangeLineNumber = linenumbersselected => {
+    this.setState({ linenumbersselected });
+  }
+
+  handleChangeGroup = groupsselected => {
+    this.setState({ groupsselected });
   }
 
   handleStartDateChange = searchStartDate => {
@@ -119,6 +156,9 @@ class List extends Component {
       q: this.state.q,
       searchProccessName: this.state.proccessnamesselected && this.state.proccessnamesselected.value,
       searchModelType: this.state.modeltypesselected && this.state.modeltypesselected.value,
+      searchShift: this.state.shiftsselected && this.state.shiftsselected.value,
+      searchLineNumber: this.state.linenumbersselected && this.state.linenumbersselected.value,
+      searchGroup: this.state.groupsselected && this.state.groupsselected.value,
       searchStartDate: (new Date(this.state.searchStartDate)).getTime(),
       searchEndDate: (new Date(this.state.searchEndDate)).getTime()
     };
@@ -133,9 +173,21 @@ class List extends Component {
       let v = `modelType:${query.searchModelType}`;
       queryString += (query.q || query.searchProccessName) ? `;${v}` : `&filter=${v}`;
     }
+    if (query.searchShift) {
+      let v = `shift:${query.searchShift}`;
+      queryString += (query.q || query.searchProccessName || query.searchModelType) ? `;${v}` : `&filter=${v}`;
+    }
+    if (query.searchLineNumber) {
+      let v = `lineNumber:${query.searchLineNumber}`;
+      queryString += (query.q || query.searchProccessName || query.searchModelType || query.searchShift) ? `;${v}` : `&filter=${v}`;
+    }
+    if (query.searchGroup) {
+      let v = `group:${query.searchGroup}`;
+      queryString += (query.q || query.searchProccessName || query.searchModelType || query.searchShift || query.searchLineNumber) ? `;${v}` : `&filter=${v}`;
+    }
     if (query.searchStartDate && query.searchEndDate) {
       let v = `date:${query.searchStartDate}-${query.searchEndDate}`;
-      queryString += (query.q || query.searchProccessName || query.searchModelType) ? `;${v}` : `&filter=${v}`;
+      queryString += (query.q || query.searchProccessName || query.searchModelType || query.searchShift || query.searchLineNumber || query.searchGroup) ? `;${v}` : `&filter=${v}`;
     }
     await this.drawTable(queryString);
     this.setState({ downloadTapped: true });
@@ -365,6 +417,27 @@ class List extends Component {
                 options={this.state.modeltypesoptions}
               />
             </div>
+              <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+                <Select
+                  placeholder="Pilih Shift"
+                  onChange={this.handleChangeShift}
+                  options={this.state.shiftsoptions}
+                />
+              </div>
+              <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+                <Select
+                  placeholder="Pilih Line"
+                  onChange={this.handleChangeLineNumber}
+                  options={this.state.linenumbersoptions}
+                />
+              </div>
+              <div className="col-md-2 p-md-1 mb-md-0 mb-2">
+                <Select
+                  placeholder="Pilih Group"
+                  onChange={this.handleChangeGroup}
+                  options={this.state.groupsoptions}
+                />
+              </div>
             <div className="col-md-2 p-md-1 mb-md-0 mb-2">
               <DatePicker
                 placeholderText="Start Date (00:00)"
@@ -392,15 +465,15 @@ class List extends Component {
             </div>
             <div className="col-md-2 p-md-1 text-center text-md-left">
               <button
-                className="btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
+                className="btn btn-cc btn-block btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
                 onClick={this.handleSearch}
                 ref={(r) => this.cariButton = r}>
                 <FontAwesomeIcon icon={faSearch} />&ensp;Cari
               </button>
             </div>
-            <div className="col-md-2 p-md-1 pl-md-3 text-center text-md-left">
+            <div className="col-md-2 p-md-1 text-center text-md-left">
               <button
-                className="btn btn-cc btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
+                className="btn btn-cc btn-block btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
                 onClick={this.exportCSV}
                 disabled={!this.state.downloadTapped}
                 >
