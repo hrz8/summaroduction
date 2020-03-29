@@ -49,7 +49,7 @@ class Add extends Component {
       okAmount: 0,
       reuseAmount: 0,
       startAt: (new Date()).getTime(),
-      finishAt: (new Date()).getTime() + 3600000,
+      finishAt: (new Date()).getTime() + 7200000,
       // operation number
       operationnumbers: [],
       operationnumbersOptions: []
@@ -114,8 +114,8 @@ class Add extends Component {
       }, () => {
         this.state.plannedactivities.forEach(item => {
           this.setState(prevState => ({
-            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { activity: item.id, minute: 0 }]
-          }))
+            plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { activity: item.id, minute: item.minuteDefault }]
+          }), () => this.setState({ targetAmount: getTarget(this.state) }))
         });
       });
     }
@@ -480,11 +480,10 @@ class Add extends Component {
                 <label htmlFor="inputTarget">Target</label>
                 <input
                   id="inputTarget"
-                  type="number"
                   className="form-control"
                   name="targetAmount"
                   value={this.state.targetAmount}
-                  onChange={this.handleChangeNumber}
+                  disabled
                   />
               </div>
             </div>

@@ -46,7 +46,7 @@ class Edit extends Component {
       unplannedactivitiesToSend: [],
       unplannedactivitiesJumlah: 0,
       // params
-      targetAmount: 1515,
+      targetAmount: 0,
       actualAmount: 0,
       okAmount: 0,
       reuseAmount: 0,
@@ -509,11 +509,10 @@ class Edit extends Component {
                 <label htmlFor="inputTarget">Target</label>
                 <input
                   id="inputTarget"
-                  type="number"
                   className="form-control"
                   name="targetAmount"
                   value={this.state.targetAmount}
-                  onChange={this.handleChangeNumber}
+                  disabled
                   />
               </div>
             </div>
