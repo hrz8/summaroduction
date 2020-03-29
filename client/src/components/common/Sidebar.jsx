@@ -67,7 +67,7 @@ class Sidebar extends Component {
                           <NavLink to="/dashboard/group" className="waves-effect pl-4"><FontAwesomeIcon icon={faUsers} />&emsp;Groups</NavLink>
                         </li>
                         <li>
-                          <NavLink to="/dashboard/proccess-name" className="waves-effect pl-4"><FontAwesomeIcon icon={faBoxOpen} />&emsp;Proccess</NavLink>
+                          <NavLink to="/dashboard/proccess-name" className="waves-effect pl-4"><FontAwesomeIcon icon={faBoxOpen} />&emsp;Proccess Names</NavLink>
                         </li>
                         <li>
                           <NavLink to="/dashboard/line-number" className="waves-effect pl-4"><FontAwesomeIcon icon={faGripLines} />&emsp;Line Numbers</NavLink>

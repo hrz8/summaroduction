@@ -15,7 +15,13 @@ import {
   faKey,
   faIndustry,
   faUsers,
-  faAdjust} from '@fortawesome/free-solid-svg-icons';
+  faAdjust,
+  faBoxOpen,
+  faGripLines,
+  faCubes,
+  faListOl,
+  faRandom,
+  faBriefcase} from '@fortawesome/free-solid-svg-icons';
 import { logout } from '../../store/actions/auth';
 
 
@@ -29,6 +35,12 @@ const breadcrumbData2 = [
   { name: 'production', label: "Productions", logo: faIndustry, link: "/dashboard/production" },
   { name: 'shift', label: "Shifts", logo: faAdjust, link: "/dashboard/shift" },
   { name: 'group', label: "Groups", logo: faUsers, link: "/dashboard/group" },
+  { name: 'proccess-name', label: "Proccess Names", logo: faBoxOpen, link: "/dashboard/proccess-name" },
+  { name: 'line-number', label: "Line Numbers", logo: faGripLines, link: "/dashboard/line-number" },
+  { name: 'model', label: "Models", logo: faCubes, link: "/dashboard/model" },
+  { name: 'planned-activity', label: "Planned Activities", logo: faListOl, link: "/dashboard/planned-activity" },
+  { name: 'unplanned-activity', label: "Unplanned Activities", logo: faRandom, link: "/dashboard/unplanned-activity" },
+  { name: 'operation-number', label: "Operation Numbers", logo: faBriefcase, link: "/dashboard/operation-number" },
   { name: 'change-password', label: "Change Password", logo: faKey, link: "/account/change-password" }
 ]
 

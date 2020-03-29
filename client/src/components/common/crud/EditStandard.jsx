@@ -71,7 +71,7 @@ class EditStandard extends Component {
               onChange={this.handleChange} />
           </div>
           <div className="form-group">
-            <label htmlFor="inputKeterangan">Keterangan</label>
+            <label htmlFor="inputKeterangan">Keterangan (optional)</label>
             <input
               id="inputKeterangan"
               type="text"

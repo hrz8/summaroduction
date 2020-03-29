@@ -21,6 +21,11 @@ import ShiftAdd from './components/dashboard/shift/Add';
 import ShiftDetail from './components/dashboard/shift/Detail';
 import ShiftEdit from './components/dashboard/shift/Edit';
 
+import Group from './components/dashboard/group/List';
+import GroupAdd from './components/dashboard/group/Add';
+import GroupDetail from './components/dashboard/group/Detail';
+import GroupEdit from './components/dashboard/group/Edit';
+
 import './App.scss';
 
 const App = (props) => {
@@ -50,6 +55,11 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/shift/add" auth={props.store.auth} component={ShiftAdd} />
           <PrivateRoute exact path="/dashboard/shift/detail/:colId" auth={props.store.auth} component={ShiftDetail} />
           <PrivateRoute exact path="/dashboard/shift/edit/:colId" auth={props.store.auth} component={ShiftEdit} />
+
+          <PrivateRoute exact path="/dashboard/group" auth={props.store.auth} component={Group} />
+          <PrivateRoute exact path="/dashboard/group/add" auth={props.store.auth} component={GroupAdd} />
+          <PrivateRoute exact path="/dashboard/group/detail/:colId" auth={props.store.auth} component={GroupDetail} />
+          <PrivateRoute exact path="/dashboard/group/edit/:colId" auth={props.store.auth} component={GroupEdit} />
             
         </Container>
       </main>
