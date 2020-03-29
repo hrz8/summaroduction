@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ListStandard from '../../common/crud/ListStandard';
 
 const List = () => (

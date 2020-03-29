@@ -1,5 +1,6 @@
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
+import { logout } from '../store/actions/auth';
 
 export const decodeAccessToken = (access_token) => {
   const jwt = jwt_decode(access_token);
@@ -17,7 +18,7 @@ export const axios_get = async (url, access_token) => {
     );
     return results.data.data;
   }
-  catch(err) {
+  catch (err) {
     throw err;
   }
 }
@@ -29,7 +30,7 @@ export const axios_post = async (url, body, access_token) => {
     );
     return results.data.data;
   }
-  catch(err) {
+  catch (err) {
     throw err;
   }
 }
@@ -41,7 +42,7 @@ export const axios_put = async (url, body, access_token) => {
     );
     return results.data.data;
   }
-  catch(err) {
+  catch (err) {
     throw err;
   }
 }
@@ -55,6 +56,22 @@ export const axios_delete = async (url, access_token) => {
   }
   catch (err) {
     throw err;
+  }
+}
+
+export const handle_error = code => {
+  switch (code) {
+    case 401:
+      alert('session habis');
+      this.props.dispatch(logout());
+      this.props.history.push('/login');
+      break;
+    case 500:
+      alert('server error');
+      break;
+    default:
+      alert('error: ' + code);
+      break;
   }
 }
 

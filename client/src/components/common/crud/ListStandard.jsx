@@ -12,8 +12,7 @@ import {
   faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import Card from '../../common/Card';
-import { axios_get, axios_delete } from '../../../helpers';
-import { logout } from '../../../store/actions/auth';
+import { axios_get, axios_delete, handle_error } from '../../../helpers';
 
 class ListStandard extends Component {
   constructor(props) {
@@ -40,12 +39,7 @@ class ListStandard extends Component {
       this.setState({ data });
     }
     catch (err) {
-      const { statusCode } = err.response.data;
-      if (statusCode === 401) {
-        alert('session habis');
-        this.props.dispatch(logout());
-        this.props.history.push('/login');
-      }
+      handle_error(err.response.data.statusCode);
     }
   }
 
@@ -65,12 +59,7 @@ class ListStandard extends Component {
         await this.drawTable();
       }
       catch (err) {
-        const { statusCode } = err.response.data;
-        if (statusCode === 401) {
-          alert('session habis');
-          this.props.dispatch(logout());
-          this.props.history.push('/login');
-        }
+        handle_error(err.response.data.statusCode);
       }
     }
   }

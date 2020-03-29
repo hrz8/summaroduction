@@ -7,7 +7,7 @@ import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import { axios_get, oee } from '../../../helpers';
+import { axios_get, oee, handle_error } from '../../../helpers';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import { CSVLink } from 'react-csv';
@@ -104,8 +104,8 @@ class List extends Component {
         })
       });
     }
-    catch(err) {
-      throw err;
+    catch (err) {
+      handle_error(err.response.data.statusCode);
     }
   }
 

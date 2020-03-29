@@ -29,7 +29,7 @@ class Login extends Component {
     try {
       await this.props.dispatch(login(user));
     }
-    catch(err) {
+    catch (err) {
       alert(err.response.data.message);
     }
     

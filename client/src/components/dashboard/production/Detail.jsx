@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Card from '../../common/Card';
 import moment from 'moment';
-import { axios_get, oee } from '../../../helpers';
+import { axios_get, oee, handle_error } from '../../../helpers';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import { faArrowLeft, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { logout } from '../../../store/actions/auth';
 
 class Detail extends Component {
   constructor(props) {
@@ -106,13 +105,8 @@ class Detail extends Component {
         });
       });
     }
-    catch(err) {
-      const { statusCode } = err.response.data;
-      if (statusCode === 401) {
-        alert('session habis');
-        this.props.dispatch(logout());
-        this.props.history.push('/login');
-      }
+    catch (err) {
+      handle_error(err.response.data.statusCode);
     }
   }
 

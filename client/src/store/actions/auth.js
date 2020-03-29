@@ -10,7 +10,7 @@ export const login = user => async dispatch => {
     dispatch({ type: LOGIN, payload: decodeAccessToken(access_token).userData });
     return response;
   }
-  catch(err) {
+  catch (err) {
     throw err;
   }
 }

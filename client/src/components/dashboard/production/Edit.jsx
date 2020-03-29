@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import Card from '../../common/Card';
-import { axios_get, axios_put, getTarget } from '../../../helpers';
-import { logout } from '../../../store/actions/auth';
+import { axios_get, axios_put, getTarget, handle_error } from '../../../helpers';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
@@ -158,13 +157,8 @@ class Edit extends Component {
         });
       });
     }
-    catch(err) {
-      const { statusCode } = err.response.data;
-      if (statusCode === 401) {
-        alert('session habis');
-        this.props.dispatch(logout());
-        this.props.history.push('/login');
-      }
+    catch (err) {
+      handle_error(err.response.data.statusCode);
     }
   }
 
@@ -415,13 +409,8 @@ class Edit extends Component {
         );
         this.props.history.push('../detail/' + newProduction.id);
       }
-      catch(err) {
-        const { statusCode } = err.response.data;
-        if (statusCode === 401) {
-          alert('session habis');
-          this.props.dispatch(logout());
-          this.props.history.push('/login');
-        }
+      catch (err) {
+        handle_error(err.response.data.statusCode);
       }
     }
     else {
