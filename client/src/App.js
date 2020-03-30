@@ -8,6 +8,8 @@ import Container from './components/common/Container';
 import Footer from './components/common/Footer';
 
 import Login from './components/Login';
+import ChangePassword from './components/ChangePassword';
+
 import AnonRoute from './components/AnonRoute';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -120,6 +122,8 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/operation-number/add" auth={props.store.auth} component={OperationNumberAdd} />
           <PrivateRoute exact path="/dashboard/operation-number/detail/:colId" auth={props.store.auth} component={OperationNumberDetail} />
           <PrivateRoute exact path="/dashboard/operation-number/edit/:colId" auth={props.store.auth} component={OperationNumberEdit} />
+
+          <PrivateRoute exact path="/account/change-password" auth={props.store.auth} component={ChangePassword}/>
             
         </Container>
       </main>
