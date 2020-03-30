@@ -34,11 +34,12 @@ class ChangePassword extends Component {
     e.preventDefault();
     if (this.state.newPassword === this.state.confirmNewPassword) {
       try {
-        const edited = await axios_put(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/auth/change-password/${this.state.id}`, {
+        await axios_put(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/auth/change-password/${this.state.id}`, {
           id: this.state.id,
           username: this.props.store.auth.username,
           oldPassword: this.state.currentPassword,
-          newPassword: this.state.newPassword
+          newPassword: this.state.newPassword,
+          admin: false
         }, this.props.store.auth.access_token);
         alert("password berhasil diubah, anda harus login kembali")
         this.logout();

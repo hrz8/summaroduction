@@ -1,9 +1,10 @@
-import { Controller, Post, Res, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Res, Body, HttpStatus, UseGuards } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { BaseController } from '../shared/base.controller';
 import { UserService } from './user.service';
 import { User } from './user.model';
 import { ActionResponse } from '../shared/base.response';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController extends BaseController<User> {

@@ -238,14 +238,13 @@ class List extends Component {
               className="btn btn-cc btn-cc-primary btn-cc-radius-normal p-1 mb-1">
               <FontAwesomeIcon icon={faEdit} />&nbsp;Edit
             </Link>
-            {this.props.store.auth.role === "su" ?
-              <button
-                className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
-                data-id={original.id}
-                data-name={original.name}
-                onClick={this.handleDelete}>
-                <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Hapus
-            </button> : <></>}
+            <button
+              className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
+              data-id={original.id}
+              data-name={original.name}
+              onClick={this.handleDelete}>
+              <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Hapus
+          </button>
           </>
         )
       },

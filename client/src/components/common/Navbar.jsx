@@ -41,7 +41,8 @@ const breadcrumbData2 = [
   { name: 'planned-activity', label: "Planned Activities", logo: faListOl, link: "/dashboard/planned-activity" },
   { name: 'unplanned-activity', label: "Unplanned Activities", logo: faRandom, link: "/dashboard/unplanned-activity" },
   { name: 'operation-number', label: "Operation Numbers", logo: faBriefcase, link: "/dashboard/operation-number" },
-  { name: 'change-password', label: "Change Password", logo: faKey, link: "/account/change-password" }
+  { name: 'change-password', label: "Change Password", logo: faKey, link: "/account/change-password" },
+  { name: 'users', label: "Users", logo: faUsers, link: "/dashboard/users" }
 ]
 
 const breadcrumbData3 = [

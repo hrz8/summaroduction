@@ -33,27 +33,49 @@ export class AuthController {
       throw new BadRequestException("invalid id match");
     }
 
-    const { username, oldPassword, newPassword } = message;
-    const user: any = await this.authService.validateUser(username, oldPassword);
-    if (!user) {
-      throw new UnauthorizedException('invalid old password');
+    let editData: any;
+
+    if (message.admin) {
+      editData = await this.userService.updateAsync({
+        id: message.id,
+        firstName: message.firstName,
+        lastName: message.lastName,
+        username: message.username,
+        password: bcrypt.hashSync(message.password, 10),
+        role: message.role
+      });
+
+      if (!editData) {
+        throw new NotFoundException('unknown id');
+      }
     }
+    else {
+      const { username, oldPassword, newPassword } = message;
+      const user: any = await this.authService.validateUser(username, oldPassword);
+      if (!user) {
+        throw new UnauthorizedException('invalid old password');
+      }
+
+      const encryptedPassword = bcrypt.hashSync(newPassword, 10);
+
+      editData = await this.userService.updateAsync({
+        id: user._doc._id,
+        firstName: user._doc.firstName,
+        lastName: user._doc.lastName,
+        username: user._doc.username,
+        password: encryptedPassword,
+        role: user._doc.role
+      });
+
+      if (!editData) {
+        throw new NotFoundException('unknown id');
+      }
+    }
+    
 
     let response: ActionResponse<User> = new ActionResponse<User>();
 
-    const encryptedPassword = bcrypt.hashSync(newPassword, 10);
-    const editData: User = await this.userService.updateAsync({
-      id: user._doc._id,
-      firstName: user._doc.firstName,
-      lastName: user._doc.lastName,
-      username: user._doc.username,
-      password: encryptedPassword,
-      role: user._doc.role
-    });
-
-    if (!editData) {
-      throw new NotFoundException('unknown id');
-    }
+    
 
     response.message = "successfully change password";
     response.action = "update";

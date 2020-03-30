@@ -58,6 +58,11 @@ import OperationNumberAdd from './components/dashboard/operationnumber/Add';
 import OperationNumberDetail from './components/dashboard/operationnumber/Detail';
 import OperationNumberEdit from './components/dashboard/operationnumber/Edit';
 
+import User from './components/dashboard/user/List';
+import UserAdd from './components/dashboard/user/Add';
+import UserDetail from './components/dashboard/user/Detail';
+import UserEdit from './components/dashboard/user/Edit';
+
 import './App.scss';
 
 const App = (props) => {
@@ -122,6 +127,11 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/operation-number/add" auth={props.store.auth} component={OperationNumberAdd} />
           <PrivateRoute exact path="/dashboard/operation-number/detail/:colId" auth={props.store.auth} component={OperationNumberDetail} />
           <PrivateRoute exact path="/dashboard/operation-number/edit/:colId" auth={props.store.auth} component={OperationNumberEdit} />
+
+          <PrivateRoute exact path="/dashboard/users" auth={props.store.auth} component={User}/>
+          <PrivateRoute exact path="/dashboard/users/add" auth={props.store.auth} component={UserAdd}/>
+          <PrivateRoute exact path="/dashboard/users/detail/:userId" auth={props.store.auth} component={UserDetail}/>
+          <PrivateRoute exact path="/dashboard/users/edit/:userId" auth={props.store.auth} component={UserEdit}/>
 
           <PrivateRoute exact path="/account/change-password" auth={props.store.auth} component={ChangePassword}/>
             
