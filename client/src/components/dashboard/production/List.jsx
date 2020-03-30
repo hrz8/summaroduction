@@ -11,6 +11,7 @@ import { axios_get, oee, handle_error, axios_delete } from '../../../helpers';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import { CSVLink } from 'react-csv';
+import Graph from './Graph';
 
 class List extends Component {
   constructor(props) {
@@ -37,7 +38,9 @@ class List extends Component {
       //dat
       searchStartDate: null,
       searchEndDate: null,
-      downloadTapped: false
+      cariTapped: false,
+      downloadTapped: false,
+      loadGraph: false
     }
     this.handleChangeProccessName = this.handleChangeProccessName.bind(this);
     this.handleChangeModelType = this.handleChangeModelType.bind(this);
@@ -45,6 +48,10 @@ class List extends Component {
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
+  }
+
+  handleShowGraphButton = () => {
+    this.setState(prev => ({ loadGraph: !prev.loadGraph }))
   }
 
   componentDidMount = async () => {
@@ -80,8 +87,11 @@ class List extends Component {
   }
 
   graphButtonIsAvailable = () => {
-    return this.state.q && this.state.proccessnamesselected.value && this.state.modeltypesselected.value && this.state.shiftsselected.value
-      && this.state.linenumbersselected.value && this.state.groupsselected.value;
+    return this.state.cariTapped && (this.state.proccessnamesselected && this.state.proccessnamesselected.value) && 
+      (this.state.modeltypesselected && this.state.modeltypesselected.value) &&
+      (this.state.shiftsselected && this.state.shiftsselected.value) && 
+      (this.state.linenumbersselected && this.state.linenumbersselected.value) && 
+      (this.state.groupsselected && this.state.groupsselected.value);
   }
 
   handleChange = e => {
@@ -131,7 +141,7 @@ class List extends Component {
     }
   };
 
-  drawTable = async (url = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`) => {
+  drawTable = async (url = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?sort=startAt:desc&populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`) => {
     try {
       const productions = await axios_get(
         url,
@@ -156,7 +166,7 @@ class List extends Component {
       alert("masukkan end date");
       return;
     }
-    let queryString = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`;
+    let queryString = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?sort=startAt:desc&populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`;
     const query = { 
       q: this.state.q,
       searchProccessName: this.state.proccessnamesselected && this.state.proccessnamesselected.value,
@@ -195,7 +205,7 @@ class List extends Component {
       queryString += (query.q || query.searchProccessName || query.searchModelType || query.searchShift || query.searchLineNumber || query.searchGroup) ? `;${v}` : `&filter=${v}`;
     }
     await this.drawTable(queryString);
-    this.setState({ downloadTapped: true });
+    this.setState({ downloadTapped: true, cariTapped: true });
   }
 
   handleDelete = async e => {
@@ -478,6 +488,15 @@ class List extends Component {
             <div className="col-md-2 p-md-1 text-center text-md-left">
               <button
                 className="btn btn-cc btn-block btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
+                onClick={this.handleShowGraphButton}
+                disabled={!this.graphButtonIsAvailable()}>
+                <FontAwesomeIcon icon={faIndustry} />&ensp;Toggle Grafik
+              </button>
+            </div>
+            {!this.state.loadGraph ?
+            <div className="col-md-2 p-md-1 text-center text-md-left">
+              <button
+                className="btn btn-cc btn-block btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
                 onClick={this.exportCSV}
                 disabled={!this.state.downloadTapped}
                 >
@@ -523,28 +542,22 @@ class List extends Component {
                   >
                   Download
               </CSVLink>
-            </div>
-            <div className="col-md-2 p-md-1 text-center text-md-left">
-              <button
-                className="btn btn-cc btn-block btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
-                onClick={this.handleSearch}
-                disabled={!this.graphButtonIsAvailable()}>
-                <FontAwesomeIcon icon={faIndustry} />&ensp;Grafik
-              </button>
-            </div>
+            </div> : <></>}
+            {!this.state.loadGraph ?
             <div className="col-md-3 ml-md-auto text-center text-md-right">
               <Link
                 to="/dashboard/production/add"
                 className="btn btn-cc btn-cc-primary btn-cc-radius-extra ml-0 py-2 px-5 px-md-2">
                 <FontAwesomeIcon icon={faPlus} />&ensp;Tambah
               </Link>
-            </div>
+            </div> : <></>}
           </div>
+          {!this.state.loadGraph ?
           <ReactTable 
             data={this.state.productionsExtends}
             columns={columns}
             pageSize={10}
-            minRows={2} />
+            minRows={2} /> : <Graph state={this.state.productionsExtends}></Graph>}
         </> :
         <div className="text-center">
           <span>access denied</span>
