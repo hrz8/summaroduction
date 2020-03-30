@@ -5,7 +5,7 @@ import 'react-table-6/react-table.css';
 import Moment from 'react-moment';
 import Card from '../../common/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faPlus, faInfoCircle, faEdit, faTrashAlt, faDownload, faIndustry } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { axios_get, oee, handle_error, axios_delete } from '../../../helpers';
 import Select from 'react-select';
@@ -77,6 +77,11 @@ class List extends Component {
       linenumbersoptions: [...prevState.linenumbersoptions, ...linenumbers.map(item => ({ value: item.id, label: item.name }))],
       groupsoptions: [...prevState.groupsoptions, ...groups.map(item => ({ value: item.id, label: item.name }))]
     }));
+  }
+
+  graphButtonIsAvailable = () => {
+    return this.state.q && this.state.proccessnamesselected.value && this.state.modeltypesselected.value && this.state.shiftsselected.value
+      && this.state.linenumbersselected.value && this.state.groupsselected.value;
   }
 
   handleChange = e => {
@@ -518,6 +523,14 @@ class List extends Component {
                   >
                   Download
               </CSVLink>
+            </div>
+            <div className="col-md-2 p-md-1 text-center text-md-left">
+              <button
+                className="btn btn-cc btn-block btn-cc-primary btn-cc-radius-normal ml-0 py-2 px-5 px-md-2"
+                onClick={this.handleSearch}
+                disabled={!this.graphButtonIsAvailable()}>
+                <FontAwesomeIcon icon={faIndustry} />&ensp;Grafik
+              </button>
             </div>
             <div className="col-md-3 ml-md-auto text-center text-md-right">
               <Link
