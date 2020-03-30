@@ -209,10 +209,10 @@ class List extends Component {
   }
 
   handleDelete = async e => {
-    if (window.confirm(`Hapus data dengan id ${e.target.dataset.id} (${e.target.dataset.name}) ?`)) {
+    if (window.confirm(`Hapus data dengan id ${e.target.dataset.id} (${e.target.dataset.code}) ?`)) {
       try {
         const deleted = await axios_delete(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production/${e.target.dataset.id}`, this.props.store.auth.access_token)
-        alert(`Data dengan id ${deleted.id} (${deleted.name}) berhasil dihapus.`);
+        alert(`Data dengan id ${deleted.id} (${deleted.code}) berhasil dihapus.`);
         await this.drawTable();
       }
       catch (err) {
@@ -256,7 +256,7 @@ class List extends Component {
             <button
               className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
               data-id={original.id}
-              data-name={original.name}
+              data-code={original.code}
               onClick={this.handleDelete}>
               <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Hapus
           </button>
