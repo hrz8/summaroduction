@@ -141,9 +141,11 @@ export const oee = (production) => {
 
 
 export const getTarget = (state) => {
-  const perHour = Math.floor(Math.floor((3600 / state.cycleTime)).toFixed() * 0.96).toFixed(2);
+  // const perHour = Math.floor(Math.floor((3600 / state.cycleTime)).toFixed() * 0.96).toFixed(2);
   const hour = (((state.finishAt - state.startAt) / (1000 * 60 * 60)) % 24).toFixed(2);
   const minute = Math.floor(hour * 60);
-  const minuteBersih = minute - oee(state).planDtTime3;
-  return ((minuteBersih / 60) * perHour).toFixed();
+  const minuteBersih = minute - oee(state).planDtTime;
+  // console.log(minuteBersih, perHour, state.cycleTime);
+  return Math.ceil(((minuteBersih * 60) / state.cycleTime) * 0.96);
+  // return ((minuteBersih / 60) * perHour).toFixed();
 }
