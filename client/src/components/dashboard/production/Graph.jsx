@@ -105,7 +105,7 @@ class Graph extends Component {
           data: dataAmountOK.reverse()
         },
         {
-          label: 'FY',
+          label: 'OK (+Reuse)',
           lineTension: 0,
           fill: false,
           borderColor: '#eb7000',
