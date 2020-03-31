@@ -52,16 +52,14 @@ class List extends Component {
   }
 
   handleDelete = async e => {
-    if (window.confirm(`IMPORTANT: MENGHAPUS DATA INI DAPAT MEMBUAT ERROR DATA PRODUCTION. SEBELUM MELANJUTKAN, PASTIKAN TERLEBIH DAHULU TIDAK ADA DATA PADA PRODUCTION YANG MEMAKAI DATA INI SEBAGAI DATA ${this.props.label.toUpperCase()}!!!\ningin melanjutkan?`)) {
-      if (window.confirm(`Hapus data dengan id ${e.target.dataset.id} (${e.target.dataset.name}) ?`)) {
-        try {
-          const deleted = await axios_delete(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/user/${e.target.dataset.id}`, this.props.store.auth.access_token)
-          alert(`Data dengan id ${deleted.id} (${deleted.name}) berhasil dihapus.`);
-          await this.drawTable();
-        }
-        catch (err) {
-          handle_error(err.response.data.statusCode);
-        }
+    if (window.confirm(`Hapus data dengan id ${e.target.dataset.id} (${e.target.dataset.firstname}) ?`)) {
+      try {
+        const deleted = await axios_delete(`http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/user/${e.target.dataset.id}`, this.props.store.auth.access_token)
+        alert(`Data dengan id ${deleted.id} (${deleted.firstname}) berhasil dihapus.`);
+        await this.drawTable();
+      }
+      catch (err) {
+        handle_error(err.response.data.statusCode);
       }
     }
   }
@@ -107,7 +105,7 @@ class List extends Component {
               <button
                 className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
                 data-id={original.id}
-                data-name={original.name}
+                data-firstname={original.firstName}
                 onClick={this.handleDelete}>
                 <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Hapus
             </button> : <></>}
