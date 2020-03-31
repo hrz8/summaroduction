@@ -52,12 +52,14 @@ class Graph extends Component {
       datasets: [
         {
           label: 'OEE',
+          lineTension: 0,
           fill: false,
           borderColor: '#00d6e8',
           data: dataSetOEE.reverse()
         },
         {
           label: 'OEE2',
+          lineTension: 0,
           fill: false,
           borderColor: '#eb7000',
           data: dataSetOEE2.reverse()
@@ -70,18 +72,21 @@ class Graph extends Component {
       datasets: [
         {
           label: 'Quality Rate',
+          lineTension: 0,
           fill: false,
           borderColor: '#002ede',
           data: dataOK.reverse()
         },
         {
           label: 'Quality Rate (+Reuse)',
+          lineTension: 0,
           fill: false,
           borderColor: '#00a685',
           data: dataOK2.reverse()
         },
         {
           label: 'NG',
+          lineTension: 0,
           fill: false,
           borderColor: '#eb1000',
           data: datNG.reverse()
@@ -94,18 +99,21 @@ class Graph extends Component {
       datasets: [
         {
           label: 'OK',
+          lineTension: 0,
           fill: false,
           borderColor: '#00d6e8',
           data: dataAmountOK.reverse()
         },
         {
           label: 'FY',
+          lineTension: 0,
           fill: false,
           borderColor: '#eb7000',
           data: dataAmountFY.reverse()
         },
         {
           label: 'NG',
+          lineTension: 0,
           fill: false,
           borderColor: '#9dbb00',
           data: dataAmountNG.reverse()
