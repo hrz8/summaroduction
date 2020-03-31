@@ -344,6 +344,30 @@ class Detail extends Component {
             </div>
           </div>
           <div className="row">
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputStartAt">Start</label>
+                <input
+                  id="inputStartAt"
+                  className="form-control"
+                  value={moment(this.state.startAt).format('DD/MM/YYYY HH:mm')}
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputFinishAt">Finish</label>
+                <input
+                  id="inputFinishAt"
+                  className="form-control"
+                  value={moment(this.state.finishAt).format('DD/MM/YYYY HH:mm')}
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
+          <div className="row">
             <div className="col-2">
               <div className="form-group">
                 <label htmlFor="inputTarget">Target</label>
@@ -420,30 +444,6 @@ class Detail extends Component {
                   value={this.state.reuseAmount + this.state.okAmount}
                   disabled
                   />
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <div className="form-group">
-                <label htmlFor="inputStartAt">Start</label>
-                <input
-                  id="inputStartAt"
-                  className="form-control"
-                  value={moment(this.state.startAt).format('DD/MM/YYYY HH:mm')}
-                  disabled
-                />
-              </div>
-            </div>
-            <div className="col-6">
-              <div className="form-group">
-                <label htmlFor="inputFinishAt">Finish</label>
-                <input
-                  id="inputFinishAt"
-                  className="form-control"
-                  value={moment(this.state.finishAt).format('DD/MM/YYYY HH:mm')}
-                  disabled
-                />
               </div>
             </div>
           </div>

@@ -97,7 +97,10 @@ class ListStandard extends Component {
               className="btn btn-cc btn-cc-primary btn-cc-radius-normal p-1 mb-1">
               <FontAwesomeIcon icon={faEdit} />&nbsp;Edit
             </Link>
-            {this.props.store.auth.role === "su" ?
+            {this.props.store.auth.role === "su" && 
+              original.id !==  "5e6b54b996251e144c923884" && 
+              original.id !== "5e6b54d396251e144c923885" && 
+              original.id !== "5e6b54ff96251e144c92388a" ?
               <button
                 className="btn btn-cc btn-cc-secondary btn-cc-radius-normal p-1 mb-1"
                 data-id={original.id}

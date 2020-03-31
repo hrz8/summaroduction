@@ -83,10 +83,15 @@ export const oee = (production) => {
   const ng2 = production.actualAmount - fy;
   const opTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
   let planDtTime = 0;
+  let planDtTime3 = 0;
   let unplanDtTime = 0;
+  const plan3 = ['5e6b54b996251e144c923884', '5e6b54d396251e144c923885', '5e6b54ff96251e144c92388a'];
   if (production.plannedActivities && production.unplannedActivities) {
     production.plannedActivities.forEach(item => {
       planDtTime += item.minute;
+      if (plan3.includes(item.activity)) {
+        planDtTime3 += item.minute;
+      }
     });
     production.unplannedActivities.forEach(item => {
       unplanDtTime += item.minute;
@@ -95,6 +100,9 @@ export const oee = (production) => {
   else {
     production.plannedactivitiesToSend.forEach(item => {
       planDtTime += item.minute;
+      if (plan3.includes(item.activity)) {
+        planDtTime3 += item.minute;
+      }
     });
     production.unplannedactivitiesToSend.forEach(item => {
       unplanDtTime += item.minute;
@@ -124,7 +132,7 @@ export const oee = (production) => {
   const oeeComma = oee.toString().replace('.', ',');
   const oee2Comma = oee2.toString().replace('.', ',');
   return {
-    fy, opTime, planDtTime, unplanDtTime, totalDtTime, runTime, needTime, 
+    fy, opTime, planDtTime, planDtTime3, unplanDtTime, totalDtTime, runTime, needTime, 
     eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2,
     effComma, availComma, performanceComma, ngRateComma, ngRate2Comma, qRateComma,
     qRate2Comma, oeeComma, oee2Comma
@@ -136,6 +144,6 @@ export const getTarget = (state) => {
   const perHour = Math.floor(Math.floor((3600 / state.cycleTime)).toFixed() * 0.96).toFixed(2);
   const hour = (((state.finishAt - state.startAt) / (1000 * 60 * 60)) % 24).toFixed(2);
   const minute = Math.floor(hour * 60);
-  const minuteBersih = minute - oee(state).planDtTime;
+  const minuteBersih = minute - oee(state).planDtTime3;
   return ((minuteBersih / 60) * perHour).toFixed();
 }

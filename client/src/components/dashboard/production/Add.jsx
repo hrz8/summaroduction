@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import Card from '../../common/Card';
 import { axios_get, axios_post, getTarget, handle_error } from '../../../helpers';
 
@@ -48,8 +49,8 @@ class Add extends Component {
       actualAmount: 0,
       okAmount: 0,
       reuseAmount: 0,
-      startAt: (new Date()).getTime(),
-      finishAt: (new Date()).getTime() + 7200000,
+      startAt: moment(moment(new Date()).format("YYYY-MM-DD").toString()).set("hour", 7).set("minute", 30).toDate().getTime(),
+      finishAt: moment(moment(new Date()).format("YYYY-MM-DD").toString()).set("hour", 16).set("minute", 40).toDate().getTime(),
       // operation number
       operationnumbers: [],
       operationnumbersOptions: []
@@ -474,6 +475,34 @@ class Add extends Component {
               </div>
             </div>
           </div>
+          <div className="form-group">
+            <label htmlFor="inputStartAt">Start</label>
+            <DatePicker
+              id="inputStartAt"
+              className="form-control"
+              selected={this.state.startAt}
+              onChange={this.handleChangeStart}
+              showTimeSelect
+              dateFormat="dd/MM/yyyy HH:mm"
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              showDisabledMonthNavigation
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="inputFinishAt">Finish</label>
+            <DatePicker
+              id="inputFinishAt"
+              className="form-control"
+              selected={this.state.finishAt}
+              onChange={this.handleChangeFinish}
+              showTimeSelect
+              dateFormat="dd/MM/yyyy HH:mm"
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              showDisabledMonthNavigation
+            />
+          </div>
           <div className="row">
             <div className="col-3">
               <div className="form-group">
@@ -526,34 +555,6 @@ class Add extends Component {
                   />
               </div>
             </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="inputStartAt">Start</label>
-            <DatePicker
-              id="inputStartAt"
-              className="form-control"
-              selected={this.state.startAt}
-              onChange={this.handleChangeStart}
-              showTimeSelect
-              dateFormat="dd/MM/yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              showDisabledMonthNavigation
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="inputFinishAt">Finish</label>
-            <DatePicker
-              id="inputFinishAt"
-              className="form-control"
-              selected={this.state.finishAt}
-              onChange={this.handleChangeFinish}
-              showTimeSelect
-              dateFormat="dd/MM/yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              showDisabledMonthNavigation
-            />
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
           <div className="row">

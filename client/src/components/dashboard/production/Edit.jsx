@@ -503,6 +503,34 @@ class Edit extends Component {
               </div>
             </div>
           </div>
+          <div className="form-group">
+            <label htmlFor="inputStartAt">Start</label>
+            <DatePicker
+              id="inputStartAt"
+              className="form-control"
+              selected={this.state.startAt}
+              onChange={this.handleChangeStart}
+              showTimeSelect
+              dateFormat="dd/MM/yyyy HH:mm"
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              showDisabledMonthNavigation
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="inputFinishAt">Finish</label>
+            <DatePicker
+              id="inputFinishAt"
+              className="form-control"
+              selected={this.state.finishAt}
+              onChange={this.handleChangeFinish}
+              showTimeSelect
+              dateFormat="dd/MM/yyyy HH:mm"
+              timeFormat="HH:mm"
+              timeIntervals={1}
+              showDisabledMonthNavigation
+            />
+          </div>
           <div className="row">
             <div className="col-3">
               <div className="form-group">
@@ -555,34 +583,6 @@ class Edit extends Component {
                   />
               </div>
             </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="inputStartAt">Start</label>
-            <DatePicker
-              id="inputStartAt"
-              className="form-control"
-              selected={this.state.startAt}
-              onChange={this.handleChangeStart}
-              showTimeSelect
-              dateFormat="dd/MM/yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              showDisabledMonthNavigation
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="inputFinishAt">Finish</label>
-            <DatePicker
-              id="inputFinishAt"
-              className="form-control"
-              selected={this.state.finishAt}
-              onChange={this.handleChangeFinish}
-              showTimeSelect
-              dateFormat="dd/MM/yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeIntervals={1}
-              showDisabledMonthNavigation
-            />
           </div>
           <h5 style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>Planning Down Time</h5>
           <div className="row">

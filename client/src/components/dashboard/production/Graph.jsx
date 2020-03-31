@@ -26,10 +26,6 @@ const optionsAmount = {
 }
 
 class Graph extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     let labels = [], 
     dataSetOEE = [], 

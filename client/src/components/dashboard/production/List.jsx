@@ -141,7 +141,7 @@ class List extends Component {
     }
   };
 
-  drawTable = async (url = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?sort=startAt:desc&populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber`) => {
+  drawTable = async (url = `http://${process.env.REACT_APP_API_URL || 'localhost'}:3029/production?sort=startAt:desc&populate=shift,group,proccessName,lineNumber,modelType,plannedActivities.activity,unplannedActivities.activity,unplannedActivities.operationNumber&filter=date:${(new Date()).getTime() - 2678400000}-${(new Date()).getTime()}`) => {
     try {
       const productions = await axios_get(
         url,
