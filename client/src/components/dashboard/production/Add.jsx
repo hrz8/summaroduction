@@ -167,6 +167,8 @@ class Add extends Component {
   handleChangeCT = e => {
     this.setState({
       cycleTime: parseFloat(e.target.value)
+    }, () => {
+      this.setState({ targetAmount: getTarget(this.state) });
     });
   }
 
