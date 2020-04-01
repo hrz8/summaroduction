@@ -17,7 +17,6 @@ import Production from './components/dashboard/production/List';
 import ProductionAdd from './components/dashboard/production/Add';
 import ProductionDetail from './components/dashboard/production/Detail';
 import ProductionEdit from './components/dashboard/production/Edit';
-import ProductionGraph from './components/dashboard/production/Graph';
 
 import Shift from './components/dashboard/shift/List';
 import ShiftAdd from './components/dashboard/shift/Add';
@@ -88,7 +87,6 @@ const App = (props) => {
           <PrivateRoute exact path="/dashboard/production/add" auth={props.store.auth} component={ProductionAdd} />
           <PrivateRoute exact path="/dashboard/production/detail/:productionId" auth={props.store.auth} component={ProductionDetail} />
           <PrivateRoute exact path="/dashboard/production/edit/:productionId" auth={props.store.auth} component={ProductionEdit} />
-          <PrivateRoute exact path="/dashboard/production/graph" auth={props.store.auth} component={ProductionGraph} />
         
           <PrivateRoute exact path="/dashboard/shift" auth={props.store.auth} component={Shift} />
           <PrivateRoute exact path="/dashboard/shift/add" auth={props.store.auth} component={ShiftAdd} />

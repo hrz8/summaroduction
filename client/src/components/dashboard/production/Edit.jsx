@@ -542,6 +542,7 @@ class Edit extends Component {
                   value={this.state.targetAmount}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-3">
@@ -555,6 +556,7 @@ class Edit extends Component {
                   value={this.state.actualAmount}
                   onChange={this.handleChangeNumber}
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-3">
@@ -568,6 +570,7 @@ class Edit extends Component {
                   value={this.state.okAmount}
                   onChange={this.handleChangeNumber}
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-3">
@@ -581,6 +584,7 @@ class Edit extends Component {
                   value={this.state.reuseAmount}
                   onChange={this.handleChangeNumber}
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
           </div>

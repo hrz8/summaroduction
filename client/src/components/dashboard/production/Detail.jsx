@@ -379,6 +379,7 @@ class Detail extends Component {
                   value={this.state.targetAmount}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-2">
@@ -392,6 +393,7 @@ class Detail extends Component {
                   value={this.state.actualAmount}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-2">
@@ -405,6 +407,7 @@ class Detail extends Component {
                   value={dataOee.ng}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-2">
@@ -418,6 +421,7 @@ class Detail extends Component {
                   value={this.state.okAmount}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-2">
@@ -431,6 +435,7 @@ class Detail extends Component {
                   value={this.state.reuseAmount}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
             <div className="col-2">
@@ -444,6 +449,7 @@ class Detail extends Component {
                   value={this.state.reuseAmount + this.state.okAmount}
                   disabled
                   />
+                  <small className="form-text text-muted">pcs</small>
               </div>
             </div>
           </div>
