@@ -137,10 +137,11 @@ export const oee = (production) => {
   const minuteTotal = Math.floor(hour * 60);
   const minuteBersih = minuteTotal - planDtTime;
   const busyTime = minuteBersih - unplanDtTime
+  const pbtTime = minuteBersih;
   const oee3 = (((production.cycleTime * production.okAmount) / (busyTime * 60)) * 100).toFixed(2);
   return {
     fy, opTime, planDtTime, planDtTime3, unplanDtTime, totalDtTime, runTime, needTime, 
-    eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2, oee3, refTime, busyTime,
+    eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2, oee3, refTime, busyTime, pbtTime,
     effComma, availComma, performanceComma, ngRateComma, ngRate2Comma, qRateComma,
     qRate2Comma, oeeComma, oee2Comma
   }
@@ -167,8 +168,9 @@ export const getTarget2 = (state) => {
   const settingTime = oeeObj.planDtTime3;
   const noProdTime = oeeObj.planDtTime - settingTime;
   const busyTime = minuteBersih - oeeObj.unplanDtTime; // busy time itu sama udt gak
+  const pbtTime = minuteBersih;
   const oeeVar = ((state.cycleTime * state.okAmount) / (busyTime * 60)) * 100;
   const oeeLama = oeeObj.oee;
   const oee2Lama = oeeObj.oee2;
-  return { target, refTime, settingTime, noProdTime, busyTime, oeeVar, oeeLama, oee2Lama }
+  return { target, refTime, settingTime, noProdTime, busyTime, pbtTime, oeeVar, oeeLama, oee2Lama }
 }

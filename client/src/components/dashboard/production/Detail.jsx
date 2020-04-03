@@ -349,7 +349,7 @@ class Detail extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-3">
+            <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputStartAt">Start</label>
                 <input
@@ -360,7 +360,7 @@ class Detail extends Component {
                 />
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputFinishAt">Finish</label>
                 <input
@@ -371,7 +371,9 @@ class Detail extends Component {
                 />
               </div>
             </div>
-            <div className="col-3">
+          </div>
+          <div className="row">
+          <div className="col-4">
               <div className="form-group">
                 <label htmlFor="inputRef">Ref Time</label>
                 <input
@@ -382,11 +384,22 @@ class Detail extends Component {
                 />
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-4">
               <div className="form-group">
                 <label htmlFor="inputPBT">PBT</label>
                 <input
                   id="inputPBT"
+                  className="form-control"
+                  value={dataOee.pbtTime}
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="col-4">
+              <div className="form-group">
+                <label htmlFor="inputAPT">APT</label>
+                <input
+                  id="inputAPT"
                   className="form-control"
                   value={dataOee.busyTime}
                   disabled

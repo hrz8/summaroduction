@@ -50,6 +50,7 @@ class Add extends Component {
       settingTime: 0,
       noProdTime: 0,
       busyTime: 0,
+      pbtTime: 0,
       actualAmount: 0,
       okAmount: 0,
       reuseAmount: 0,
@@ -125,7 +126,8 @@ class Add extends Component {
             refTime: getTarget2(this.state).refTime,
             settingTime: getTarget2(this.state).settingTime,
             noProdTime: getTarget2(this.state).noProdTime,
-            busyTime: getTarget2(this.state).busyTime
+            busyTime: getTarget2(this.state).busyTime,
+            pbtTime: getTarget2(this.state).pbtTime
           }))
         });
       });
@@ -168,7 +170,8 @@ class Add extends Component {
         refTime: getTarget2(this.state).refTime,
         settingTime: getTarget2(this.state).settingTime,
         noProdTime: getTarget2(this.state).noProdTime,
-        busyTime: getTarget2(this.state).busyTime
+        busyTime: getTarget2(this.state).busyTime,
+        pbtTime: getTarget2(this.state).pbtTime
        });
     });
   };
@@ -180,7 +183,8 @@ class Add extends Component {
         refTime: getTarget2(this.state).refTime,
         settingTime: getTarget2(this.state).settingTime,
         noProdTime: getTarget2(this.state).noProdTime,
-        busyTime: getTarget2(this.state).busyTime
+        busyTime: getTarget2(this.state).busyTime,
+        pbtTime: getTarget2(this.state).pbtTime
        });
     });
   };
@@ -203,7 +207,8 @@ class Add extends Component {
         refTime: getTarget2(this.state).refTime,
         settingTime: getTarget2(this.state).settingTime,
         noProdTime: getTarget2(this.state).noProdTime,
-        busyTime: getTarget2(this.state).busyTime
+        busyTime: getTarget2(this.state).busyTime,
+        pbtTime: getTarget2(this.state).pbtTime
        });
     });
   }
@@ -229,7 +234,8 @@ class Add extends Component {
           refTime: getTarget2(this.state).refTime,
           settingTime: getTarget2(this.state).settingTime,
           noProdTime: getTarget2(this.state).noProdTime,
-          busyTime: getTarget2(this.state).busyTime
+          busyTime: getTarget2(this.state).busyTime,
+          pbtTime: getTarget2(this.state).pbtTime
          })
       });
     }
@@ -283,7 +289,18 @@ class Add extends Component {
     if (parseInt(e.target.value) >= 0) {
       let unplannedactivitiesToSendTemp = [ ...this.state.unplannedactivitiesToSend ];
       unplannedactivitiesToSendTemp[e.target.dataset.index].minute = parseInt(e.target.value);
-      this.setState({ unplannedactivitiesToSend: unplannedactivitiesToSendTemp });
+      this.setState({ 
+        unplannedactivitiesToSend: unplannedactivitiesToSendTemp 
+      }, () => {
+        this.setState({
+          targetAmount: getTarget2(this.state).target,
+          refTime: getTarget2(this.state).refTime,
+          settingTime: getTarget2(this.state).settingTime,
+          noProdTime: getTarget2(this.state).noProdTime,
+          busyTime: getTarget2(this.state).busyTime,
+          pbtTime: getTarget2(this.state).pbtTime
+        })
+      });
     }
   }
 
@@ -548,7 +565,7 @@ class Add extends Component {
             />
           </div>
           <div className="row">
-            <div className="col-3">
+            <div className="col-4">
               <div className="form-group">
                 <label htmlFor="inputRefTime">Ref Time</label>
                 <input
@@ -561,7 +578,7 @@ class Add extends Component {
                   <small className="form-text text-muted">menit</small>
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-4">
               <div className="form-group">
                 <label htmlFor="inputSetTime">Setting Time</label>
                 <input
@@ -574,7 +591,7 @@ class Add extends Component {
                   <small className="form-text text-muted">menit</small>
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-4">
               <div className="form-group">
                 <label htmlFor="inputNoTime">No Prod</label>
                 <input
@@ -587,9 +604,24 @@ class Add extends Component {
                   <small className="form-text text-muted">menit</small>
               </div>
             </div>
-            <div className="col-3">
+          </div>
+          <div className="row">
+            <div className="col-6">
               <div className="form-group">
                 <label htmlFor="inputPBT">PBT</label>
+                <input
+                  id="inputPBT"
+                  className="form-control"
+                  name="PBTime"
+                  value={this.state.pbtTime}
+                  disabled
+                  />
+                  <small className="form-text text-muted">menit</small>
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label htmlFor="inputPBT">APT</label>
                 <input
                   id="inputPBT"
                   className="form-control"
