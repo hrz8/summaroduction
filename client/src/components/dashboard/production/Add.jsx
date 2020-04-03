@@ -4,7 +4,7 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import Card from '../../common/Card';
-import { axios_get, axios_post, getTarget, handle_error } from '../../../helpers';
+import { axios_get, axios_post, getTarget2, handle_error } from '../../../helpers';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
@@ -46,6 +46,10 @@ class Add extends Component {
       unplannedactivitiesJumlah: 0,
       // params
       targetAmount: 0,
+      refTime: 0, 
+      settingTime: 0,
+      noProdTime: 0,
+      busyTime: 0,
       actualAmount: 0,
       okAmount: 0,
       reuseAmount: 0,
@@ -116,7 +120,13 @@ class Add extends Component {
         this.state.plannedactivities.forEach(item => {
           this.setState(prevState => ({
             plannedactivitiesToSend: [...prevState.plannedactivitiesToSend, { activity: item.id, minute: item.minuteDefault }]
-          }), () => this.setState({ targetAmount: getTarget(this.state) }))
+          }), () => this.setState({ 
+            targetAmount: getTarget2(this.state).target,
+            refTime: getTarget2(this.state).refTime,
+            settingTime: getTarget2(this.state).settingTime,
+            noProdTime: getTarget2(this.state).noProdTime,
+            busyTime: getTarget2(this.state).busyTime
+          }))
         });
       });
     }
@@ -153,22 +163,48 @@ class Add extends Component {
   // time handle
   handleChangeStart = startAt => { 
     this.setState({ startAt: startAt.getTime() }, () => {
-      this.setState({ targetAmount: getTarget(this.state) });
+      this.setState({ 
+        targetAmount: getTarget2(this.state).target,
+        refTime: getTarget2(this.state).refTime,
+        settingTime: getTarget2(this.state).settingTime,
+        noProdTime: getTarget2(this.state).noProdTime,
+        busyTime: getTarget2(this.state).busyTime
+       });
     });
   };
 
   handleChangeFinish = finishAt => { 
     this.setState({ finishAt: finishAt.getTime() }, () => {
-      this.setState({ targetAmount: getTarget(this.state) });
+      this.setState({ 
+        targetAmount: getTarget2(this.state).target,
+        refTime: getTarget2(this.state).refTime,
+        settingTime: getTarget2(this.state).settingTime,
+        noProdTime: getTarget2(this.state).noProdTime,
+        busyTime: getTarget2(this.state).busyTime
+       });
     });
   };
+
+  handleChangeActualAmmount = e => {
+    this.setState({ actualAmount: e.target.value });
+  }
+
+  handleChangeOKAmount = e => {
+    this.setState({ okAmount: e.target.value });
+  }
 
   // number handle
   handleChangeCT = e => {
     this.setState({
       cycleTime: parseFloat(e.target.value)
     }, () => {
-      this.setState({ targetAmount: getTarget(this.state) });
+      this.setState({ 
+        targetAmount: getTarget2(this.state).target,
+        refTime: getTarget2(this.state).refTime,
+        settingTime: getTarget2(this.state).settingTime,
+        noProdTime: getTarget2(this.state).noProdTime,
+        busyTime: getTarget2(this.state).busyTime
+       });
     });
   }
 
@@ -188,7 +224,13 @@ class Add extends Component {
         minute: parseInt(e.target.value)
       };
       this.setState({ plannedactivitiesToSend: plannedactivitiesToSendTemp }, () => {
-        this.setState({ targetAmount: getTarget(this.state) })
+        this.setState({ 
+          targetAmount: getTarget2(this.state).target,
+          refTime: getTarget2(this.state).refTime,
+          settingTime: getTarget2(this.state).settingTime,
+          noProdTime: getTarget2(this.state).noProdTime,
+          busyTime: getTarget2(this.state).busyTime
+         })
       });
     }
   }
@@ -508,6 +550,60 @@ class Add extends Component {
           <div className="row">
             <div className="col-3">
               <div className="form-group">
+                <label htmlFor="inputRefTime">Ref Time</label>
+                <input
+                  id="inputRefTime"
+                  className="form-control"
+                  name="refTime"
+                  value={this.state.refTime}
+                  disabled
+                  />
+                  <small className="form-text text-muted">menit</small>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputSetTime">Setting Time</label>
+                <input
+                  id="inputSetTime"
+                  className="form-control"
+                  name="setTime"
+                  value={this.state.settingTime}
+                  disabled
+                  />
+                  <small className="form-text text-muted">menit</small>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputNoTime">No Prod</label>
+                <input
+                  id="inputNoTime"
+                  className="form-control"
+                  name="noTime"
+                  value={this.state.noProdTime}
+                  disabled
+                  />
+                  <small className="form-text text-muted">menit</small>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputPBT">PBT</label>
+                <input
+                  id="inputPBT"
+                  className="form-control"
+                  name="PBTime"
+                  value={this.state.busyTime}
+                  disabled
+                  />
+                  <small className="form-text text-muted">menit</small>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-3">
+              <div className="form-group">
                 <label htmlFor="inputTarget">Target</label>
                 <input
                   id="inputTarget"
@@ -521,14 +617,14 @@ class Add extends Component {
             </div>
             <div className="col-3">
               <div className="form-group">
-                <label htmlFor="inputAktual">Aktual</label>
+                <label htmlFor="inputAktual">Input</label>
                 <input
                   id="inputAktual"
                   type="number"
                   className="form-control"
                   name="actualAmount"
                   value={this.state.actualAmount}
-                  onChange={this.handleChangeNumber}
+                  onChange={this.handleChangeActualAmmount}
                   />
                   <small className="form-text text-muted">pcs</small>
               </div>
@@ -542,7 +638,7 @@ class Add extends Component {
                   className="form-control"
                   name="okAmount"
                   value={this.state.okAmount}
-                  onChange={this.handleChangeNumber}
+                  onChange={this.handleChangeOKAmount}
                   />
                   <small className="form-text text-muted">pcs</small>
               </div>

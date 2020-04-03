@@ -131,9 +131,16 @@ export const oee = (production) => {
   const qRate2Comma = qRate2.toString().replace('.', ',');
   const oeeComma = oee.toString().replace('.', ',');
   const oee2Comma = oee2.toString().replace('.', ',');
+  // BARU
+  const hour = ((((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / (1000 * 60 * 60)) % 24).toFixed(2);
+  const refTime = ((new Date(production.finishAt)).getTime() - (new Date(production.startAt)).getTime()) / 60000;
+  const minuteTotal = Math.floor(hour * 60);
+  const minuteBersih = minuteTotal - planDtTime;
+  const busyTime = minuteBersih - unplanDtTime
+  const oee3 = (((production.cycleTime * production.okAmount) / (busyTime * 60)) * 100).toFixed(2);
   return {
     fy, opTime, planDtTime, planDtTime3, unplanDtTime, totalDtTime, runTime, needTime, 
-    eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2,
+    eff, avail, performance, ng, ng2, ngRate, ngRate2, qRate, qRate2, oee, oee2, oee3, refTime, busyTime,
     effComma, availComma, performanceComma, ngRateComma, ngRate2Comma, qRateComma,
     qRate2Comma, oeeComma, oee2Comma
   }
@@ -148,4 +155,20 @@ export const getTarget = (state) => {
   // console.log(minuteBersih, perHour, state.cycleTime);
   return Math.ceil(((minuteBersih * 60) / state.cycleTime) * 0.96);
   // return ((minuteBersih / 60) * perHour).toFixed();
+}
+
+export const getTarget2 = (state) => {
+  const hour = (((state.finishAt - state.startAt) / (1000 * 60 * 60)) % 24).toFixed(2);
+  const minuteTotal = Math.floor(hour * 60);
+  const oeeObj = oee(state);
+  const minuteBersih = minuteTotal - oeeObj.planDtTime;
+  const target = Math.round(((minuteBersih * 60) / state.cycleTime) * 0.96);
+  const refTime = (state.finishAt - state.startAt) / 60000;
+  const settingTime = oeeObj.planDtTime3;
+  const noProdTime = oeeObj.planDtTime - settingTime;
+  const busyTime = minuteBersih - oeeObj.unplanDtTime; // busy time itu sama udt gak
+  const oeeVar = ((state.cycleTime * state.okAmount) / (busyTime * 60)) * 100;
+  const oeeLama = oeeObj.oee;
+  const oee2Lama = oeeObj.oee2;
+  return { target, refTime, settingTime, noProdTime, busyTime, oeeVar, oeeLama, oee2Lama }
 }

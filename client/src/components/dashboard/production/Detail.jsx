@@ -243,6 +243,7 @@ class Detail extends Component {
 
   render() {
     const dataOee = oee(this.state);
+    console.log(dataOee)
     return (
       <Card title="Detail" col={11}>
         {this.props.store.auth.role === "su" || this.props.store.auth.role === "admin" ?
@@ -283,6 +284,10 @@ class Detail extends Component {
                   <tr className="font-italic">
                     <td colSpan="7" className="font-weight-bold font-medium">OEE2</td>
                     <td className="font-weight-bold color-secondary font-medium">{dataOee.oee2}%</td>
+                  </tr>
+                  <tr className="font-italic">
+                    <td colSpan="7" className="font-weight-bold font-medium">OEE3</td>
+                    <td className="font-weight-bold color-secondary font-medium">{dataOee.oee3}%</td>
                   </tr>
                 </tbody>
               </table>
@@ -344,7 +349,7 @@ class Detail extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-6">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputStartAt">Start</label>
                 <input
@@ -355,13 +360,35 @@ class Detail extends Component {
                 />
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-3">
               <div className="form-group">
                 <label htmlFor="inputFinishAt">Finish</label>
                 <input
                   id="inputFinishAt"
                   className="form-control"
                   value={moment(this.state.finishAt).format('DD/MM/YYYY HH:mm')}
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputRef">Ref Time</label>
+                <input
+                  id="inputRef"
+                  className="form-control"
+                  value={dataOee.refTime}
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="form-group">
+                <label htmlFor="inputPBT">PBT</label>
+                <input
+                  id="inputPBT"
+                  className="form-control"
+                  value={dataOee.busyTime}
                   disabled
                 />
               </div>
@@ -384,7 +411,7 @@ class Detail extends Component {
             </div>
             <div className="col-2">
               <div className="form-group">
-                <label htmlFor="inputAktual">Aktual</label>
+                <label htmlFor="inputAktual">Input</label>
                 <input
                   id="inputAktual"
                   type="number"
