@@ -30,6 +30,7 @@ class Graph extends Component {
     let labels = [], 
     dataSetOEE = [], 
     dataSetOEE2 = [], 
+    dataSetOEE3 = [], 
     dataOK = [], 
     dataOK2 = [],
     datNG = [];
@@ -40,6 +41,7 @@ class Graph extends Component {
       labels.push(moment(item.startAt).format('dddd DD/MM/YYYY'));
       dataSetOEE.push(item.oee);
       dataSetOEE2.push(item.oee2);
+      dataSetOEE3.push(item.oee3);
       dataOK.push(item.qRate);
       dataOK2.push(item.qRate2);
       datNG.push(item.ngRate);
@@ -64,6 +66,13 @@ class Graph extends Component {
           borderColor: '#eb7000',
           data: dataSetOEE2.reverse()
         },
+        {
+          label: 'OEE3',
+          lineTension: 0,
+          fill: false,
+          borderColor: '#f5e042',
+          data: dataSetOEE3.reverse()
+        }
       ]
     };
 
